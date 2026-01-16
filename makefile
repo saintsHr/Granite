@@ -32,8 +32,8 @@ DEP := $(OBJ:.o=.d)
 # ====================================================
 DEPFLAGS := -MMD -MP
 
-CFLAGS   := -Wall -Wextra -std=c11   $(INCLUDE) $(DEPFLAGS)
-CXXFLAGS := -Wall -Wextra -std=c++20 $(INCLUDE) $(DEPFLAGS)
+CFLAGS   := -Wall -Wextra -std=c11   -DGLFW_INCLUDE_NONE $(INCLUDE) $(DEPFLAGS)
+CXXFLAGS := -Wall -Wextra -std=c++20 -DGLFW_INCLUDE_NONE $(INCLUDE) $(DEPFLAGS)
 
 RELEASE_CFLAGS   := -O3 $(CFLAGS)
 RELEASE_CXXFLAGS := -O3 $(CXXFLAGS)

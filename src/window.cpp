@@ -1,8 +1,9 @@
 #include "granite/window.hpp"
 
 #include <GLFW/glfw3.h>
+#include <GL/gl.h>
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height){
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height){
     (void)window;
     glViewport(0, 0, width, height);
 }
@@ -23,7 +24,7 @@ void Window::create(){
     raw_ = glfwCreateWindow(size_.x, size_.y, title_.c_str(), NULL, NULL);
     if (raw_ == NULL) return;
     glfwMakeContextCurrent(raw_);
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, size_.x, size_.y);
     glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback);
 }
 
@@ -38,11 +39,12 @@ void Window::handle(){
 
 void Window::clear(gr::Color3 color){
     glClearColor(
-        color.r / 255,
-        color.g / 255,
-        color.b / 255,
+        color.r / 255.0f,
+        color.g / 255.0f,
+        color.b / 255.0f,
         1.0f
     );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::setSize(int width, int height){
