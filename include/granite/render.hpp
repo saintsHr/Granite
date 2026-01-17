@@ -10,7 +10,7 @@ void init();
 struct Transform{
     gr::Vec3 position = {0.0f, 0.0f, 0.0f};
     gr::Vec3 rotation = {0.0f, 0.0f, 0.0f};
-    gr::Vec3 scale    = {0.0f, 0.0f, 0.0f};
+    gr::Vec3 scale    = {1.0f, 1.0f, 1.0f};
 };
 
 class Shader{

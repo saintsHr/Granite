@@ -6,3 +6,4 @@
 #include "granite/color.hpp"
 #include "granite/vector.hpp"
 #include "granite/render.hpp"
+#include "granite/camera.hpp"
