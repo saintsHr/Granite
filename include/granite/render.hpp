@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 #include "granite/vector.hpp"
+#include <vector>
 
 namespace gr::Render{
     
@@ -28,11 +29,13 @@ class Mesh{
 public:
     Mesh();
     ~Mesh();
-    void upload(const float* vertices, uint32_t vertexCount);
+    void upload(const std::vector<float>& vertices);
+    void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index);
     void draw(GLenum drawMode = GL_TRIANGLES) const;
 private:
-    GLuint vbo_, vao_;
+    GLuint vbo_, vao_, ebo_;
     uint32_t vertexCount_;
+    uint32_t indexCount_;
 };
 
 class RenderObject{

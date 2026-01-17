@@ -40,16 +40,52 @@ void init(){
     glEnable(GL_DEPTH_TEST);
 }
 
-void Mesh::upload(const float* vertices, uint32_t vertexCount){
-    vertexCount_ = vertexCount;
+void Mesh::upload(const std::vector<float>& vertices){
+    vertexCount_ = vertices.size() / 3;
+    indexCount_ = 0;
 
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertexCount * 3 * sizeof(float),
-        vertices,
+        vertices.size() * sizeof(float),
+        vertices.data(),
+        GL_STATIC_DRAW
+    );
+
+    glVertexAttribPointer(
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        3 * sizeof(float),
+        (void*)0
+    );
+
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+}
+
+void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index){
+    vertexCount_ = vertices.size() / 3;
+    indexCount_ = index.size();
+
+    glBindVertexArray(vao_);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        vertices.size() * sizeof(float),
+        vertices.data(),
+        GL_STATIC_DRAW
+    );
+
+    glBufferData(
+        GL_ELEMENT_ARRAY_BUFFER,
+        index.size() * sizeof(unsigned int),
+        index.data(),
         GL_STATIC_DRAW
     );
 
@@ -68,10 +104,16 @@ void Mesh::upload(const float* vertices, uint32_t vertexCount){
 
 void Mesh::draw(GLenum drawMode) const{
     glBindVertexArray(vao_);
-    glDrawArrays(drawMode, 0, vertexCount_);
+    if(indexCount_ > 0){
+        glDrawElements(drawMode, indexCount_, GL_UNSIGNED_INT, 0);
+    }else{
+        glDrawArrays(drawMode, 0, vertexCount_);
+    }
+    glBindVertexArray(0);
 }
 
 Mesh::~Mesh(){
+    glBindVertexArray(0);
     glDeleteVertexArrays(1, &vao_);
     glDeleteBuffers(1, &vbo_);
 }
@@ -79,6 +121,7 @@ Mesh::~Mesh(){
 Mesh::Mesh(){
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
+    glGenBuffers(1, &ebo_);
 }
 
 void RenderObject::draw(const Shader& shader) const{
