@@ -13,6 +13,17 @@ struct Transform{
     gr::Vec3 scale;
 };
 
+class Shader{
+public:
+    Shader();
+    Shader(const char* vertexSource, const char* fragmentSource);
+    ~Shader();
+    void use() const;
+    GLuint getProgram() const;
+private:
+    GLuint program_;
+};
+
 class Mesh{
 public:
     Mesh();
@@ -28,6 +39,7 @@ class RenderObject{
 public:
     Mesh* mesh;
     Transform transform;
+    void draw(const Shader& shader) const;
 };
 
 };
