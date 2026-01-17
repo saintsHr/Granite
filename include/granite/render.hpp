@@ -8,9 +8,9 @@ namespace gr::Render{
 void init();
 
 struct Transform{
-    gr::Vec3 position;
-    gr::Vec3 rotation;
-    gr::Vec3 scale;
+    gr::Vec3 position = {0.0f, 0.0f, 0.0f};
+    gr::Vec3 rotation = {0.0f, 0.0f, 0.0f};
+    gr::Vec3 scale    = {0.0f, 0.0f, 0.0f};
 };
 
 class Shader{

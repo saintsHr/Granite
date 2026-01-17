@@ -1,18 +1,22 @@
 #include "granite/render.hpp"
 
 #include "GLFW/glfw3.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace gr::internal {
 
     static const char* defaultVertex = R"(
 
     #version 330 core
-    layout (location = 0) in vec3 aPos;
+    layout(location = 0) in vec3 aPos;
 
-    uniform vec3 u_Position;
+    uniform mat4 uProjection;
+    uniform mat4 uView;
+    uniform mat4 uModel;
 
-    void main() {
-        gl_Position = vec4(aPos + u_Position, 1.0);
+    void main(){
+        gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
     }
 
     )";
@@ -22,7 +26,7 @@ namespace gr::internal {
     #version 330 core
     out vec4 FragColor;
 
-    void main() {
+    void main(){
         FragColor = vec4(1.0);
     }
 
@@ -33,6 +37,7 @@ namespace gr::Render{
 
 void init(){
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) return;
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Mesh::upload(const float* vertices, uint32_t vertexCount){
@@ -79,14 +84,15 @@ Mesh::Mesh(){
 void RenderObject::draw(const Shader& shader) const{
     shader.use();
 
-    GLint loc = glGetUniformLocation(shader.getProgram(), "u_Position");
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, transform.position.z));
+    model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1,0,0));
+    model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0,1,0));
+    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0,0,1));
+    model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z));
 
-    glUniform3f(
-        loc,
-        transform.position.x,
-        transform.position.y,
-        transform.position.z
-    );
+    GLuint mLoc = glGetUniformLocation(shader.getProgram(), "uModel");
+    glUniformMatrix4fv(mLoc, 1, GL_FALSE, &model[0][0]);
 
     mesh->draw();
 }
