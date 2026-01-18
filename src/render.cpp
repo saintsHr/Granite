@@ -46,9 +46,11 @@ void Mesh::upload(const std::vector<float>& vertices){
     vertexCount_ = vertices.size() / 3;
     indexCount_ = 0;
 
+    // bind buffers
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
+    // fills VBO data
     glBufferData(
         GL_ARRAY_BUFFER,
         vertices.size() * sizeof(float),
@@ -56,6 +58,7 @@ void Mesh::upload(const std::vector<float>& vertices){
         GL_STATIC_DRAW
     );
 
+    // configs VAO
     glVertexAttribPointer(
         0,
         3,
@@ -73,10 +76,12 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     vertexCount_ = vertices.size() / 3;
     indexCount_ = index.size();
 
+    // bind buffers
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
 
+    // fills VBO data
     glBufferData(
         GL_ARRAY_BUFFER,
         vertices.size() * sizeof(float),
@@ -84,6 +89,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         GL_STATIC_DRAW
     );
 
+    // fills EBO data
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
         index.size() * sizeof(unsigned int),
@@ -91,6 +97,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         GL_STATIC_DRAW
     );
 
+    // configs VAO
     glVertexAttribPointer(
         0,
         3,
@@ -105,14 +112,36 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
 }
 
 void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
+    shader.use();
+
     glBindVertexArray(vao_);
-    GLuint cLoc = glGetUniformLocation(shader.getProgram(), "uColor");
-    glUniform4f(cLoc, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, 1.0f);
+
+    // checks if color location exists, if not, find it
+    GLint cLoc;
+    if (cL_ == 0){
+        cLoc = glGetUniformLocation(shader.getProgram(), "uColor");
+    } else {
+        cLoc = cL_;
+    }
+
+    // applies color if valid location
+    if (cLoc != -1){
+        glUniform4f(
+            cLoc,
+            color.r * (1.0f / 255.0f),
+            color.g * (1.0f / 255.0f),
+            color.b * (1.0f / 255.0f),
+            1.0f
+        );
+    }
+
+    // draws the mesh
     if(indexCount_ > 0){
         glDrawElements(drawMode, indexCount_, GL_UNSIGNED_INT, 0);
     }else{
         glDrawArrays(drawMode, 0, vertexCount_);
     }
+
     glBindVertexArray(0);
 }
 
@@ -128,9 +157,10 @@ Mesh::Mesh(){
     glGenBuffers(1, &ebo_);
 }
 
-void RenderObject::draw(const Shader& shader, gr::Color3 color) const{
+void RenderObject::draw(const Shader& shader, gr::Color3 color, GLenum drawMode) const{
     shader.use();
 
+    // calculates transform
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, transform.position.z));
     model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1,0,0));
@@ -138,10 +168,26 @@ void RenderObject::draw(const Shader& shader, gr::Color3 color) const{
     model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0,0,1));
     model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z));
 
-    GLuint mLoc = glGetUniformLocation(shader.getProgram(), "uModel");
-    glUniformMatrix4fv(mLoc, 1, GL_FALSE, &model[0][0]);
+    // checks if model location exists, if not, find it
+    GLint mLoc;
+    if (mL_ == 0){
+        mLoc = glGetUniformLocation(shader.getProgram(), "uModel");
+    } else {
+        mLoc = mL_;
+    }
 
-    mesh->draw(shader, color);
+    // applies transform if valid location
+    if (mLoc != -1){
+        glUniformMatrix4fv(
+            mLoc,
+            1,
+            GL_FALSE,
+            &model[0][0]
+        );
+    }
+
+    // draws mesh
+    mesh->draw(shader, color, drawMode);
 }
 
 Shader::Shader(const char* vertexSource, const char* fragmentSource){

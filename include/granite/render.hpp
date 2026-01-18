@@ -37,13 +37,16 @@ private:
     GLuint vbo_, vao_, ebo_;
     uint32_t vertexCount_;
     uint32_t indexCount_;
+    GLint cL_ = 0;
 };
 
 class RenderObject{
 public:
     Mesh* mesh;
     Transform transform;
-    void draw(const Shader& shader, gr::Color3 color) const;
+    void draw(const Shader& shader, gr::Color3 color, GLenum drawMode = GL_TRIANGLES) const;
+private:
+    GLint mL_ = 0;
 };
 
 };
