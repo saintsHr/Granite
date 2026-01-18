@@ -26,8 +26,10 @@ namespace gr::internal {
     #version 330 core
     out vec4 FragColor;
 
+    uniform vec4 uColor;
+
     void main(){
-        FragColor = vec4(1.0);
+        FragColor = uColor;
     }
 
     )";
@@ -102,8 +104,10 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     glBindVertexArray(0);
 }
 
-void Mesh::draw(GLenum drawMode) const{
+void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
     glBindVertexArray(vao_);
+    GLuint cLoc = glGetUniformLocation(shader.getProgram(), "uColor");
+    glUniform4f(cLoc, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, 1.0f);
     if(indexCount_ > 0){
         glDrawElements(drawMode, indexCount_, GL_UNSIGNED_INT, 0);
     }else{
@@ -124,7 +128,7 @@ Mesh::Mesh(){
     glGenBuffers(1, &ebo_);
 }
 
-void RenderObject::draw(const Shader& shader) const{
+void RenderObject::draw(const Shader& shader, gr::Color3 color) const{
     shader.use();
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -137,7 +141,7 @@ void RenderObject::draw(const Shader& shader) const{
     GLuint mLoc = glGetUniformLocation(shader.getProgram(), "uModel");
     glUniformMatrix4fv(mLoc, 1, GL_FALSE, &model[0][0]);
 
-    mesh->draw();
+    mesh->draw(shader, color);
 }
 
 Shader::Shader(const char* vertexSource, const char* fragmentSource){

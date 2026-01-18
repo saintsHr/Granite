@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 #include "granite/vector.hpp"
+#include "granite/color.hpp"
 #include <vector>
 
 namespace gr::Render{
@@ -31,7 +32,7 @@ public:
     ~Mesh();
     void upload(const std::vector<float>& vertices);
     void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index);
-    void draw(GLenum drawMode = GL_TRIANGLES) const;
+    void draw(Shader shader, gr::Color3 color, GLenum drawMode = GL_TRIANGLES) const;
 private:
     GLuint vbo_, vao_, ebo_;
     uint32_t vertexCount_;
@@ -42,7 +43,7 @@ class RenderObject{
 public:
     Mesh* mesh;
     Transform transform;
-    void draw(const Shader& shader) const;
+    void draw(const Shader& shader, gr::Color3 color) const;
 };
 
 };
