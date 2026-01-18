@@ -7,3 +7,4 @@
 #include "granite/vector.hpp"
 #include "granite/render.hpp"
 #include "granite/camera.hpp"
+#include "granite/input.hpp"

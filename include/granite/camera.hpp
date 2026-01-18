@@ -1,6 +1,7 @@
 #pragma once
 
 #include "granite/render.hpp"
+#include "granite/window.hpp"
 
 namespace gr{
 
@@ -13,7 +14,7 @@ public:
     float near = 0.1f;
     float far = 100.0f;
 
-    void update(const gr::Render::Shader& shader);
+    void update(const gr::Render::Shader& shader, const gr::Window& window);
 };
 
 }

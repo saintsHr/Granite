@@ -3,32 +3,42 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height){
-    (void)window;
-    glViewport(0, 0, width, height);
-}
-
 namespace gr{
+
+void Window::framebuffer_size_callback_(GLFWwindow* window, int width, int height){
+    Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (!self) return;
+
+    glViewport(0, 0, width, height);
+    self->size_ = {(float)width, (float)height};
+}
 
 Window::Window(const std::string& title, gr::Vec2 size){
     title_ = title;
-    size_.x = size.x;
-    size_.y = size.y;
+    size_ = size;
 };
 Window::~Window(){
-    size_.x = 0;
-    size_.y = 0;
+    size_ = {0.0f, 0.0f};
 };
 
 void Window::create(){
     raw_ = glfwCreateWindow(size_.x, size_.y, title_.c_str(), NULL, NULL);
     if (raw_ == NULL) return;
+
     glfwMakeContextCurrent(raw_);
+
+    glfwSetWindowUserPointer(raw_, this);
+    
+    int fbW, fbH;
+    glfwGetFramebufferSize(raw_, &fbW, &fbH);
+    size_ = {(float)fbW, (float)fbH};
+
     glViewport(0, 0, size_.x, size_.y);
-    glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback);
+
+    glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback_);
 }
 
-bool Window::shouldClose(){
+bool Window::shouldClose() const{
     return glfwWindowShouldClose(raw_);
 }
 
@@ -48,20 +58,23 @@ void Window::clear(gr::Color3 color){
 }
 
 void Window::setSize(int width, int height){
-    size_.x = width;
-    size_.y = height;
+    glfwSetWindowSize(raw_, width, height);
 }
 
 void Window::setTitle(const std::string& title){
     Window::title_ = title;
 }
 
-gr::Vec2 Window::getSize(){
+gr::Vec2 Window::getSize() const{
     return size_;
 }
 
-std::string Window::getTitle(){
+std::string Window::getTitle() const{
     return title_;
+}
+
+GLFWwindow* Window::getRaw(){
+    return raw_;
 }
 
 }

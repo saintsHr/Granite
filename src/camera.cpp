@@ -5,7 +5,11 @@
 
 namespace gr{
 
-void Camera::update(const gr::Render::Shader& shader){
+void Camera::update(const gr::Render::Shader& shader, const gr::Window& window){
+    if (aspect.y <= 0.0f) return;
+    if (aspect.x <= 0.0f) return;
+    aspect = window.getSize();
+
     glm::mat4 projection = glm::perspective(glm::radians(fov), aspect.x / aspect.y, near, far);
 
     glm::vec3 front;

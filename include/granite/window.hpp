@@ -16,18 +16,20 @@ public:
     
     void setSize(int width, int height);
     void setTitle(const std::string& title);
-    gr::Vec2 getSize();
-    std::string getTitle();
+    gr::Vec2 getSize() const;
+    std::string getTitle() const;
     void create();
-    bool shouldClose();
+    bool shouldClose() const;
     void handle();
     void clear(gr::Color3 color);
+    GLFWwindow* getRaw();
 
 private:
 
     gr::Vec2 size_;
     std::string title_;
     GLFWwindow* raw_;
+    static void framebuffer_size_callback_(GLFWwindow* window, int width, int height);
 
 };
 
