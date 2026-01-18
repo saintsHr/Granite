@@ -40,6 +40,8 @@ namespace gr::Render{
 void init(){
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) return;
     glEnable(GL_DEPTH_TEST);
+    glfwWindowHint(GLFW_DEPTH_BITS, 24);
+    glfwWindowHint(GLFW_STENCIL_BITS, 8);
 }
 
 void Mesh::upload(const std::vector<float>& vertices){

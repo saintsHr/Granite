@@ -31,4 +31,60 @@ void Camera::update(const gr::Render::Shader& shader, const gr::Window& window){
     glUniformMatrix4fv(vLoc, 1, GL_FALSE, &view[0][0]);
 }
 
+void Camera::moveForward(float speed){
+    float yawRad = glm::radians(rotation.y - 90.0f);
+
+    glm::vec3 forward;
+    forward.x = cos(yawRad);
+    forward.y = 0.0f;
+    forward.z = sin(yawRad);
+    forward = glm::normalize(forward);
+
+    pos += forward * speed;
+}
+
+void Camera::moveBack(float speed){
+    float yawRad = glm::radians(rotation.y - 90.0f);
+
+    glm::vec3 forward;
+    forward.x = cos(yawRad);
+    forward.y = 0.0f;
+    forward.z = sin(yawRad);
+    forward = glm::normalize(forward);
+
+    pos -= forward * speed;
+}
+
+void Camera::moveLeft(float speed){
+    float yawRad = glm::radians(rotation.y - 90.0f);
+
+    glm::vec3 forward;
+    forward.x = cos(yawRad);
+    forward.y = 0.0f;
+    forward.z = sin(yawRad);
+    forward = glm::normalize(forward);
+
+    glm::vec3 right = glm::normalize(
+        glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f))
+    );
+
+    pos -= right * speed;
+}
+
+void Camera::moveRight(float speed){
+    float yawRad = glm::radians(rotation.y - 90.0f);
+
+    glm::vec3 forward;
+    forward.x = cos(yawRad);
+    forward.y = 0.0f;
+    forward.z = sin(yawRad);
+    forward = glm::normalize(forward);
+
+    glm::vec3 right = glm::normalize(
+        glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f))
+    );
+
+    pos += right * speed;
+}
+
 }
