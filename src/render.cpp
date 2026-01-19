@@ -147,6 +147,182 @@ void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
     glBindVertexArray(0);
 }
 
+void Mesh::newTriangle(){
+    std::vector<float> vertices = {
+        -1.0f, -0.866f, 0.0f,
+         1.0f, -0.866f, 0.0f,
+         0.0f,  0.866f, 0.0f,
+    };
+    this->upload(vertices);
+}
+void Mesh::newQuad(){
+    std::vector<float> vertices = {
+        -1.0f, -1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f,
+    };
+    std::vector<unsigned int> index = {
+        0, 1, 2,
+        0, 3, 2
+    };
+    this->upload(vertices, index);
+}
+
+void Mesh::newCube(){
+    std::vector<float> vertices = {
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, 1.0f,
+         1.0f, -1.0f, 1.0f,
+         1.0f,  1.0f, 1.0f,
+        -1.0f,  1.0f, 1.0f,
+    };
+    std::vector<unsigned int> index = {
+        0, 1, 2,
+        2, 3, 0,
+        4, 5, 6,
+        6, 7, 4,
+        6, 5, 1,
+        1, 2, 6,
+        0, 4, 7,
+        0, 7, 3,
+        4, 1, 3,
+        4, 5, 1,
+        7, 6, 2,
+        7, 2, 3,
+    };
+    this->upload(vertices, index);
+}
+
+void Mesh::newCircle(int segments) {
+    std::vector<float> vertices;
+    std::vector<unsigned int> index;
+
+    vertices.push_back(0.0f);
+    vertices.push_back(0.0f);
+    vertices.push_back(0.0f);
+
+    for(int i = 0; i < segments; i++){
+        float angle = 2.0f * PI * i / segments;
+        vertices.push_back(cos(angle));
+        vertices.push_back(sin(angle));
+        vertices.push_back(0.0f);
+    }
+
+    for(int i = 1; i <= segments; i++){
+        int next = (i % segments) + 1;
+        index.push_back(0);
+        index.push_back(i);
+        index.push_back(next);
+    }
+
+    this->upload(vertices, index);
+}
+
+void Mesh::newSphere(int latSegments, int longSegments){
+    std::vector<float> vertices;
+    std::vector<unsigned int> index;
+
+    for(int lat = 0; lat <= latSegments; lat++){
+        float theta = lat * PI / latSegments;
+        float sinTheta = sin(theta);
+        float cosTheta = cos(theta);
+
+        for(int lon = 0; lon <= longSegments; lon++){
+            float phi = lon * 2.0f * PI / longSegments;
+            float sinPhi = sin(phi);
+            float cosPhi = cos(phi);
+
+            float x = sinTheta * cosPhi;
+            float y = cosTheta;
+            float z = sinTheta * sinPhi;
+
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+        }
+    }
+
+    for(int lat = 0; lat < latSegments; lat++){
+        for(int lon = 0; lon < longSegments; lon++){
+            int first = lat * (longSegments + 1) + lon;
+            int second = first + longSegments + 1;
+
+            index.push_back(first);
+            index.push_back(second);
+            index.push_back(first + 1);
+
+            index.push_back(second);
+            index.push_back(second + 1);
+            index.push_back(first + 1);
+        }
+    }
+
+    this->upload(vertices, index);
+}
+
+void Mesh::newCylinder(int segments){
+    std::vector<float> vertices;
+    std::vector<unsigned int> index;
+
+    vertices.push_back(0.0f); vertices.push_back(-1.0f); vertices.push_back(0.0f);
+    for (int i = 0; i < segments; i++) {
+        float angle = 2.0f * 3.14159265f * i / segments;
+        float x = cos(angle);
+        float z = sin(angle);
+        vertices.push_back(x);
+        vertices.push_back(-1.0f);
+        vertices.push_back(z);
+    }
+
+    vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+    for (int i = 0; i < segments; i++) {
+        float angle = 2.0f * 3.14159265f * i / segments;
+        float x = cos(angle);
+        float z = sin(angle);
+        vertices.push_back(x);
+        vertices.push_back(1.0f);
+        vertices.push_back(z);
+    }
+
+    for (int i = 1; i <= segments; i++) {
+        int next = (i % segments) + 1;
+        index.push_back(0);
+        index.push_back(next);
+        index.push_back(i);
+    }
+
+    int topCenter = segments + 1;
+    for (int i = 1; i <= segments; i++) {
+        int next = (i % segments) + 1 + segments + 1;
+        index.push_back(topCenter);
+        index.push_back(i + segments + 1);
+        index.push_back(next);
+    }
+
+    for (int i = 1; i <= segments; i++) {
+        int next = (i % segments) + 1;
+
+        int bottomCurrent = i;
+        int bottomNext = next;
+        int topCurrent = i + segments + 1;
+        int topNext = next + segments + 1;
+
+        index.push_back(bottomCurrent);
+        index.push_back(topCurrent);
+        index.push_back(bottomNext);
+
+        index.push_back(bottomNext);
+        index.push_back(topCurrent);
+        index.push_back(topNext);
+    }
+
+    this->upload(vertices, index);
+}
+
 Mesh::~Mesh(){
     glBindVertexArray(0);
     glDeleteVertexArrays(1, &vao_);

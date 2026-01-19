@@ -1,5 +1,7 @@
 #pragma once
 
+#define PI 3.1415926535
+
 #include "glad/glad.h"
 #include "granite/vector.hpp"
 #include "granite/color.hpp"
@@ -33,6 +35,14 @@ public:
     void upload(const std::vector<float>& vertices);
     void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index);
     void draw(Shader shader, gr::Color3 color, GLenum drawMode = GL_TRIANGLES) const;
+
+    void newTriangle();
+    void newQuad();
+    void newCircle(int segments = 32);
+
+    void newCube();
+    void newSphere(int latSegments = 16, int longSegments = 32);
+    void newCylinder(int segments = 32);
 private:
     GLuint vbo_, vao_, ebo_;
     uint32_t vertexCount_;
