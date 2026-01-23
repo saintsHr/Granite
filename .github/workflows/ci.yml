@@ -18,6 +18,7 @@ jobs:
             build-essential \
             libgl1-mesa-dev \
             libglfw3-dev \
+            libglm-dev \
 
       - name: build
         run: |

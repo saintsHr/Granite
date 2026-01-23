@@ -252,13 +252,13 @@ void Mesh::newSphere(int latSegments, int longSegments){
             int first = lat * (longSegments + 1) + lon;
             int second = first + longSegments + 1;
 
-            index.push_back(first);
-            index.push_back(second);
-            index.push_back(first + 1);
+            index.push_back(static_cast<unsigned int>(first));
+            index.push_back(static_cast<unsigned int>(second));
+            index.push_back(static_cast<unsigned int>(first + 1));
 
-            index.push_back(second);
-            index.push_back(second + 1);
-            index.push_back(first + 1);
+            index.push_back(static_cast<unsigned int>(second));
+            index.push_back(static_cast<unsigned int>(second + 1));
+            index.push_back(static_cast<unsigned int>(first + 1));
         }
     }
 
@@ -271,9 +271,9 @@ void Mesh::newCylinder(int segments){
 
     vertices.push_back(0.0f); vertices.push_back(-1.0f); vertices.push_back(0.0f);
     for (int i = 0; i < segments; i++) {
-        float angle = 2.0f * 3.14159265f * i / segments;
-        float x = cos(angle);
-        float z = sin(angle);
+        float angle = 2.0f * 3.14159265f * static_cast<float>(i / segments);
+        float x = static_cast<float>(cos(angle));
+        float z = static_cast<float>(sin(angle));
         vertices.push_back(x);
         vertices.push_back(-1.0f);
         vertices.push_back(z);
@@ -281,9 +281,9 @@ void Mesh::newCylinder(int segments){
 
     vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
     for (int i = 0; i < segments; i++) {
-        float angle = 2.0f * 3.14159265f * i / segments;
-        float x = cos(angle);
-        float z = sin(angle);
+        float angle = 2.0f * 3.14159265f * static_cast<float>(i / segments);
+        float x = static_cast<float>(cos(angle));
+        float z = static_cast<float>(sin(angle));
         vertices.push_back(x);
         vertices.push_back(1.0f);
         vertices.push_back(z);
@@ -292,16 +292,16 @@ void Mesh::newCylinder(int segments){
     for (int i = 1; i <= segments; i++) {
         int next = (i % segments) + 1;
         index.push_back(0);
-        index.push_back(next);
-        index.push_back(i);
+        index.push_back(static_cast<unsigned int>(next));
+        index.push_back(static_cast<unsigned int>(i));
     }
 
     int topCenter = segments + 1;
     for (int i = 1; i <= segments; i++) {
         int next = (i % segments) + 1 + segments + 1;
-        index.push_back(topCenter);
-        index.push_back(i + segments + 1);
-        index.push_back(next);
+        index.push_back(static_cast<unsigned int>(topCenter));
+        index.push_back(static_cast<unsigned int>(i + segments + 1));
+        index.push_back(static_cast<unsigned int>(next));
     }
 
     for (int i = 1; i <= segments; i++) {
@@ -312,13 +312,13 @@ void Mesh::newCylinder(int segments){
         int topCurrent = i + segments + 1;
         int topNext = next + segments + 1;
 
-        index.push_back(bottomCurrent);
-        index.push_back(topCurrent);
-        index.push_back(bottomNext);
+        index.push_back(static_cast<unsigned int>(bottomCurrent));
+        index.push_back(static_cast<unsigned int>(topCurrent));
+        index.push_back(static_cast<unsigned int>(bottomNext));
 
-        index.push_back(bottomNext);
-        index.push_back(topCurrent);
-        index.push_back(topNext);
+        index.push_back(static_cast<unsigned int>(bottomNext));
+        index.push_back(static_cast<unsigned int>(topCurrent));
+        index.push_back(static_cast<unsigned int>(topNext));
     }
 
     this->upload(vertices, index);
@@ -357,9 +357,9 @@ void Mesh::newCone(int segments){
     vertices.push_back(0.0f);
 
     for (int i = 0; i < segments; i++){
-        float angle = (float)i / segments * 2.0f * gr::Math::PI;
-        float x = cos(angle);
-        float z = sin(angle);
+        float angle = static_cast<float>(i / segments) * 2.0f * gr::Math::PI;
+        float x = static_cast<float>(cos(angle));
+        float z = static_cast<float>(sin(angle));
 
         vertices.push_back(x);
         vertices.push_back(-1.0f);
@@ -368,16 +368,16 @@ void Mesh::newCone(int segments){
 
     for (int i = 1; i < segments - 1; i++){
         index.push_back(1);
-        index.push_back(i + 1);
-        index.push_back(i + 2);
+        index.push_back(static_cast<unsigned int>(i + 1));
+        index.push_back(static_cast<unsigned int>(i + 2));
     }
 
     for (int i = 1; i <= segments; i++){
         int next = (i % segments) + 1;
 
         index.push_back(0);
-        index.push_back(i);
-        index.push_back(next);
+        index.push_back(static_cast<unsigned int>(i));
+        index.push_back(static_cast<unsigned int>(next));
     }
 
     this->upload(vertices, index);
