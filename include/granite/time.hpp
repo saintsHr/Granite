@@ -37,21 +37,11 @@ inline float GetElapsedTimeS(){
     return GetElapsedTimeMS() * 0.001f;
 }
 
-inline float GetFPS(){
-    static int frames = 0;
-    static float elapsedMS = 0.0f;
-    static float fps = 0.0f;
-
-    frames++;
-    elapsedMS += GetDeltaTimeMS();
-
-    if (elapsedMS >= 1000.0f){
-        fps = frames * (1000.0f / elapsedMS);
-        frames = 0;
-        elapsedMS = 0.0f;
-    }
-
-    return fps;
+inline float GetFPS(float dt){
+    static float lastFPS = 0.0f;
+    if (dt <= 0.0f) return lastFPS;
+    lastFPS = 1.0f / dt;
+    return lastFPS;
 }
 
 }

@@ -63,6 +63,7 @@ void Window::setSize(int width, int height){
 
 void Window::setTitle(const std::string& title){
     Window::title_ = title;
+    glfwSetWindowTitle(raw_, title.c_str());
 }
 
 gr::Vec2 Window::getSize() const{
