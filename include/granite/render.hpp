@@ -43,6 +43,8 @@ public:
     void newCube();
     void newSphere(int latSegments = 16, int longSegments = 32);
     void newCylinder(int segments = 32);
+    void newPyramid();
+    void newCone(int segments = 32);
 private:
     GLuint vbo_, vao_, ebo_;
     uint32_t vertexCount_;

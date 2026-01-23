@@ -323,6 +323,65 @@ void Mesh::newCylinder(int segments){
     this->upload(vertices, index);
 }
 
+void Mesh::newPyramid(){
+    std::vector<float> vertices = {
+        1.0f, -1.0f,  1.0f, // 0: base front right
+       -1.0f, -1.0f,  1.0f, // 1: base front left
+        1.0f, -1.0f, -1.0f, // 2: base back right
+       -1.0f, -1.0f, -1.0f, // 3: base back left
+        0.0f,  1.0f,  0.0f  // 4: top
+    };
+
+    std::vector<unsigned int> index = {
+        0, 2, 1,
+        2, 3, 1,
+        0, 1, 4,
+        1, 3, 4,
+        3, 2, 4,
+        2, 0, 4
+    };
+
+    this->upload(vertices, index);
+}
+
+void Mesh::newCone(int segments){
+    std::vector<float> vertices;
+    std::vector<unsigned int> index;
+
+    vertices.clear();
+    index.clear();
+
+    vertices.push_back(0.0f);
+    vertices.push_back(1.0f);
+    vertices.push_back(0.0f);
+
+    for (int i = 0; i < segments; i++){
+        float angle = (float)i / segments * 2.0f * PI;
+        float x = cos(angle);
+        float z = sin(angle);
+
+        vertices.push_back(x);
+        vertices.push_back(-1.0f);
+        vertices.push_back(z);
+    }
+
+    for (int i = 1; i < segments - 1; i++){
+        index.push_back(1);
+        index.push_back(i + 1);
+        index.push_back(i + 2);
+    }
+
+    for (int i = 1; i <= segments; i++){
+        int next = (i % segments) + 1;
+
+        index.push_back(0);
+        index.push_back(i);
+        index.push_back(next);
+    }
+
+    this->upload(vertices, index);
+}
+
 Mesh::~Mesh(){
     glBindVertexArray(0);
     glDeleteVertexArrays(1, &vao_);
