@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            libgl1-mesa-dev \
+            libglfw3-dev \
+
+      - name: build
+        run: |
+          make clean || true
+          make ci
