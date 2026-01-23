@@ -21,4 +21,8 @@ inline float Normalize(float value, float min, float max){
     return (value - min) / (max - min);
 }
 
+inline float Smooth(float oldValue, float newValue, float factor){
+    return oldValue + (newValue - oldValue) * factor;
+}
+
 }
