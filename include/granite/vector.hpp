@@ -2,12 +2,28 @@
 
 #include <glm/glm.hpp>
 
+#include "granite/math.hpp"
+
 namespace gr {
 
 class Vec2 {
 public:
     Vec2() : x(0), y(0) {}
     Vec2(float xv, float yv) : x(xv), y(yv) {}
+
+    Vec2 Normalize(float min, float max){
+        return {
+            gr::Math::Normalize(this->x, min, max),
+            gr::Math::Normalize(this->y, min, max)
+        };
+    }
+
+    Vec2 Clamp(float min, float max){
+        return {
+            gr::Math::Clamp(this->x, min, max),
+            gr::Math::Clamp(this->y, min, max)
+        };
+    }
 
     explicit operator glm::vec2() const {
         return {x, y};
@@ -62,6 +78,22 @@ class Vec3 {
 public:
     Vec3() : x(0), y(0), z(0) {}
     Vec3(float xv, float yv, float zv) : x(xv), y(yv), z(zv) {}
+
+    Vec3 Normalize(float min, float max){
+        return {
+            gr::Math::Normalize(this->x, min, max),
+            gr::Math::Normalize(this->y, min, max),
+            gr::Math::Normalize(this->z, min, max)
+        };
+    }
+
+    Vec3 Clamp(float min, float max){
+        return {
+            gr::Math::Clamp(this->x, min, max),
+            gr::Math::Clamp(this->y, min, max),
+            gr::Math::Clamp(this->z, min, max)
+        };
+    }
 
     explicit operator glm::vec3() const {
         return {x, y, z};

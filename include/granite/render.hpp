@@ -1,7 +1,5 @@
 #pragma once
 
-#define PI 3.1415926535
-
 #include "glad/glad.h"
 #include "granite/vector.hpp"
 #include "granite/color.hpp"

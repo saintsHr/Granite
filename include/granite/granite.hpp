@@ -8,3 +8,4 @@
 #include "granite/render.hpp"
 #include "granite/camera.hpp"
 #include "granite/input.hpp"
+#include "granite/math.hpp"

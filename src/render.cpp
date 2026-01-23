@@ -1,4 +1,5 @@
 #include "granite/render.hpp"
+#include "granite/math.hpp"
 
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
@@ -206,7 +207,7 @@ void Mesh::newCircle(int segments) {
     vertices.push_back(0.0f);
 
     for(int i = 0; i < segments; i++){
-        float angle = 2.0f * PI * i / segments;
+        float angle = 2.0f * gr::Math::PI * i / segments;
         vertices.push_back(cos(angle));
         vertices.push_back(sin(angle));
         vertices.push_back(0.0f);
@@ -227,12 +228,12 @@ void Mesh::newSphere(int latSegments, int longSegments){
     std::vector<unsigned int> index;
 
     for(int lat = 0; lat <= latSegments; lat++){
-        float theta = lat * PI / latSegments;
+        float theta = lat * gr::Math::PI / latSegments;
         float sinTheta = sin(theta);
         float cosTheta = cos(theta);
 
         for(int lon = 0; lon <= longSegments; lon++){
-            float phi = lon * 2.0f * PI / longSegments;
+            float phi = lon * 2.0f * gr::Math::PI / longSegments;
             float sinPhi = sin(phi);
             float cosPhi = cos(phi);
 
@@ -356,7 +357,7 @@ void Mesh::newCone(int segments){
     vertices.push_back(0.0f);
 
     for (int i = 0; i < segments; i++){
-        float angle = (float)i / segments * 2.0f * PI;
+        float angle = (float)i / segments * 2.0f * gr::Math::PI;
         float x = cos(angle);
         float z = sin(angle);
 
