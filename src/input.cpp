@@ -19,7 +19,7 @@ void MouseLocked(gr::Window window, bool state){
 gr::Vec2 GetMousePosition(gr::Window window){
     double x, y;
     glfwGetCursorPos(window.getRaw(), &x, &y);
-    return {(float)x, (float)y};
+    return {static_cast<float>(x), static_cast<float>(y)};
 }
 
 static double s_lastX   = 0.0;

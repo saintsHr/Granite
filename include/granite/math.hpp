@@ -15,7 +15,7 @@ inline float Clamp(float value, float min, float max){
 }
 
 inline float Normalize(float value, float min, float max){
-    if (std::abs(max - min) < (float)1e-9) return 0.0f;
+    if (std::abs(max - min) < static_cast<float>(1e-9)) return 0.0f;
     if (value <= min) return 0.0f;
     if (value >= max) return 1.0f;
     return (value - min) / (max - min);

@@ -10,7 +10,7 @@ void Window::framebuffer_size_callback_(GLFWwindow* window, int width, int heigh
     if (!self) return;
 
     glViewport(0, 0, width, height);
-    self->size_ = {(float)width, (float)height};
+    self->size_ = {static_cast<float>(width), static_cast<float>(height)};
 }
 
 Window::Window(const std::string& title, gr::Vec2 size){
@@ -31,7 +31,7 @@ void Window::create(){
     
     int fbW, fbH;
     glfwGetFramebufferSize(raw_, &fbW, &fbH);
-    size_ = {(float)fbW, (float)fbH};
+    size_ = {static_cast<float>(fbW), static_cast<float>(fbH)};
 
     glViewport(0, 0, int(size_.x), int(size_.y));
 

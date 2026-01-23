@@ -53,17 +53,23 @@ release: $(LIB)
 # CI (Continuous Integration)
 # ====================================================
 
-CI_CXXFLAGS := -Wall -Wextra -Wpedantic \
-               -Wconversion -Wsign-conversion -Wshadow \
-               -Wnon-virtual-dtor -Wunused -Wuninitialized \
-               -Wdouble-promotion -Wformat=2 \
-               -Werror -g -fsanitize=address,undefined \
-               -fno-omit-frame-pointer \
-               -DGLFW_INCLUDE_NONE $(INCLUDE) $(DEPFLAGS)
+CI_FLAGS := \
+    -Wall -Wextra -Wpedantic \
+    -Wconversion -Wsign-conversion -Wshadow \
+    -Wnon-virtual-dtor -Wunused -Wuninitialized \
+    -Wdouble-promotion -Wformat=2 \
+    -Wold-style-cast -Wzero-as-null-pointer-constant \
+    -Wduplicated-cond -Wlogical-op \
+    -Werror \
+    -fsanitize=address,undefined \
+    -fno-omit-frame-pointer \
+    -g \
+    -fstack-protector-strong \
+    -D_FORTIFY_SOURCE=2 \
+    -DGLFW_INCLUDE_NONE \
+    $(INCLUDE) $(DEPFLAGS)
 
-CPP_FILES := $(shell find $(SRC_DIR) $(INC_DIR) -type f \( -name "*.cpp" -o -name "*.hpp" \))
-
-ci: CXXFLAGS := $(CI_CXXFLAGS)
+ci: CXXFLAGS := $(CI_FLAGS)
 ci: $(LIB)
 
 # ====================================================

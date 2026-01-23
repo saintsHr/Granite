@@ -39,7 +39,7 @@ namespace gr::internal {
 namespace gr::Render{
 
 void init(){
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) return;
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) return;
     glEnable(GL_DEPTH_TEST);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
     glfwWindowHint(GLFW_STENCIL_BITS, 8);
@@ -68,7 +68,7 @@ void Mesh::upload(const std::vector<float>& vertices){
         GL_FLOAT,
         GL_FALSE,
         3 * sizeof(float),
-        (void*)0
+        static_cast<void*>(0)
     );
 
     glEnableVertexAttribArray(0);
@@ -107,7 +107,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         GL_FLOAT,
         GL_FALSE,
         3 * sizeof(float),
-        (void*)0
+        static_cast<void*>(0)
     );
 
     glEnableVertexAttribArray(0);
@@ -140,7 +140,7 @@ void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
 
     // draws the mesh
     if(indexCount_ > 0){
-        glDrawElements(drawMode, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, 0);
+        glDrawElements(drawMode, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, static_cast<void*>(0));
     }else{
         glDrawArrays(drawMode, 0, static_cast<GLsizei>(vertexCount_));
     }
