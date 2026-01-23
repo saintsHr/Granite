@@ -46,7 +46,7 @@ void init(){
 }
 
 void Mesh::upload(const std::vector<float>& vertices){
-    vertexCount_ = vertices.size() / 3;
+    vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
     indexCount_ = 0;
 
     // bind buffers
@@ -56,7 +56,7 @@ void Mesh::upload(const std::vector<float>& vertices){
     // fills VBO data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(float),
+        static_cast<uint32_t>(vertices.size() * sizeof(float)),
         vertices.data(),
         GL_STATIC_DRAW
     );
@@ -76,8 +76,8 @@ void Mesh::upload(const std::vector<float>& vertices){
 }
 
 void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index){
-    vertexCount_ = vertices.size() / 3;
-    indexCount_ = index.size();
+    vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
+    indexCount_ = static_cast<uint32_t>(index.size());
 
     // bind buffers
     glBindVertexArray(vao_);
@@ -87,7 +87,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     // fills VBO data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(float),
+        static_cast<GLsizeiptr>(vertices.size() * sizeof(float)),
         vertices.data(),
         GL_STATIC_DRAW
     );
@@ -95,7 +95,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     // fills EBO data
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
-        index.size() * sizeof(unsigned int),
+        static_cast<GLsizeiptr>(index.size() * sizeof(unsigned int)),
         index.data(),
         GL_STATIC_DRAW
     );
@@ -131,18 +131,18 @@ void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
     if (cLoc != -1){
         glUniform4f(
             cLoc,
-            color.r * (1.0f / 255.0f),
-            color.g * (1.0f / 255.0f),
-            color.b * (1.0f / 255.0f),
+            static_cast<float>(color.r) * (1.0f / 255.0f),
+            static_cast<float>(color.g) * (1.0f / 255.0f),
+            static_cast<float>(color.b) * (1.0f / 255.0f),
             1.0f
         );
     }
 
     // draws the mesh
     if(indexCount_ > 0){
-        glDrawElements(drawMode, indexCount_, GL_UNSIGNED_INT, 0);
+        glDrawElements(drawMode, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, 0);
     }else{
-        glDrawArrays(drawMode, 0, vertexCount_);
+        glDrawArrays(drawMode, 0, static_cast<GLsizei>(vertexCount_));
     }
 
     glBindVertexArray(0);
@@ -207,17 +207,17 @@ void Mesh::newCircle(int segments) {
     vertices.push_back(0.0f);
 
     for(int i = 0; i < segments; i++){
-        float angle = 2.0f * gr::Math::PI * i / segments;
-        vertices.push_back(cos(angle));
-        vertices.push_back(sin(angle));
+        float angle = 2.0f * gr::Math::PI * static_cast<float>(i) / static_cast<float>(segments);
+        vertices.push_back(static_cast<float>(cos(angle)));
+        vertices.push_back(static_cast<float>(sin(angle)));
         vertices.push_back(0.0f);
     }
 
     for(int i = 1; i <= segments; i++){
         int next = (i % segments) + 1;
         index.push_back(0);
-        index.push_back(i);
-        index.push_back(next);
+        index.push_back(static_cast<unsigned int>(i));
+        index.push_back(static_cast<unsigned int>(next));
     }
 
     this->upload(vertices, index);
@@ -228,14 +228,14 @@ void Mesh::newSphere(int latSegments, int longSegments){
     std::vector<unsigned int> index;
 
     for(int lat = 0; lat <= latSegments; lat++){
-        float theta = lat * gr::Math::PI / latSegments;
-        float sinTheta = sin(theta);
-        float cosTheta = cos(theta);
+        float theta = static_cast<float>(lat) * gr::Math::PI / static_cast<float>(latSegments);
+        float sinTheta = static_cast<float>(sin(theta));
+        float cosTheta = static_cast<float>(cos(theta));
 
         for(int lon = 0; lon <= longSegments; lon++){
-            float phi = lon * 2.0f * gr::Math::PI / longSegments;
-            float sinPhi = sin(phi);
-            float cosPhi = cos(phi);
+            float phi = static_cast<float>(lon) * 2.0f * gr::Math::PI / static_cast<float>(longSegments);
+            float sinPhi = static_cast<float>(sin(phi));
+            float cosPhi = static_cast<float>(cos(phi));
 
             float x = sinTheta * cosPhi;
             float y = cosTheta;

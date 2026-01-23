@@ -22,7 +22,7 @@ Window::~Window(){
 };
 
 void Window::create(){
-    raw_ = glfwCreateWindow(size_.x, size_.y, title_.c_str(), NULL, NULL);
+    raw_ = glfwCreateWindow(int(size_.x), int(size_.y), title_.c_str(), NULL, NULL);
     if (raw_ == NULL) return;
 
     glfwMakeContextCurrent(raw_);
@@ -33,7 +33,7 @@ void Window::create(){
     glfwGetFramebufferSize(raw_, &fbW, &fbH);
     size_ = {(float)fbW, (float)fbH};
 
-    glViewport(0, 0, size_.x, size_.y);
+    glViewport(0, 0, int(size_.x), int(size_.y));
 
     glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback_);
 }
@@ -49,9 +49,9 @@ void Window::handle(){
 
 void Window::clear(gr::Color3 color){
     glClearColor(
-        color.r / 255.0f,
-        color.g / 255.0f,
-        color.b / 255.0f,
+        float(color.r) / 255.0f,
+        float(color.g) / 255.0f,
+        float(color.b) / 255.0f,
         1.0f
     );
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

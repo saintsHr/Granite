@@ -41,13 +41,30 @@ RELEASE_CXXFLAGS := -O3 $(CXXFLAGS)
 # ====================================================
 # Main Rules
 # ====================================================
-.PHONY: all release clean
+.PHONY: all release clean ci
 
 all: $(LIB)
 
 release: CFLAGS   := $(RELEASE_CFLAGS)
 release: CXXFLAGS := $(RELEASE_CXXFLAGS)
 release: $(LIB)
+
+# ====================================================
+# CI (Continuous Integration)
+# ====================================================
+
+CI_CXXFLAGS := -Wall -Wextra -Wpedantic \
+               -Wconversion -Wsign-conversion -Wshadow \
+               -Wnon-virtual-dtor -Wunused -Wuninitialized \
+               -Wdouble-promotion -Wformat=2 \
+               -Werror -g -fsanitize=address,undefined \
+               -fno-omit-frame-pointer \
+               -DGLFW_INCLUDE_NONE $(INCLUDE) $(DEPFLAGS)
+
+CPP_FILES := $(shell find $(SRC_DIR) $(INC_DIR) -type f \( -name "*.cpp" -o -name "*.hpp" \))
+
+ci: CXXFLAGS := $(CI_CXXFLAGS)
+ci: $(LIB)
 
 # ====================================================
 # Library
