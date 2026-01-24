@@ -11,13 +11,17 @@ namespace gr::internal {
 
     #version 330 core
     layout(location = 0) in vec3 aPos;
+    layout(location = 1) in vec3 aColor;
 
     uniform mat4 uProjection;
     uniform mat4 uView;
     uniform mat4 uModel;
 
+    out vec3 vColor;
+
     void main(){
         gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
+        vColor = aColor;
     }
 
     )";
@@ -25,12 +29,12 @@ namespace gr::internal {
     static const char* defaultFragment = R"(
 
     #version 330 core
+
+    in vec3 vColor;
     out vec4 FragColor;
 
-    uniform vec4 uColor;
-
     void main(){
-        FragColor = uColor;
+        FragColor = vec4(vColor, 1.0);
     }
 
     )";
@@ -45,39 +49,12 @@ void init(){
     glfwWindowHint(GLFW_STENCIL_BITS, 8);
 }
 
-void Mesh::upload(const std::vector<float>& vertices){
-    vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
-    indexCount_ = 0;
-
-    // bind buffers
-    glBindVertexArray(vao_);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-
-    // fills VBO data
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        static_cast<uint32_t>(vertices.size() * sizeof(float)),
-        vertices.data(),
-        GL_STATIC_DRAW
-    );
-
-    // configs VAO
-    glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        3 * sizeof(float),
-        static_cast<void*>(0)
-    );
-
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
-}
-
-void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index){
+void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& color){
     vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
     indexCount_ = static_cast<uint32_t>(index.size());
+
+    GLsizeiptr vertSize  = vertices.size() * sizeof(float);
+    GLsizeiptr colorSize = color.size()    * sizeof(float);
 
     // bind buffers
     glBindVertexArray(vao_);
@@ -87,9 +64,23 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     // fills VBO data
     glBufferData(
         GL_ARRAY_BUFFER,
-        static_cast<GLsizeiptr>(vertices.size() * sizeof(float)),
-        vertices.data(),
+        vertSize + colorSize,
+        nullptr,
         GL_STATIC_DRAW
+    );
+
+    glBufferSubData(
+        GL_ARRAY_BUFFER,
+        0,
+        vertSize,
+        vertices.data()
+    );
+
+    glBufferSubData(
+        GL_ARRAY_BUFFER,
+        vertSize,
+        colorSize,
+        color.data()
     );
 
     // fills EBO data
@@ -106,37 +97,27 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         3,
         GL_FLOAT,
         GL_FALSE,
-        3 * sizeof(float),
-        static_cast<void*>(0)
+        0,
+        (void*)0
+    );
+    glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void*)(vertSize)
     );
 
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 }
 
-void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
+void Mesh::draw(Shader shader, GLenum drawMode) const{
     shader.use();
 
     glBindVertexArray(vao_);
-
-    // checks if color location exists, if not, find it
-    GLint cLoc;
-    if (cL_ == 0){
-        cLoc = glGetUniformLocation(shader.getProgram(), "uColor");
-    } else {
-        cLoc = cL_;
-    }
-
-    // applies color if valid location
-    if (cLoc != -1){
-        glUniform4f(
-            cLoc,
-            static_cast<float>(color.r) * (1.0f / 255.0f),
-            static_cast<float>(color.g) * (1.0f / 255.0f),
-            static_cast<float>(color.b) * (1.0f / 255.0f),
-            1.0f
-        );
-    }
 
     // draws the mesh
     if(indexCount_ > 0){
@@ -148,15 +129,23 @@ void Mesh::draw(Shader shader, gr::Color3 color, GLenum drawMode) const{
     glBindVertexArray(0);
 }
 
-void Mesh::newTriangle(){
+void Mesh::newTriangle(const gr::Color3 color){
     std::vector<float> vertices = {
         -1.0f, -0.866f, 0.0f,
          1.0f, -0.866f, 0.0f,
          0.0f,  0.866f, 0.0f,
     };
-    this->upload(vertices);
+    std::vector<unsigned int> index = {
+        0, 1, 2
+    };
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
-void Mesh::newQuad(){
+void Mesh::newQuad(const gr::Color3 color){
     std::vector<float> vertices = {
         -1.0f, -1.0f, 0.0f,
          1.0f, -1.0f, 0.0f,
@@ -167,10 +156,15 @@ void Mesh::newQuad(){
         0, 1, 2,
         0, 3, 2
     };
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
-void Mesh::newCube(){
+void Mesh::newCube(const gr::Color3 color){
     std::vector<float> vertices = {
         -1.0f, -1.0f, -1.0f,
          1.0f, -1.0f, -1.0f,
@@ -195,10 +189,15 @@ void Mesh::newCube(){
         7, 6, 2,
         7, 2, 3,
     };
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
-void Mesh::newCircle(int segments) {
+void Mesh::newCircle(const gr::Color3 color, int segments) {
     std::vector<float> vertices;
     std::vector<unsigned int> index;
 
@@ -219,11 +218,15 @@ void Mesh::newCircle(int segments) {
         index.push_back(static_cast<unsigned int>(i));
         index.push_back(static_cast<unsigned int>(next));
     }
-
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
-void Mesh::newSphere(int latSegments, int longSegments){
+void Mesh::newSphere(const gr::Color3 color, int latSegments, int longSegments){
     std::vector<float> vertices;
     std::vector<unsigned int> index;
 
@@ -261,11 +264,15 @@ void Mesh::newSphere(int latSegments, int longSegments){
             index.push_back(static_cast<unsigned int>(first + 1));
         }
     }
-
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
-void Mesh::newCylinder(int segments){
+void Mesh::newCylinder(const gr::Color3 color, int segments){
     std::vector<float> vertices;
     std::vector<unsigned int> index;
 
@@ -320,11 +327,15 @@ void Mesh::newCylinder(int segments){
         index.push_back(static_cast<unsigned int>(topCurrent));
         index.push_back(static_cast<unsigned int>(topNext));
     }
-
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
-void Mesh::newPyramid(){
+void Mesh::newPyramid(const gr::Color3 color){
     std::vector<float> vertices = {
         1.0f, -1.0f,  1.0f, // 0: base front right
        -1.0f, -1.0f,  1.0f, // 1: base front left
@@ -341,11 +352,15 @@ void Mesh::newPyramid(){
         3, 2, 4,
         2, 0, 4
     };
-
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
-void Mesh::newCone(int segments){
+void Mesh::newCone(const gr::Color3 color, int segments){
     std::vector<float> vertices;
     std::vector<unsigned int> index;
 
@@ -379,8 +394,12 @@ void Mesh::newCone(int segments){
         index.push_back(static_cast<unsigned int>(i));
         index.push_back(static_cast<unsigned int>(next));
     }
-
-    this->upload(vertices, index);
+    std::vector<float> colors = {
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b),
+         static_cast<float>(color.r), static_cast<float>(color.g), static_cast<float>(color.b)
+    };
+    this->upload(vertices, index, colors);
 }
 
 Mesh::~Mesh(){
@@ -395,7 +414,7 @@ Mesh::Mesh(){
     glGenBuffers(1, &ebo_);
 }
 
-void RenderObject::draw(const Shader& shader, gr::Color3 color, GLenum drawMode) const{
+void RenderObject::draw(const Shader& shader, GLenum drawMode) const{
     shader.use();
 
     // calculates transform
@@ -425,7 +444,7 @@ void RenderObject::draw(const Shader& shader, gr::Color3 color, GLenum drawMode)
     }
 
     // draws mesh
-    mesh->draw(shader, color, drawMode);
+    mesh->draw(shader, drawMode);
 }
 
 Shader::Shader(const char* vertexSource, const char* fragmentSource){
