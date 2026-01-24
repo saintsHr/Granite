@@ -53,8 +53,8 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
     indexCount_ = static_cast<uint32_t>(index.size());
 
-    GLsizeiptr vertSize  = vertices.size() * sizeof(float);
-    GLsizeiptr colorSize = color.size()    * sizeof(float);
+    GLsizeiptr vertSize  = static_cast<GLsizeiptr>(vertices.size() * sizeof(float));
+    GLsizeiptr colorSize = static_cast<GLsizeiptr>(color.size() * sizeof(float));
 
     // bind buffers
     glBindVertexArray(vao_);
@@ -98,7 +98,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         GL_FLOAT,
         GL_FALSE,
         0,
-        (void*)0
+        static_cast<void*>(0)
     );
     glVertexAttribPointer(
         1,
@@ -106,7 +106,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         GL_FLOAT,
         GL_FALSE,
         0,
-        (void*)(vertSize)
+        reinterpret_cast<void*>(vertSize)
     );
 
     glEnableVertexAttribArray(0);
