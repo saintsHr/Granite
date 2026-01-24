@@ -1,30 +1,12 @@
 #pragma once
 
 #include "glad/glad.h"
-#include "granite/vector.hpp"
-#include "granite/color.hpp"
 #include <vector>
 
+#include "granite/render/shader.hpp"
+#include "granite/core/color.hpp"
+
 namespace gr::Render{
-    
-void init();
-
-struct Transform{
-    gr::Vec3 position = {0.0f, 0.0f, 0.0f};
-    gr::Vec3 rotation = {0.0f, 0.0f, 0.0f};
-    gr::Vec3 scale    = {1.0f, 1.0f, 1.0f};
-};
-
-class Shader{
-public:
-    Shader();
-    Shader(const char* vertexSource, const char* fragmentSource);
-    ~Shader();
-    void use() const;
-    GLuint getProgram() const;
-private:
-    GLuint program_;
-};
 
 class Mesh{
 public:
@@ -49,13 +31,4 @@ private:
     GLint cL_ = 0;
 };
 
-class RenderObject{
-public:
-    Mesh* mesh;
-    Transform transform;
-    void draw(const Shader& shader, GLenum drawMode = GL_TRIANGLES) const;
-private:
-    GLint mL_ = 0;
-};
-
-};
+}

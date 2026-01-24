@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "granite/math.hpp"
+#include "granite/core/math.hpp"
 
 namespace gr {
 
@@ -146,6 +146,12 @@ public:
     }
 
     float x, y, z;
+};
+
+struct Transform{
+    gr::Vec3 position = {0.0f, 0.0f, 0.0f};
+    gr::Vec3 rotation = {0.0f, 0.0f, 0.0f};
+    gr::Vec3 scale    = {1.0f, 1.0f, 1.0f};
 };
 
 }

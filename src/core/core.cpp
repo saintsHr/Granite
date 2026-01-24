@@ -1,4 +1,4 @@
-#include "granite/core.hpp"
+#include "granite/core/core.hpp"
 
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>

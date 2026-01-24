@@ -1,9 +1,9 @@
 #pragma once
 
-#include "granite/render.hpp"
-#include "granite/window.hpp"
+#include "granite/render/shader.hpp"
+#include "granite/window/window.hpp"
 
-namespace gr{
+namespace gr::Scene{
 
 class Camera{
 public:

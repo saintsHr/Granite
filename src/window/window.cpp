@@ -1,4 +1,4 @@
-#include "granite/window.hpp"
+#include "granite/window/window.hpp"
 
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>

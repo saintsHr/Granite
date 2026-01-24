@@ -1,9 +1,9 @@
-#include "granite/camera.hpp"
+#include "granite/scene/camera.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace gr{
+namespace gr::Scene{
 
 void Camera::update(const gr::Render::Shader& shader, const gr::Window& window){
     if (aspect.y <= 0.0f) return;

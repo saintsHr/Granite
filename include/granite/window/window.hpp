@@ -1,7 +1,7 @@
 #pragma once
 
-#include "granite/vector.hpp"
-#include "granite/color.hpp"
+#include "granite/core/vector.hpp"
+#include "granite/core/color.hpp"
 
 #include "GLFW/glfw3.h"
 #include <string>

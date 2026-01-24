@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 
-#include "granite/input.hpp"
+#include "granite/input/input.hpp"
+
 namespace gr::Input{
 
 bool KeyPressed(gr::Window window, Input::Key key){

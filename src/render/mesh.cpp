@@ -1,53 +1,9 @@
-#include "granite/render.hpp"
-#include "granite/math.hpp"
+#include "granite/render/mesh.hpp"
+#include "granite/core/math.hpp"
 
-#include "GLFW/glfw3.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-namespace gr::internal {
-
-    static const char* defaultVertex = R"(
-
-    #version 330 core
-    layout(location = 0) in vec3 aPos;
-    layout(location = 1) in vec3 aColor;
-
-    uniform mat4 uProjection;
-    uniform mat4 uView;
-    uniform mat4 uModel;
-
-    out vec3 vColor;
-
-    void main(){
-        gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
-        vColor = aColor;
-    }
-
-    )";
-
-    static const char* defaultFragment = R"(
-
-    #version 330 core
-
-    in vec3 vColor;
-    out vec4 FragColor;
-
-    void main(){
-        FragColor = vec4(vColor, 1.0);
-    }
-
-    )";
-}
+#include <cmath>
 
 namespace gr::Render{
-
-void init(){
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) return;
-    glEnable(GL_DEPTH_TEST);
-    glfwWindowHint(GLFW_DEPTH_BITS, 24);
-    glfwWindowHint(GLFW_STENCIL_BITS, 8);
-}
 
 void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& color){
     vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
@@ -413,75 +369,5 @@ Mesh::Mesh(){
     glGenBuffers(1, &vbo_);
     glGenBuffers(1, &ebo_);
 }
-
-void RenderObject::draw(const Shader& shader, GLenum drawMode) const{
-    shader.use();
-
-    // calculates transform
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, transform.position.z));
-    model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1,0,0));
-    model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0,1,0));
-    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0,0,1));
-    model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z));
-
-    // checks if model location exists, if not, find it
-    GLint mLoc;
-    if (mL_ == 0){
-        mLoc = glGetUniformLocation(shader.getProgram(), "uModel");
-    } else {
-        mLoc = mL_;
-    }
-
-    // applies transform if valid location
-    if (mLoc != -1){
-        glUniformMatrix4fv(
-            mLoc,
-            1,
-            GL_FALSE,
-            &model[0][0]
-        );
-    }
-
-    // draws mesh
-    mesh->draw(shader, drawMode);
+    
 }
-
-Shader::Shader(const char* vertexSource, const char* fragmentSource){
-    // creates & compiles shaders
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexSource, NULL);
-    glCompileShader(vertexShader);
-
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-    glCompileShader(fragmentShader);
-
-    // links shaders into program
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    program_ = shaderProgram;
-
-    // delete shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-}
-
-Shader::Shader() : Shader(gr::internal::defaultVertex, gr::internal::defaultFragment){}
-
-Shader::~Shader(){
-    glDeleteProgram(program_);
-}
-
-void Shader::use() const{
-    glUseProgram(program_);
-}
-
-GLuint Shader::getProgram() const{
-    return program_;
-}
-
-};

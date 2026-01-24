@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "granite/window.hpp"
+#include "granite/window/window.hpp"
 
 namespace gr::Input{
 

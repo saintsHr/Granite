@@ -1,12 +1,8 @@
 #pragma once
 
 #define GLFW_INCLUDE_NONE
-#include "granite/core.hpp"
-#include "granite/window.hpp"
-#include "granite/color.hpp"
-#include "granite/vector.hpp"
-#include "granite/render.hpp"
-#include "granite/camera.hpp"
-#include "granite/input.hpp"
-#include "granite/math.hpp"
-#include "granite/time.hpp"
+#include "granite/core/core.hpp"
+#include "granite/window/window.hpp"
+#include "granite/render/render.hpp"
+#include "granite/scene/scene.hpp"
+#include "granite/input/input.hpp"
