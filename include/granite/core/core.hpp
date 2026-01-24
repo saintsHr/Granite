@@ -5,16 +5,15 @@
 #include "granite/core/vector.hpp"
 #include "granite/core/time.hpp"
 
-namespace gr{
+namespace gr::Core{
 
-class Core{
-public:
-
-    Core() = delete;
+struct Config{
+    unsigned int depthBits   = 24;
+    unsigned int stencilBits = 8;
+    unsigned int msaaSamples = 4;
+};
     
-    static void init();
-    static void exit();
+void init(const Config& cfg);
+void exit();
 
 };
-
-}

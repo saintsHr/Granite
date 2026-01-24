@@ -36,6 +36,8 @@ void Window::create(){
     glViewport(0, 0, int(size_.x), int(size_.y));
 
     glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback_);
+
+    glEnable(GL_MULTISAMPLE);
 }
 
 bool Window::shouldClose() const{
