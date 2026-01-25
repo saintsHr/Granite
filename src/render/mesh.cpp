@@ -4,9 +4,9 @@
 #include <cmath>
 
 static inline void pushColor(std::vector<float>& colors, const gr::Color3& c){
-    colors.push_back(c.r / 255.0f);
-    colors.push_back(c.g / 255.0f);
-    colors.push_back(c.b / 255.0f);
+    colors.push_back(static_cast<float>(c.r) / 255.0f);
+    colors.push_back(static_cast<float>(c.g) / 255.0f);
+    colors.push_back(static_cast<float>(c.b) / 255.0f);
 }
 
 namespace gr::Render{
@@ -158,16 +158,16 @@ void Mesh::newCircle(const gr::Color3 color, int segments){
     pushColor(colors, color);
 
     for (int i = 0; i < segments; i++){
-        float angle = 2.0f * gr::Math::PI * (float(i) / segments);
-        vertices.push_back(cos(angle));
-        vertices.push_back(sin(angle));
+        float angle = 2.0f * gr::Math::PI * float(static_cast<float>(i) / static_cast<float>(segments));
+        vertices.push_back(static_cast<float>(cos(static_cast<float>(angle))));
+        vertices.push_back(static_cast<float>(sin(static_cast<float>(angle))));
         vertices.push_back(0.f);
         pushColor(colors, color);
     }
 
     for (int i = 1; i <= segments; i++){
         int next = (i % segments) + 1;
-        index.insert(index.end(), {0, (unsigned)i, (unsigned)next});
+        index.insert(index.end(), {0, static_cast<unsigned>(i), static_cast<unsigned>(next)});
     }
 
     upload(vertices, index, colors);
@@ -179,13 +179,13 @@ void Mesh::newSphere(const gr::Color3 color, int latSeg, int lonSeg){
     std::vector<float> colors;
 
     for (int lat = 0; lat <= latSeg; lat++){
-        float theta = lat * gr::Math::PI / latSeg;
+        float theta = static_cast<float>(lat) * gr::Math::PI / static_cast<float>(latSeg);
         for (int lon = 0; lon <= lonSeg; lon++){
-            float phi = lon * 2.f * gr::Math::PI / lonSeg;
+            float phi = static_cast<float>(lon) * 2.f * gr::Math::PI / static_cast<float>(lonSeg);
 
-            float x = sin(theta) * cos(phi);
-            float y = cos(theta);
-            float z = sin(theta) * sin(phi);
+            float x = static_cast<float>(sin(static_cast<float>(theta))) * static_cast<float>(cos(static_cast<float>(phi)));
+            float y = static_cast<float>(cos(static_cast<float>(theta)));
+            float z = static_cast<float>(sin(static_cast<float>(theta))) * static_cast<float>(sin(static_cast<float>(phi)));
 
             vertices.insert(vertices.end(), {x,y,z});
             pushColor(colors, color);
@@ -198,8 +198,8 @@ void Mesh::newSphere(const gr::Color3 color, int latSeg, int lonSeg){
             int b = a + lonSeg + 1;
 
             index.insert(index.end(), {
-                (unsigned)a, (unsigned)b, (unsigned)(a+1),
-                (unsigned)b, (unsigned)(b+1), (unsigned)(a+1)
+                static_cast<unsigned>(a), static_cast<unsigned>(b), static_cast<unsigned>(a + 1),
+                static_cast<unsigned>(b), static_cast<unsigned>(b+1), static_cast<unsigned>(a+1)
             });
         }
     }
@@ -216,23 +216,23 @@ void Mesh::newCylinder(const gr::Color3 color, int segments){
     pushColor(colors, color);
 
     for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * (float(i) / segments);
-        float x = cos(a);
-        float z = sin(a);
+        float a = 2.f * gr::Math::PI * (static_cast<float>(i) / static_cast<float>(segments));
+        float x = static_cast<float>(cos(static_cast<float>(a)));
+        float z = static_cast<float>(sin(static_cast<float>(a)));
 
         vertices.insert(vertices.end(), {x, -1.f, z});
         pushColor(colors, color);
     }
 
-    unsigned int topCenter = vertices.size() / 3;
+    long unsigned int topCenter = vertices.size() / 3;
     vertices.insert(vertices.end(), {0.f, 1.f, 0.f});
     pushColor(colors, color);
 
-    unsigned int topRingStart = vertices.size() / 3;
+    long unsigned int topRingStart = vertices.size() / 3;
     for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * (float(i) / segments);
-        float x = cos(a);
-        float z = sin(a);
+        float a = 2.f * gr::Math::PI * (static_cast<float>(i) / static_cast<float>(segments));
+        float x = static_cast<float>(cos(static_cast<float>(a)));
+        float z = static_cast<float>(sin(static_cast<float>(a)));
 
         vertices.insert(vertices.end(), {x, 1.f, z});
         pushColor(colors, color);
@@ -240,28 +240,28 @@ void Mesh::newCylinder(const gr::Color3 color, int segments){
 
     for(int i = 1; i <= segments; i++){
         int next = (i % segments) + 1;
-        index.insert(index.end(), {0u, (unsigned)next, (unsigned)i});
+        index.insert(index.end(), {0u, static_cast<unsigned>(next), static_cast<unsigned>(i)});
     }
 
     for(int i = 0; i < segments; i++){
-        int curr = topRingStart + i;
-        int next = topRingStart + (i + 1) % segments;
+        int curr = static_cast<int>(topRingStart) + i;
+        int next = static_cast<int>(topRingStart) + (i + 1) % segments;
         index.insert(index.end(), {
-            (unsigned)topCenter,
-            (unsigned)curr,
-            (unsigned)next
+            static_cast<unsigned>(topCenter),
+            static_cast<unsigned>(curr),
+            static_cast<unsigned>(next)
         });
     }
 
     for(int i = 0; i < segments; i++){
         int b0 = 1 + i;
         int b1 = 1 + (i + 1) % segments;
-        int t0 = topRingStart + i;
-        int t1 = topRingStart + (i + 1) % segments;
+        int t0 = static_cast<int>(topRingStart) + i;
+        int t1 = static_cast<int>(topRingStart) + (i + 1) % segments;
 
         index.insert(index.end(), {
-            (unsigned)b0, (unsigned)t0, (unsigned)b1,
-            (unsigned)b1, (unsigned)t0, (unsigned)t1
+            static_cast<unsigned>(b0), static_cast<unsigned>(t0), static_cast<unsigned>(b1),
+            static_cast<unsigned>(b1), static_cast<unsigned>(t0), static_cast<unsigned>(t1)
         });
     }
 
@@ -301,37 +301,37 @@ void Mesh::newCone(const gr::Color3 color, int segments){
     vertices.insert(vertices.end(), {0.f, 1.f, 0.f});
     pushColor(colors, color);
 
-    unsigned int baseCenter = vertices.size() / 3;
+    long unsigned int baseCenter = vertices.size() / 3;
     vertices.insert(vertices.end(), {0.f, -1.f, 0.f});
     pushColor(colors, color);
 
-    unsigned int ringStart = vertices.size() / 3;
+    long unsigned int ringStart = vertices.size() / 3;
     for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * (float(i) / segments);
-        float x = cos(a);
-        float z = sin(a);
+        float a = 2.f * gr::Math::PI * (static_cast<float>(i) / static_cast<float>(segments));
+        float x = static_cast<float>(cos(static_cast<float>(a)));
+        float z = static_cast<float>(sin(static_cast<float>(a)));
 
         vertices.insert(vertices.end(), {x, -1.f, z});
         pushColor(colors, color);
     }
 
     for(int i = 0; i < segments; i++){
-        int curr = ringStart + i;
-        int next = ringStart + (i + 1) % segments;
+        int curr = static_cast<int>(ringStart) + i;
+        int next = static_cast<int>(ringStart) + (i + 1) % segments;
         index.insert(index.end(), {
             0u,
-            (unsigned)curr,
-            (unsigned)next
+            static_cast<unsigned>(curr),
+            static_cast<unsigned>(next)
         });
     }
 
     for(int i = 0; i < segments; i++){
-        int curr = ringStart + i;
-        int next = ringStart + (i + 1) % segments;
+        int curr = static_cast<int>(ringStart) + i;
+        int next = static_cast<int>(ringStart) + (i + 1) % segments;
         index.insert(index.end(), {
-            (unsigned)baseCenter,
-            (unsigned)next,
-            (unsigned)curr
+            static_cast<unsigned>(baseCenter),
+            static_cast<unsigned>(next),
+            static_cast<unsigned>(curr)
         });
     }
 
