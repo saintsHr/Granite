@@ -18,6 +18,8 @@ void init(const Config& cfg){
     glfwWindowHint(GLFW_DEPTH_BITS, depth);
     glfwWindowHint(GLFW_STENCIL_BITS, stencil);
     glfwWindowHint(GLFW_SAMPLES, samples);
+
+    gr::Time::GetElapsedTimeMS();
 }
 
 void init(){
@@ -28,6 +30,8 @@ void init(){
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
     glfwWindowHint(GLFW_STENCIL_BITS, 8);
     glfwWindowHint(GLFW_SAMPLES, 4);
+
+    gr::Time::GetElapsedTimeMS();
 }
 
 void exit(){

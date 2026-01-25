@@ -12,6 +12,10 @@ inline float GetElapsedTimeMS(){
     return std::chrono::duration<float, std::milli>(now - start).count();
 }
 
+inline float GetElapsedTimeS(){
+    return GetElapsedTimeMS() * 0.001f;
+}
+
 inline float GetDeltaTimeMS(){
     static bool first = true;
     static auto last = Clock::now();
@@ -31,10 +35,6 @@ inline float GetDeltaTimeMS(){
 
 inline float GetDeltaTimeS(){
     return GetDeltaTimeMS() * 0.001f;
-}
-
-inline float GetElapsedTimeS(){
-    return GetElapsedTimeMS() * 0.001f;
 }
 
 inline float GetFPS(float dt){
