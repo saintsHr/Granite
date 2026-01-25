@@ -7,17 +7,13 @@ namespace gr::internal {
 
     #version 330 core
     layout(location = 0) in vec3 aPos;
-    layout(location = 1) in vec3 aColor;
 
     uniform mat4 uProjection;
     uniform mat4 uView;
     uniform mat4 uModel;
 
-    out vec3 vColor;
-
     void main(){
         gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
-        vColor = aColor;
     }
 
     )";
@@ -26,11 +22,11 @@ namespace gr::internal {
 
     #version 330 core
 
-    in vec3 vColor;
+    uniform vec3 uColor;
     out vec4 FragColor;
 
     void main(){
-        FragColor = vec4(vColor, 1.0);
+        FragColor = vec4(uColor, 1.0);
     }
 
     )";
