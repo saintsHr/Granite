@@ -14,6 +14,7 @@ struct Config{
 };
     
 void init(const Config& cfg);
+void init();
 void exit();
 
 };
