@@ -12,8 +12,8 @@ class Mesh{
 public:
     Mesh();
     ~Mesh();
-    void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index);
-    void draw(const Shader& shader, GLenum drawMode = GL_TRIANGLES) const;
+    void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals);
+    void draw(const Shader& shader) const;
 
     void newTriangle();
     void newQuad();

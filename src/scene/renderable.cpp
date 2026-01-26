@@ -33,7 +33,7 @@ void RenderObject::draw(GLenum drawMode){
     if (pLoc != -1) glUniformMatrix4fv(pLoc, 1, GL_FALSE, &gr::Render::gFrame.projection[0][0]);
 
     // draws mesh
-    mesh->draw(*material.shader, drawMode);
+    mesh->draw(*material.shader);
 }
 
 }

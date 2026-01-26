@@ -1,61 +1,102 @@
 #include "granite/render/mesh.hpp"
 #include "granite/core/math.hpp"
 
+#include <glm/glm.hpp>
 #include <cmath>
+
+static std::vector<float> computeNormals(const std::vector<float>& vertices, const std::vector<unsigned int>& index){
+    size_t numVertices = vertices.size() / 3;
+    std::vector<glm::vec3> normalsAccum(numVertices, glm::vec3(0.0f));
+
+    for (size_t i = 0; i < index.size(); i += 3){
+        unsigned int i0 = index[i + 0];
+        unsigned int i1 = index[i + 1];
+        unsigned int i2 = index[i + 2];
+
+        glm::vec3 v0(vertices[i0 * 3 + 0], vertices[i0 * 3 + 1], vertices[i0 * 3 + 2]);
+        glm::vec3 v1(vertices[i1 * 3 + 0], vertices[i1 * 3 + 1], vertices[i1 * 3 + 2]);
+        glm::vec3 v2(vertices[i2 * 3 + 0], vertices[i2 * 3 + 1], vertices[i2 * 3 + 2]);
+
+        glm::vec3 normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+
+        normalsAccum[i0] += normal;
+        normalsAccum[i1] += normal;
+        normalsAccum[i2] += normal;
+    }
+
+    std::vector<float> normals;
+    normals.reserve(numVertices * 3);
+
+    for (auto& n : normalsAccum){
+        glm::vec3 norm = glm::normalize(n);
+        normals.push_back(norm.x);
+        normals.push_back(norm.y);
+        normals.push_back(norm.z);
+    }
+
+    return normals;
+}
 
 namespace gr::Render{
 
-void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index){
-    vertexCount_ = static_cast<uint32_t>(vertices.size() / 3);
-    indexCount_ = static_cast<uint32_t>(index.size());
+void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals){
+    size_t numVertices = vertices.size() / 3;
+    std::vector<float> interleaved;
+    interleaved.reserve(numVertices * 6);
 
-    GLsizeiptr vertSize  = static_cast<GLsizeiptr>(vertices.size() * sizeof(float));
+    for (size_t i = 0; i < numVertices; ++i){
+        interleaved.push_back(vertices[i*3 + 0]);
+        interleaved.push_back(vertices[i*3 + 1]);
+        interleaved.push_back(vertices[i*3 + 2]);
 
-    // bind buffers
+        interleaved.push_back(normals[i*3 + 0]);
+        interleaved.push_back(normals[i*3 + 1]);
+        interleaved.push_back(normals[i*3 + 2]);
+    }
+
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
 
-    // fills VBO data
+    // VBO data
     glBufferData(
         GL_ARRAY_BUFFER,
-        vertSize,
-        vertices.data(),
+        interleaved.size() * sizeof(float),
+        interleaved.data(),
         GL_STATIC_DRAW
     );
 
-    // fills EBO data
+    // EBO data
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
-        static_cast<GLsizeiptr>(index.size() * sizeof(unsigned int)),
+        index.size() * sizeof(unsigned int),
         index.data(),
         GL_STATIC_DRAW
     );
 
     // configs VAO
-    glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        3 * sizeof(float),
-        static_cast<void*>(0)
-    );
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);          // posição
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float))); // normal
 
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+
     glBindVertexArray(0);
+
+    vertexCount_ = static_cast<unsigned int>(numVertices);
+    indexCount_  = static_cast<unsigned int>(index.size());
 }
 
-void Mesh::draw(const Shader& shader, GLenum drawMode) const{
+void Mesh::draw(const Shader& shader) const{
     shader.use();
 
     glBindVertexArray(vao_);
 
     // draws the mesh
     if(indexCount_ > 0){
-        glDrawElements(drawMode, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, static_cast<void*>(0));
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, static_cast<void*>(0));
     }else{
-        glDrawArrays(drawMode, 0, static_cast<GLsizei>(vertexCount_));
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertexCount_));
     }
 
     glBindVertexArray(0);
@@ -72,15 +113,17 @@ void Mesh::newTriangle(){
         0, 1, 2
     };
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newQuad(){
     std::vector<float> vertices = {
-        -1.f, -1.f, 0.f,
-         1.f, -1.f, 0.f,
-         1.f,  1.f, 0.f,
-        -1.f,  1.f, 0.f
+        -1.0f, -1.0f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+         1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f
     };
 
     std::vector<unsigned int> index = {
@@ -88,25 +131,41 @@ void Mesh::newQuad(){
         0, 2, 3
     };
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newCube(){
     std::vector<float> vertices = {
-        -1,-1,-1,  1,-1,-1,  1, 1,-1, -1, 1,-1,
-        -1,-1, 1,  1,-1, 1,  1, 1, 1, -1, 1, 1
+        -1.0f,-1.0f,-1.0f,
+         1.0f,-1.0f,-1.0f,
+         1.0f, 1.0f,-1.0f,
+        -1.0f, 1.0f,-1.0f,
+        -1.0f,-1.0f, 1.0f,
+         1.0f,-1.0f, 1.0f,
+         1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f
     };
 
     std::vector<unsigned int> index = {
-        0,1,2, 2,3,0,
-        4,5,6, 6,7,4,
-        0,4,7, 7,3,0,
-        1,5,6, 6,2,1,
-        3,2,6, 6,7,3,
-        0,1,5, 5,4,0
+        0, 1, 2,
+        2, 3, 0,
+        4, 5, 6,
+        6, 7, 4,
+        0, 4, 7,
+        7, 3, 0,
+        1, 5, 6,
+        6, 2, 1,
+        3, 2, 6,
+        6, 7, 3,
+        0, 1, 5,
+        5, 4, 0
     };
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newCircle(int segments){
@@ -127,7 +186,9 @@ void Mesh::newCircle(int segments){
         index.insert(index.end(), {0, static_cast<unsigned>(i), static_cast<unsigned>(next)});
     }
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newSphere(int latSeg, int lonSeg){
@@ -159,7 +220,9 @@ void Mesh::newSphere(int latSeg, int lonSeg){
         }
     }
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newCylinder(int segments){
@@ -215,7 +278,9 @@ void Mesh::newCylinder(int segments){
         });
     }
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newPyramid(){
@@ -236,7 +301,9 @@ void Mesh::newPyramid(){
         3, 0, 4
     };
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 void Mesh::newCone(int segments){
@@ -277,7 +344,9 @@ void Mesh::newCone(int segments){
         });
     }
 
-    upload(vertices, index);
+    std::vector<float> normals = computeNormals(vertices, index);
+
+    upload(vertices, index, normals);
 }
 
 Mesh::~Mesh(){
