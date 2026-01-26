@@ -5,7 +5,7 @@
 
 namespace gr::Scene{
 
-void RenderObject::draw(GLenum drawMode){
+void RenderObject::draw(){
     if (!mesh || !material.shader) return;
     material.bind();
 

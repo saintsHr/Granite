@@ -11,7 +11,7 @@ public:
     gr::Render::Mesh* mesh;
     Transform transform;
     gr::Render::Material material;
-    void draw(GLenum drawMode = GL_TRIANGLES);
+    void draw();
 private:
     GLint mL_ = -1;
     GLint vL_ = -1;
