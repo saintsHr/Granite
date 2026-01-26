@@ -6,15 +6,7 @@ namespace gr::Render{
 void Material::bind(){
     shader->use();
 
-    GLint vLoc = glGetUniformLocation(shader->getProgram(), "uView");
-    GLint pLoc = glGetUniformLocation(shader->getProgram(), "uProjection");
-
-    if (vLoc != -1) glUniformMatrix4fv(vLoc, 1, GL_FALSE, &gr::Render::gFrame.view[0][0]);
-    if (pLoc != -1) glUniformMatrix4fv(pLoc, 1, GL_FALSE, &gr::Render::gFrame.projection[0][0]);
-
-    if (cL_ == -1){
-        cL_ = glGetUniformLocation(shader->getProgram(), "uColor");
-    }
+    if (cL_ == -1) cL_ = glGetUniformLocation(shader->getProgram(), "uColor");
     GLint cLoc = cL_;
 
     if (cLoc != -1){

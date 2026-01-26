@@ -14,6 +14,8 @@ public:
     void draw(GLenum drawMode = GL_TRIANGLES);
 private:
     GLint mL_ = -1;
+    GLint vL_ = -1;
+    GLint pL_ = -1;
 };
 
 }
