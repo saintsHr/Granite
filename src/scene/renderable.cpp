@@ -4,8 +4,9 @@
 
 namespace gr::Scene{
 
-void RenderObject::draw(const gr::Render::Shader& shader, GLenum drawMode) const{
-    shader.use();
+void RenderObject::draw(GLenum drawMode){
+    if (!mesh || !material.shader) return;
+    material.bind();
 
     // calculates transform
     glm::mat4 model = glm::mat4(1.0f);
@@ -16,20 +17,8 @@ void RenderObject::draw(const gr::Render::Shader& shader, GLenum drawMode) const
     model = glm::scale(model, glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z));
 
     // checks if model location exists, if not, find it
-    GLint mLoc;
-    if (mL_ == -1){
-        mLoc = glGetUniformLocation(shader.getProgram(), "uModel");
-    } else {
-        mLoc = mL_;
-    }
-
-    // checks if color location exists, if not, find it
-    GLint cLoc;
-    if (cL_ == -1){
-        cLoc = glGetUniformLocation(shader.getProgram(), "uColor");
-    } else {
-        cLoc = cL_;
-    }
+    if (mL_ == -1) mL_ = glGetUniformLocation(material.shader->getProgram(), "uModel");
+    GLint mLoc = mL_;
 
     // applies transform if valid location
     if (mLoc != -1){
@@ -41,18 +30,8 @@ void RenderObject::draw(const gr::Render::Shader& shader, GLenum drawMode) const
         );
     }
 
-    // applies color if valid location
-    if (cLoc != -1){
-        glUniform3f(
-            cLoc,
-            static_cast<float>(material.color.r) * (1.0f / 255.0f),
-            static_cast<float>(material.color.g) * (1.0f / 255.0f),
-            static_cast<float>(material.color.b) * (1.0f / 255.0f)
-        );
-    }
-
     // draws mesh
-    mesh->draw(shader, drawMode);
+    mesh->draw(*material.shader, drawMode);
 }
 
 }

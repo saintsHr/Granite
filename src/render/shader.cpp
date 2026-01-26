@@ -71,4 +71,20 @@ GLuint Shader::getProgram() const{
     return program_;
 }
 
+GLint Shader::getPLoc() const{
+    return pLoc_;
+}
+
+GLint Shader::getVLoc() const{
+    return vLoc_;
+}
+
+void Shader::setPLoc(GLint loc){
+    pLoc_ = loc;
+}
+
+void Shader::setVLoc(GLint loc){
+    vLoc_ = loc;
+}
+
 }

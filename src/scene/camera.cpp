@@ -5,7 +5,7 @@
 
 namespace gr::Scene{
 
-void Camera::update(const gr::Render::Shader& shader, const gr::Window& window){
+void Camera::update(const gr::Window& window){
     if (aspect.y <= 0.0f) return;
     if (aspect.x <= 0.0f) return;
     aspect = window.getSize();
@@ -25,10 +25,16 @@ void Camera::update(const gr::Render::Shader& shader, const gr::Window& window){
 
     glm::mat4 view = glm::lookAt(posGLM, cameraTarget, up);
 
-    GLint pLoc = glGetUniformLocation(shader.getProgram(), "uProjection");
-    GLint vLoc = glGetUniformLocation(shader.getProgram(), "uView");
-    glUniformMatrix4fv(pLoc, 1, GL_FALSE, &projection[0][0]);
-    glUniformMatrix4fv(vLoc, 1, GL_FALSE, &view[0][0]);
+    projection_ = projection;
+    view_ = view;
+}
+
+glm::mat4 Camera::getProjection() const{
+    return projection_;
+}
+
+glm::mat4 Camera::getView() const{
+    return view_;
 }
 
 void Camera::moveForward(float speed){

@@ -14,11 +14,17 @@ public:
     float near = 0.1f;
     float far = 100.0f;
 
-    void update(const gr::Render::Shader& shader, const gr::Window& window);
+    glm::mat4 getProjection() const;
+    glm::mat4 getView() const;
+
+    void update(const gr::Window& window);
     void moveForward(float speed);
     void moveBack(float speed);
     void moveLeft(float speed);
     void moveRight(float speed);
+private:
+    glm::mat4 projection_;
+    glm::mat4 view_;
 };
 
 }
