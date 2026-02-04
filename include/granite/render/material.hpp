@@ -3,9 +3,9 @@
 #include "granite/render/shader.hpp"
 #include "granite/core/color.hpp"
 
-namespace gr::Render{
+namespace gr::Render {
 
-class Material{
+class Material {
 public:
     gr::Color3 color;
     gr::Render::Shader* shader = nullptr;

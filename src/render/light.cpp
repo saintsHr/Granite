@@ -1,0 +1,1 @@
+#include "granite/render/light.hpp"

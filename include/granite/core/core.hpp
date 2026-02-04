@@ -5,9 +5,9 @@
 #include "granite/core/vector.hpp"
 #include "granite/core/time.hpp"
 
-namespace gr::Core{
+namespace gr::Core {
 
-struct Config{
+struct Config {
     unsigned int depthBits   = 24;
     unsigned int stencilBits = 8;
     unsigned int msaaSamples = 4;

@@ -6,16 +6,16 @@
 #include <cstdlib>
 #include <cstdarg>
 
-namespace gr::internal{
+namespace gr::internal {
 
-enum class Severity{
+enum class Severity {
     INFO,
     WARNING,
     ERROR,
     FATAL
 };
 
-enum class Module{
+enum class Module {
     CORE,
     INPUT,
     RENDER,
@@ -27,7 +27,7 @@ const char* SeverityString[] = { "INFO", "WARNING", "ERROR", "FATAL" };
 const char* SeverityColor[]  = { "\033[96m", "\033[95m", "\033[91m", "\033[31m" };
 const char* ModuleString[]   = { "Core", "Input", "Render", "Scene", "Window" };
 
-void Log(Severity sev, Module mod, const char* fmt, ...){
+void Log(Severity sev, Module mod, const char* fmt, ...) {
     double t = gr::Time::GetElapsedTimeS();
 
     int h = static_cast<int>(t / 3600);

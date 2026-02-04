@@ -4,9 +4,9 @@
 #include "granite/render/mesh.hpp"
 #include "granite/render/material.hpp"
 
-namespace gr::Scene{
+namespace gr::Scene {
 
-class RenderObject{
+class RenderObject {
 public:
     gr::Render::Mesh* mesh;
     Transform transform;

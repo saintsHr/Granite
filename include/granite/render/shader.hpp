@@ -2,9 +2,9 @@
 
 #include "glad/glad.h"
 
-namespace gr::Render{
+namespace gr::Render {
 
-class Shader{
+class Shader {
 public:
     Shader();
     Shader(const char* vertexSource, const char* fragmentSource);

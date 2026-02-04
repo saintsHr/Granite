@@ -6,9 +6,9 @@
 #include "granite/render/shader.hpp"
 #include "granite/core/color.hpp"
 
-namespace gr::Render{
+namespace gr::Render {
 
-class Mesh{
+class Mesh {
 public:
     Mesh();
     ~Mesh();

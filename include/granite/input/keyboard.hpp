@@ -2,9 +2,9 @@
 
 #include "granite/window/window.hpp"
 
-namespace gr::Input{
+namespace gr::Input {
 
-enum class Key{
+enum class Key {
     A = GLFW_KEY_A,
     B = GLFW_KEY_B,
     C = GLFW_KEY_C,

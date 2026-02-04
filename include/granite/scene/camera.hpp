@@ -3,9 +3,9 @@
 #include "granite/render/shader.hpp"
 #include "granite/window/window.hpp"
 
-namespace gr::Scene{
+namespace gr::Scene {
 
-class Camera{
+class Camera {
 public:
     gr::Vec3 pos = {0.0f, 0.0f, 0.0f};
     gr::Vec2 rotation = {0.0f, 0.0f};

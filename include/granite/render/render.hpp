@@ -4,9 +4,9 @@
 #include "granite/render/shader.hpp"
 #include "granite/scene/camera.hpp"
 
-namespace gr::Render{
+namespace gr::Render {
 
-struct FrameContext{
+struct FrameContext {
     glm::mat4 view;
     glm::mat4 projection;
 };

@@ -6,11 +6,10 @@
 #include "GLFW/glfw3.h"
 #include <string>
 
-namespace gr{
+namespace gr {
 
-class Window{
+class Window {
 public:
-
     Window(const std::string& title, gr::Vec2 size);
     ~Window();
     
@@ -23,14 +22,11 @@ public:
     void handle();
     void clear(gr::Color3 color);
     GLFWwindow* getRaw();
-
 private:
-
     gr::Vec2 size_;
     std::string title_;
     GLFWwindow* raw_;
     static void framebuffer_size_callback_(GLFWwindow* window, int width, int height);
-
 };
 
 }
