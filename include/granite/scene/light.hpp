@@ -7,7 +7,43 @@
 
 namespace gr::Scene {
 
+constexpr int MAX_POINT_LIGHTS = 32;
+constexpr int MAX_DIRECTIONAL_LIGHTS = 4;
+
 using LightID = std::uint64_t;
+
+struct alignas(16) GPUPointLight {
+    glm::vec3 position;
+    float radius;
+
+    glm::vec3 color;
+    float intensity;
+};
+
+struct alignas(16) GPUDirectionalLight {
+    glm::vec3 direction;
+    float intensity;
+
+    glm::vec3 color;
+    float padding;
+};
+
+struct alignas(16) GPUAmbientLight {
+    glm::vec3 color;
+    float intensity;
+};
+
+struct alignas(16) GPULightBlock {
+    GPUPointLight pointLights[MAX_POINT_LIGHTS];
+    GPUDirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
+    GPUAmbientLight ambientLight;
+
+    glm::ivec4 counts;
+};
+
+static_assert(sizeof(GPUPointLight) == 32, "GPUPointLight layout mismatch");
+static_assert(sizeof(GPUDirectionalLight) == 32, "GPUDirectionalLight layout mismatch");
+static_assert(sizeof(GPUAmbientLight) == 16, "GPUAmbientLight layout mismatch");
 
 class DirectionalLight {
 public:
@@ -17,7 +53,7 @@ public:
     bool enabled;
 
     DirectionalLight() : 
-        direction(0,0,0),
+        direction(0,-1,0),
         color(1,1,1),
         intensity(1.0f),
         enabled(true) {}
@@ -67,10 +103,12 @@ public:
 
     static PointLight* getPointLight(LightID id);
     static DirectionalLight* getDirectionalLight(LightID id);
+    static AmbientLight* getAmbientLight();
 private:
     static LightID nextID_;
     static std::unordered_map<LightID, PointLight> pointLights_;
     static std::unordered_map<LightID, DirectionalLight> directionalLights_;
+    static AmbientLight ambientLight_;
 };
 
 }

@@ -6,6 +6,7 @@ LightID LightManager::nextID_ = 1;
 
 std::unordered_map<LightID, PointLight> LightManager::pointLights_;
 std::unordered_map<LightID, DirectionalLight> LightManager::directionalLights_;
+AmbientLight LightManager::ambientLight_;
 
 LightID LightManager::create(const PointLight& light) {
     LightID id = nextID_++;
@@ -37,6 +38,10 @@ DirectionalLight* LightManager::getDirectionalLight(LightID id) {
     auto it = directionalLights_.find(id);
     if (it == directionalLights_.end()) return nullptr;
     return &it->second;
+}
+
+AmbientLight*  LightManager::getAmbientLight(){
+    return &ambientLight_;
 }
 
 }
