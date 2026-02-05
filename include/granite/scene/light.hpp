@@ -104,6 +104,9 @@ public:
     static PointLight* getPointLight(LightID id);
     static DirectionalLight* getDirectionalLight(LightID id);
     static AmbientLight* getAmbientLight();
+
+    static const std::unordered_map<LightID, PointLight>& getPointLights();
+    static const std::unordered_map<LightID, DirectionalLight>& getDirectionalLights();
 private:
     static LightID nextID_;
     static std::unordered_map<LightID, PointLight> pointLights_;

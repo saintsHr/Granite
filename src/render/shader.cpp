@@ -32,7 +32,7 @@ static const char* defaultVertex = R"(
         gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
     }
 
-    )";
+)";
 
 static const char* defaultFragment = R"(
 
@@ -76,10 +76,16 @@ static const char* defaultFragment = R"(
     };
 
     void main(){
-        FragColor = vec4(uColor, 1.0);
+        vec3 ambColor = ambientLight.color; 
+        float ambIntensity = ambientLight.intensity;
+        
+        vec3 result = uColor * vec3(1.0, 1.0, 1.0) * ambIntensity;
+
+        FragColor = vec4(result, 1.0);
     }
 
-    )";
+)";
+
 }
 
 namespace gr::Render{

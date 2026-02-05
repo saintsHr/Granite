@@ -40,8 +40,16 @@ DirectionalLight* LightManager::getDirectionalLight(LightID id) {
     return &it->second;
 }
 
-AmbientLight*  LightManager::getAmbientLight(){
+AmbientLight* LightManager::getAmbientLight(){
     return &ambientLight_;
+}
+
+const std::unordered_map<LightID, PointLight>& LightManager::getPointLights() {
+    return pointLights_;
+}
+
+const std::unordered_map<LightID, DirectionalLight>& LightManager::getDirectionalLights() {
+    return directionalLights_;
 }
 
 }

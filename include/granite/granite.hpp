@@ -6,3 +6,4 @@
 #include "granite/render/render.hpp"
 #include "granite/scene/scene.hpp"
 #include "granite/input/input.hpp"
+#include "granite/scene/light.hpp"
