@@ -1,4 +1,5 @@
 #include "granite/window/window.hpp"
+#include "granite/core/log.hpp"
 
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
@@ -23,7 +24,13 @@ Window::~Window(){
 
 void Window::create(){
     raw_ = glfwCreateWindow(int(size_.x), int(size_.y), title_.c_str(), NULL, NULL);
-    if (raw_ == NULL) return;
+    if (raw_ == NULL) {
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::WINDOW,
+            "Cannot create window"
+        );
+    };
 
     glfwMakeContextCurrent(raw_);
 

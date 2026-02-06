@@ -5,31 +5,51 @@
 
 #include "granite/render/render.hpp"
 #include "granite/scene/light.hpp"
+#include "granite/core/log.hpp"
 
-namespace gr::Render{
+namespace gr::Render {
 
 FrameContext gFrame;
 
-GLuint lightUBO;
+GLuint lightUBO = 0;
 
-void init(){
+void init() {
+    bool success = true;
+
+    auto checkGL = [&success]() {
+        bool err = false;
+        while (glGetError() != GL_NO_ERROR) {
+            err = true;
+        }
+        if (err) success = false;
+    };
+
     // loads GLAD
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) return;
+    if (!gladLoadGLLoader(
+        reinterpret_cast<GLADloadproc>(glfwGetProcAddress)
+    )) {
+        success = false;
+    }
 
     // configs OpenGL
+    while (glGetError() != GL_NO_ERROR) {}
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-
+    glDepthMask(GL_TRUE);
     glEnable(GL_MULTISAMPLE);
-    
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+    checkGL();
 
     // creates light UBO
+    while (glGetError() != GL_NO_ERROR) {}
     glGenBuffers(1, &lightUBO);
+    if (lightUBO == 0) success = false;
+    checkGL();
 
     // binds light UBO
+    while (glGetError() != GL_NO_ERROR) {}
     glBindBuffer(GL_UNIFORM_BUFFER, lightUBO);
     glBufferData(
         GL_UNIFORM_BUFFER,
@@ -37,9 +57,26 @@ void init(){
         nullptr,
         GL_DYNAMIC_DRAW
     );
+    checkGL();
 
     // binds light UBO
+    while (glGetError() != GL_NO_ERROR) {}
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, lightUBO);
+    checkGL();
+
+    if (!success) {
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::RENDER,
+            "Cannot initialize renderer"
+        );
+    }
+
+    gr::internal::log(
+        gr::internal::Severity::INFO,
+        gr::internal::Module::RENDER,
+        "Renderer Initialized (OpenGL)"
+    );
 }
 
 void beginFrame(const gr::Scene::Camera& camera){

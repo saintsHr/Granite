@@ -1,4 +1,6 @@
 #include "granite/render/shader.hpp"
+#include "granite/core/log.hpp"
+
 #include <cstddef>
 #include <cstdio>
 
@@ -11,6 +13,12 @@ auto checkShader = [](GLuint shader, const char* name){
         char log[1024];
         glGetShaderInfoLog(shader, 1024, nullptr, log);
         printf("SHADER COMPILE ERROR (%s):\n%s\n", name, log);
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::RENDER,
+            "Cannot compile %s shader",
+            name
+        );
     }
 };
 
@@ -120,6 +128,11 @@ Shader::Shader(const char* vertexSource, const char* fragmentSource){
         char log[1024];
         glGetProgramInfoLog(shaderProgram, 1024, nullptr, log);
         printf("PROGRAM LINK ERROR:\n%s\n", log);
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::RENDER,
+            "Cannot link shaders"
+        );
     }
 
     // light block binding
