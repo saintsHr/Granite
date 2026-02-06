@@ -15,8 +15,16 @@ GLuint lightUBO;
 void init(){
     // loads GLAD
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) return;
+
+    // configs OpenGL
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
     glEnable(GL_MULTISAMPLE);
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     // creates light UBO
     glGenBuffers(1, &lightUBO);

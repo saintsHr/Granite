@@ -17,13 +17,13 @@ public:
 
     void newTriangle();
     void newQuad();
-    void newCircle(int segments = 32);
+    void newCircle(int segments = 64);
 
     void newCube();
-    void newSphere(int latSegments = 16, int longSegments = 32);
-    void newCylinder(int segments = 32);
+    void newSphere(int latSegments = 32, int longSegments = 64);
+    void newCylinder(int segments = 64);
     void newPyramid();
-    void newCone(int segments = 32);
+    void newCone(int segments = 64);
 private:
     GLuint vbo_, vao_, ebo_;
     uint32_t vertexCount_;
