@@ -55,7 +55,7 @@ public:
     DirectionalLight() : 
         direction(0,-1,0),
         color(1,1,1),
-        intensity(1.0f),
+        intensity(0.5f),
         enabled(true) {}
 private:
 
@@ -72,7 +72,7 @@ public:
     PointLight() : 
         position(0,0,0),
         color(1,1,1),
-        intensity(1.0f),
+        intensity(0.5f),
         radius(5.0f),
         enabled(true) {}
 private:
@@ -87,7 +87,7 @@ public:
 
     AmbientLight() : 
         color(1,1,1),
-        intensity(1.0f),
+        intensity(0.5f),
         enabled(true) {}
 private:
 

@@ -76,10 +76,15 @@ static const char* defaultFragment = R"(
     };
 
     void main(){
-        vec3 ambColor = ambientLight.color; 
-        float ambIntensity = ambientLight.intensity;
-        
-        vec3 result = uColor * vec3(1.0, 1.0, 1.0) * ambIntensity;
+        vec3 N = normalize(vNormal);
+        vec3 result = ambientLight.color * ambientLight.intensity * uColor;
+
+        for (int i = 0; i < counts.y; i++) {
+            vec3 L = normalize(-directionalLights[i].direction);
+            float diff = max(dot(N, L), 0.0);
+
+            result += diff * directionalLights[i].color * directionalLights[i].intensity;
+        }
 
         FragColor = vec4(result, 1.0);
     }
