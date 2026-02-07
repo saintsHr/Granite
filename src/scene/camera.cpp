@@ -39,9 +39,9 @@ glm::mat4 Camera::getView() const {
 
 void Camera::moveForward(float speed) {
     glm::vec3 forward;
-    forward.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-    forward.y = sin(glm::radians(rotation.x));
-    forward.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    forward.x = static_cast<float>(cos(static_cast<double>(glm::radians(rotation.x))) * sin(static_cast<double>(glm::radians(rotation.y))));
+    forward.y = static_cast<float>(sin(static_cast<double>(glm::radians(rotation.x))));
+    forward.z = static_cast<float>(-cos(static_cast<double>(glm::radians(rotation.x))) * cos(static_cast<double>(glm::radians(rotation.y))));
     forward = glm::normalize(forward);
 
     pos += forward * speed;
@@ -49,9 +49,9 @@ void Camera::moveForward(float speed) {
 
 void Camera::moveBack(float speed) {
     glm::vec3 forward;
-    forward.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-    forward.y = sin(glm::radians(rotation.x));
-    forward.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    forward.x = static_cast<float>(cos(static_cast<double>(glm::radians(rotation.x))) * sin(static_cast<double>(glm::radians(rotation.y))));
+    forward.y = static_cast<float>(sin(static_cast<double>(glm::radians(rotation.x))));
+    forward.z = static_cast<float>(-cos(static_cast<double>(glm::radians(rotation.x))) * cos(static_cast<double>(glm::radians(rotation.y))));
     forward = glm::normalize(forward);
 
     pos -= forward * speed;
@@ -59,9 +59,9 @@ void Camera::moveBack(float speed) {
 
 void Camera::moveRight(float speed) {
     glm::vec3 forward;
-    forward.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-    forward.y = sin(glm::radians(rotation.x));
-    forward.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    forward.x = static_cast<float>(cos(static_cast<double>(glm::radians(rotation.x))) * sin(static_cast<double>(glm::radians(rotation.y))));
+    forward.y = static_cast<float>(sin(static_cast<double>(glm::radians(rotation.x))));
+    forward.z = static_cast<float>(-cos(static_cast<double>(glm::radians(rotation.x))) * cos(static_cast<double>(glm::radians(rotation.y))));
     forward = glm::normalize(forward);
 
     glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -70,9 +70,9 @@ void Camera::moveRight(float speed) {
 
 void Camera::moveLeft(float speed) {
     glm::vec3 forward;
-    forward.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-    forward.y = sin(glm::radians(rotation.x));
-    forward.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    forward.x = static_cast<float>(cos(static_cast<double>(glm::radians(rotation.x))) * sin(static_cast<double>(glm::radians(rotation.y))));
+    forward.y = static_cast<float>(sin(static_cast<double>(glm::radians(rotation.x))));
+    forward.z = static_cast<float>(-cos(static_cast<double>(glm::radians(rotation.x))) * cos(static_cast<double>(glm::radians(rotation.y))));
     forward = glm::normalize(forward);
 
     glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -81,9 +81,9 @@ void Camera::moveLeft(float speed) {
 
 void Camera::moveUp(float speed) {
     glm::vec3 forward;
-    forward.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-    forward.y = sin(glm::radians(rotation.x));
-    forward.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    forward.x = static_cast<float>(cos(static_cast<double>(glm::radians(rotation.x))) * sin(static_cast<double>(glm::radians(rotation.y))));
+    forward.y = static_cast<float>(sin(static_cast<double>(glm::radians(rotation.x))));
+    forward.z = static_cast<float>(-cos(static_cast<double>(glm::radians(rotation.x))) * cos(static_cast<double>(glm::radians(rotation.y))));
     forward = glm::normalize(forward);
 
     glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -94,9 +94,9 @@ void Camera::moveUp(float speed) {
 
 void Camera::moveDown(float speed) {
     glm::vec3 forward;
-    forward.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-    forward.y = sin(glm::radians(rotation.x));
-    forward.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    forward.x = static_cast<float>(cos(static_cast<double>(glm::radians(rotation.x))) * sin(static_cast<double>(glm::radians(rotation.y))));
+    forward.y = static_cast<float>(sin(static_cast<double>(glm::radians(rotation.x))));
+    forward.z = static_cast<float>(-cos(static_cast<double>(glm::radians(rotation.x))) * cos(static_cast<double>(glm::radians(rotation.y))));
     forward = glm::normalize(forward);
 
     glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
