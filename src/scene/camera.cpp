@@ -3,9 +3,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace gr::Scene{
+namespace gr::Scene {
 
-void Camera::update(const gr::Window& window){
+void Camera::update(const gr::Window& window) {
     if (aspect.y <= 0.0f) return;
     if (aspect.x <= 0.0f) return;
     aspect = window.getSize();
@@ -29,15 +29,15 @@ void Camera::update(const gr::Window& window){
     view_ = view;
 }
 
-glm::mat4 Camera::getProjection() const{
+glm::mat4 Camera::getProjection() const {
     return projection_;
 }
 
-glm::mat4 Camera::getView() const{
+glm::mat4 Camera::getView() const {
     return view_;
 }
 
-void Camera::moveForward(float speed){
+void Camera::moveForward(float speed) {
     float yawRad = glm::radians(rotation.y - 90.0f);
 
     glm::vec3 forward;
@@ -49,7 +49,7 @@ void Camera::moveForward(float speed){
     pos += forward * speed;
 }
 
-void Camera::moveBack(float speed){
+void Camera::moveBack(float speed) {
     float yawRad = glm::radians(rotation.y - 90.0f);
 
     glm::vec3 forward;
@@ -61,7 +61,7 @@ void Camera::moveBack(float speed){
     pos -= forward * speed;
 }
 
-void Camera::moveLeft(float speed){
+void Camera::moveLeft(float speed) {
     float yawRad = glm::radians(rotation.y - 90.0f);
 
     glm::vec3 forward;
@@ -77,7 +77,7 @@ void Camera::moveLeft(float speed){
     pos -= right * speed;
 }
 
-void Camera::moveRight(float speed){
+void Camera::moveRight(float speed) {
     float yawRad = glm::radians(rotation.y - 90.0f);
 
     glm::vec3 forward;
@@ -91,6 +91,14 @@ void Camera::moveRight(float speed){
     );
 
     pos += right * speed;
+}
+
+void Camera::moveDown(float speed) {
+    this->pos.y -= speed;
+}
+
+void Camera::moveUp(float speed) {
+    this->pos.y += speed;
 }
 
 }

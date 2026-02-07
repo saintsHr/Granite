@@ -22,6 +22,8 @@ public:
     void moveBack(float speed);
     void moveLeft(float speed);
     void moveRight(float speed);
+    void moveDown(float speed);
+    void moveUp(float speed);
 private:
     glm::mat4 projection_;
     glm::mat4 view_;
