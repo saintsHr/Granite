@@ -13,6 +13,8 @@
 feel free to use it to develop your game or to modify it, also, if you want to contribute, just fork it and create a pull request!
 if you find any issue or have a cool idea/suggestion, share it on github issues or send me an e-mail!
 
+![Cube GIF](assets/cube.gif)
+
 ---
 
 ### 🚀 Features:
