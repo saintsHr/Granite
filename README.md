@@ -1,4 +1,4 @@
-# <img src="assets/logo.png" width="40"> Granite
+# <img src="assets/logo_solid_long.png" width="800" height="249">
 
 ![Static Badge](https://img.shields.io/badge/Language%20-%20C%20-%20rgb(50%2C%2050%2C%20255))
 ![GitHub License](https://img.shields.io/github/license/saintsHr/Granite)
