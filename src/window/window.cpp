@@ -17,12 +17,7 @@ void Window::framebuffer_size_callback_(GLFWwindow* window, int width, int heigh
 Window::Window(const std::string& title, gr::Vec2 size) {
     title_ = title;
     size_ = size;
-};
-Window::~Window() {
-    size_ = {0.0f, 0.0f};
-};
 
-void Window::create() {
     raw_ = glfwCreateWindow(int(size_.x), int(size_.y), title_.c_str(), NULL, NULL);
     if (raw_ == NULL) {
         gr::internal::log(
@@ -45,13 +40,19 @@ void Window::create() {
     glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback_);
 
     glEnable(GL_MULTISAMPLE);
-}
+};
+
+Window::~Window() {
+    size_ = {0.0f, 0.0f};
+    title_ = "";
+    raw_ = nullptr;
+};
 
 bool Window::shouldClose() const {
     return glfwWindowShouldClose(raw_);
 }
 
-void Window::handle() {
+void Window::endFrame() {
     glfwSwapBuffers(raw_);
     glfwPollEvents(); 
 }

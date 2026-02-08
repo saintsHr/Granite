@@ -22,11 +22,10 @@ public:
     void setVSync(bool state);
     void setMouseLock(bool state);
 
-    void create();
     void close();
 
     bool shouldClose() const;
-    void handle();
+    void endFrame();
 
     void clear(gr::Color3 color);
 
