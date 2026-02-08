@@ -1,6 +1,6 @@
 # <img src="assets/logo_solid_long.png" width="800" height="249">
 
-![Static Badge](https://img.shields.io/badge/Language%20-%20C%20-%20rgb(50%2C%2050%2C%20255))
+![Static Badge](https://img.shields.io/badge/Language%20-%20C%2B%2B%20-%20rgb(60%2C%2060%2C%20255))
 ![GitHub License](https://img.shields.io/github/license/saintsHr/Granite)
 ![GitHub Downloads](https://img.shields.io/github/downloads/saintsHr/Granite/total)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/saintsHr/Granite/.github%2Fworkflows%2Fci.yml)
