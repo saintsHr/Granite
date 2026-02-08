@@ -8,6 +8,7 @@ void Material::bind(){
 
     if (cL_ == -1) cL_ = glGetUniformLocation(shader->getProgram(), "uColor");
     if (sL_ == -1) sL_ = glGetUniformLocation(shader->getProgram(), "uShininess");
+    if (oL_ == -1) oL_ = glGetUniformLocation(shader->getProgram(), "uOpacity");
 
     if (cL_ != -1){
         glUniform3f(
@@ -21,8 +22,24 @@ void Material::bind(){
     if (sL_ != -1){
         glUniform1f(
             sL_,
-            static_cast<float>(shininess)
+            shininess
         );
+    }
+
+    if (oL_ != -1){
+        glUniform1f(
+            oL_,
+            opacity
+        );
+    }
+
+    if (opacity < 1.0f) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthMask(GL_FALSE);
+    } else {
+        glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
     }
 }
 

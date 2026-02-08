@@ -51,6 +51,7 @@ static const char* defaultFragment = R"(
 
     uniform vec3 uColor;
     uniform float uShininess;
+    uniform float uOpacity;
     uniform vec3 uCameraPos;
 
     in vec3 vNormal;
@@ -172,7 +173,7 @@ static const char* defaultFragment = R"(
             }
         }
 
-        FragColor = vec4(result, 1.0);
+        FragColor = vec4(result, uOpacity);
     }
 
 )";

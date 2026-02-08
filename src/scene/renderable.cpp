@@ -34,6 +34,11 @@ void RenderObject::draw(){
 
     // draws mesh
     mesh->draw(*material.shader);
+
+    if (material.opacity < 1.0f) {
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
+    }
 }
 
 }
