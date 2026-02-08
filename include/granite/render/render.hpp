@@ -10,6 +10,7 @@ namespace gr::Render {
 struct FrameContext {
     glm::mat4 view;
     glm::mat4 projection;
+    gr::Vec3 cameraPos;
 };
 
 extern FrameContext gFrame;

@@ -6,6 +6,7 @@
 #include "granite/render/render.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/core/log.hpp"
+#include <algorithm>
 
 namespace gr::Render {
 
@@ -84,6 +85,7 @@ void init() {
 void beginFrame(const gr::Scene::Camera& camera){
     gFrame.view = camera.getView();
     gFrame.projection = camera.getProjection();
+    gFrame.cameraPos = camera.pos;
 
     // sends camera position to shader
     if (gr::Render::currentShader) {
@@ -166,7 +168,7 @@ std::vector<gr::Scene::RenderObject> opaqueObjects;
 std::vector<gr::Scene::RenderObject> transparentObjects;
 
 void addToQueue(const gr::Scene::RenderObject& obj) {
-    if (obj.material.opacity < 1.0) {
+    if (obj.material.opacity < 1.0f) {
         transparentObjects.push_back(obj);
     } else {
         opaqueObjects.push_back(obj);
@@ -177,6 +179,17 @@ void endFrame() {
     for (size_t i = 0; i < opaqueObjects.size(); i++){
         opaqueObjects[i].draw();
     }
+
+    std::sort(
+        transparentObjects.begin(),
+        transparentObjects.end(),
+        [](const gr::Scene::RenderObject& a, const gr::Scene::RenderObject& b) {
+            float da = (gr::Render::gFrame.cameraPos - a.transform.position).length();
+            float db = (gr::Render::gFrame.cameraPos - b.transform.position).length();
+            return da > db;
+        }
+    );
+
     for (size_t i = 0; i < transparentObjects.size(); i++){
         transparentObjects[i].draw();
     }

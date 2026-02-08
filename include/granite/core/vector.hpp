@@ -71,6 +71,17 @@ public:
         return {x - s, y - s};
     }
 
+    Vec2 operator-(const Vec2& other) const {
+        return {
+            x - other.x,
+            y - other.y
+        };
+    }
+
+    float length() const {
+        return std::sqrt(x*x + y*y);
+    }
+
     float x, y;
 };
 
@@ -143,6 +154,18 @@ public:
 
     Vec3 operator-(float s) const {
         return {x - s, y - s, z - s};
+    }
+
+    Vec3 operator-(const Vec3& other) const {
+        return {
+            x - other.x,
+            y - other.y,
+            z - other.z
+        };
+    }
+
+    float length() const {
+        return std::sqrt(x*x + y*y + z*z);
     }
 
     float x, y, z;
