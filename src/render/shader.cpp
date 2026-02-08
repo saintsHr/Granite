@@ -55,6 +55,7 @@ static const char* defaultFragment = R"(
 
     in vec3 vNormal;
     in vec3 vFragPos;
+
     out vec4 FragColor;
 
     #define MAX_POINT_LIGHTS 32
@@ -95,8 +96,8 @@ static const char* defaultFragment = R"(
 
         vec3 result = ambientLight.color * ambientLight.intensity * uColor;
 
+        // directional lights
         for (int i = 0; i < counts.y; i++) {
-            // directional
             vec3 L = normalize(-directionalLights[i].direction);
             float diff = max(dot(N, L), 0.0);
             result += diff * directionalLights[i].color * directionalLights[i].intensity;
@@ -105,6 +106,22 @@ static const char* defaultFragment = R"(
             vec3 H = normalize(L + V);
             float spec = pow(max(dot(N, H), 0.0), uShininess);
             result += spec * directionalLights[i].color * directionalLights[i].intensity;
+        }
+
+        // point lights
+        for (int i = 0; i < counts.x; i++) {
+            vec3 L = normalize(pointLights[i].position - vFragPos);
+            float distance = length(pointLights[i].position - vFragPos);
+            float attenuation = clamp(1.0 - distance / pointLights[i].radius, 0.0, 1.0);
+
+            // diffuse
+            float diff = max(dot(N, L), 0.0);
+            result += diff * pointLights[i].color * pointLights[i].intensity * attenuation;
+
+            // specular
+            vec3 H = normalize(L + V);
+            float spec = pow(max(dot(N, H), 0.0), uShininess);
+            result += spec * pointLights[i].color * pointLights[i].intensity * attenuation;
         }
 
         FragColor = vec4(result, 1.0);
