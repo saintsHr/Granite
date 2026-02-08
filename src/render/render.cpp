@@ -83,6 +83,12 @@ void beginFrame(const gr::Scene::Camera& camera){
     gFrame.view = camera.getView();
     gFrame.projection = camera.getProjection();
 
+    // sends camera position to shader
+    if (gr::Render::currentShader) {
+        GLint camLoc = glGetUniformLocation(currentShader->getProgram(), "uCameraPos");
+        glUniform3f(camLoc, camera.pos.x, camera.pos.y, camera.pos.z);
+    }
+
     // creates empty light block
     gr::Scene::GPULightBlock block{};
     block.counts = glm::ivec4(0);
@@ -120,6 +126,23 @@ void beginFrame(const gr::Scene::Camera& camera){
         gpu.intensity = light.intensity;
     }
     block.counts.y = dirIndex;
+
+    // copy point lights to block
+    int spotIndex = 0;
+    for (auto& [id, light] : gr::Scene::LightManager::getSpotLights()) {
+        if (!light.enabled) continue;
+        if (spotIndex >= gr::Scene::MAX_SPOT_LIGHTS) break;
+
+        auto& gpu = block.spotLights[spotIndex++];
+
+        gpu.position  = { light.position.x, light.position.y, light.position.z };
+        gpu.direction = { light.direction.x, light.direction.y, light.direction.z };
+        gpu.color     = { light.color.r, light.color.g, light.color.b };
+        gpu.intensity = light.intensity;
+        gpu.radius    = light.radius;
+        gpu.cutoff    = light.cutoff;
+    }
+    block.counts.z = spotIndex;
 
     // copy ambient light to block
     auto* amb = gr::Scene::LightManager::getAmbientLight();

@@ -59,11 +59,23 @@ static const char* defaultFragment = R"(
     out vec4 FragColor;
 
     #define MAX_POINT_LIGHTS 32
+    #define MAX_SPOT_LIGHTS  32
     #define MAX_DIRECTIONAL_LIGHTS 4
 
     struct GPUPointLight {
         vec3 position;
         float radius;
+
+        vec3 color;
+        float intensity;
+    };
+
+    struct GPUSpotLight {
+        vec3 position;
+        float radius;
+
+        vec3 direction;
+        float cutoff;
 
         vec3 color;
         float intensity;
@@ -84,6 +96,7 @@ static const char* defaultFragment = R"(
 
     layout(std140) uniform LightBlock {
         GPUPointLight pointLights[MAX_POINT_LIGHTS];
+        GPUSpotLight spotLights[MAX_SPOT_LIGHTS];
         GPUDirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
         GPUAmbientLight ambientLight;
 
@@ -124,6 +137,25 @@ static const char* defaultFragment = R"(
             result += spec * pointLights[i].color * pointLights[i].intensity * attenuation;
         }
 
+        // spot lights
+        for (int i = 0; i < counts.z; i++) {
+            vec3 L = normalize(spotLights[i].position - vFragPos);
+            float theta = dot(L, normalize(-spotLights[i].direction));
+            if (theta > spotLights[i].cutoff) {
+                float distance = length(spotLights[i].position - vFragPos);
+                float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
+
+                float diff = max(dot(N, L), 0.0);
+                vec3 diffuse = diff * spotLights[i].color * spotLights[i].intensity * attenuation;
+
+                vec3 H = normalize(L + V);
+                float spec = pow(max(dot(N, H), 0.0), uShininess);
+                vec3 specular = spec * spotLights[i].color * spotLights[i].intensity * attenuation;
+
+                result += diffuse + specular;
+            }
+        }
+
         FragColor = vec4(result, 1.0);
     }
 
@@ -132,6 +164,8 @@ static const char* defaultFragment = R"(
 }
 
 namespace gr::Render{
+
+const Shader* currentShader = nullptr;
 
 Shader::Shader(const char* vertexSource, const char* fragmentSource){
     // creates & compiles shaders
@@ -186,6 +220,7 @@ Shader::~Shader(){
 
 void Shader::use() const{
     glUseProgram(program_);
+    currentShader = this;
 }
 
 GLuint Shader::getProgram() const{

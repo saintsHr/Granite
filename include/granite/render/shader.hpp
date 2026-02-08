@@ -4,6 +4,9 @@
 
 namespace gr::Render {
 
+class Shader;
+const extern Shader* currentShader;
+
 class Shader {
 public:
     Shader();
