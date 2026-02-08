@@ -141,16 +141,32 @@ static const char* defaultFragment = R"(
         for (int i = 0; i < counts.z; i++) {
             vec3 L = normalize(spotLights[i].position - vFragPos);
             float theta = dot(L, normalize(-spotLights[i].direction));
-            if (theta > spotLights[i].cutoff) {
+
+            float softness = 0.04;
+            float spotIntensity = smoothstep(
+                spotLights[i].cutoff - softness,
+                spotLights[i].cutoff,
+                theta
+            );
+
+            if (spotIntensity > 0.0) {
                 float distance = length(spotLights[i].position - vFragPos);
                 float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
 
+                // diffuse
                 float diff = max(dot(N, L), 0.0);
-                vec3 diffuse = diff * spotLights[i].color * spotLights[i].intensity * attenuation;
+                vec3 diffuse = diff * spotLights[i].color
+                                    * spotLights[i].intensity
+                                    * attenuation
+                                    * spotIntensity;
 
+                // specular
                 vec3 H = normalize(L + V);
                 float spec = pow(max(dot(N, H), 0.0), uShininess);
-                vec3 specular = spec * spotLights[i].color * spotLights[i].intensity * attenuation;
+                vec3 specular = spec * spotLights[i].color
+                                     * spotLights[i].intensity
+                                     * attenuation
+                                     * spotIntensity;
 
                 result += diffuse + specular;
             }
