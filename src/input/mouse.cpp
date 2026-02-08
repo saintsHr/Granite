@@ -2,11 +2,6 @@
 
 namespace gr::Input{
 
-void MouseLocked(gr::Window window, bool state){
-    if (state)  glfwSetInputMode(window.getRaw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (!state) glfwSetInputMode(window.getRaw(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-}
-
 gr::Vec2 GetMousePosition(gr::Window window){
     double x, y;
     glfwGetCursorPos(window.getRaw(), &x, &y);

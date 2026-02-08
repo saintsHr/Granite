@@ -6,7 +6,7 @@
 
 namespace gr{
 
-void Window::framebuffer_size_callback_(GLFWwindow* window, int width, int height){
+void Window::framebuffer_size_callback_(GLFWwindow* window, int width, int height) {
     Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if (!self) return;
 
@@ -14,15 +14,15 @@ void Window::framebuffer_size_callback_(GLFWwindow* window, int width, int heigh
     self->size_ = {static_cast<float>(width), static_cast<float>(height)};
 }
 
-Window::Window(const std::string& title, gr::Vec2 size){
+Window::Window(const std::string& title, gr::Vec2 size) {
     title_ = title;
     size_ = size;
 };
-Window::~Window(){
+Window::~Window() {
     size_ = {0.0f, 0.0f};
 };
 
-void Window::create(){
+void Window::create() {
     raw_ = glfwCreateWindow(int(size_.x), int(size_.y), title_.c_str(), NULL, NULL);
     if (raw_ == NULL) {
         gr::internal::log(
@@ -47,16 +47,16 @@ void Window::create(){
     glEnable(GL_MULTISAMPLE);
 }
 
-bool Window::shouldClose() const{
+bool Window::shouldClose() const {
     return glfwWindowShouldClose(raw_);
 }
 
-void Window::handle(){
+void Window::handle() {
     glfwSwapBuffers(raw_);
     glfwPollEvents(); 
 }
 
-void Window::clear(gr::Color3 color){
+void Window::clear(gr::Color3 color) {
     glClearColor(
         float(color.r) / 255.0f,
         float(color.g) / 255.0f,
@@ -66,25 +66,40 @@ void Window::clear(gr::Color3 color){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Window::setSize(int width, int height){
+void Window::close() {
+    glfwSetWindowShouldClose(this->getRaw(), GLFW_TRUE);
+}
+
+void Window::setSize(int width, int height) {
     glfwSetWindowSize(raw_, width, height);
 }
 
-void Window::setTitle(const std::string& title){
+void Window::setTitle(const std::string& title) {
     Window::title_ = title;
     glfwSetWindowTitle(raw_, title.c_str());
 }
 
-gr::Vec2 Window::getSize() const{
+gr::Vec2 Window::getSize() const {
     return size_;
 }
 
-std::string Window::getTitle() const{
+std::string Window::getTitle() const {
     return title_;
 }
 
 GLFWwindow* Window::getRaw(){
     return raw_;
+}
+
+void Window::setVSync(bool state) {
+    glfwMakeContextCurrent(this->getRaw());
+    if (state)  glfwSwapInterval(1);
+    if (!state) glfwSwapInterval(0);
+}
+
+void Window::setMouseLock(bool state) {
+    if (state)  glfwSetInputMode(this->getRaw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (!state) glfwSetInputMode(this->getRaw(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 }

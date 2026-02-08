@@ -15,12 +15,21 @@ public:
     
     void setSize(int width, int height);
     void setTitle(const std::string& title);
+
     gr::Vec2 getSize() const;
     std::string getTitle() const;
+
+    void setVSync(bool state);
+    void setMouseLock(bool state);
+
     void create();
+    void close();
+
     bool shouldClose() const;
     void handle();
+
     void clear(gr::Color3 color);
+
     GLFWwindow* getRaw();
 private:
     gr::Vec2 size_;
