@@ -162,4 +162,27 @@ void beginFrame(const gr::Scene::Camera& camera){
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(block), &block);
 }
 
+std::vector<gr::Scene::RenderObject> opaqueObjects;
+std::vector<gr::Scene::RenderObject> transparentObjects;
+
+void addToQueue(const gr::Scene::RenderObject& obj) {
+    if (obj.material.opacity < 1.0) {
+        transparentObjects.push_back(obj);
+    } else {
+        opaqueObjects.push_back(obj);
+    }
+}
+
+void endFrame() {
+    for (size_t i = 0; i < opaqueObjects.size(); i++){
+        opaqueObjects[i].draw();
+    }
+    for (size_t i = 0; i < transparentObjects.size(); i++){
+        transparentObjects[i].draw();
+    }
+
+    opaqueObjects.clear();
+    transparentObjects.clear();
+}
+
 };
