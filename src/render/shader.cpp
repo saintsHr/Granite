@@ -33,10 +33,13 @@ static const char* defaultVertex = R"(
     uniform mat4 uModel;
 
     out vec3 vNormal;
+    out vec3 vFragPos;
 
     void main(){
         mat3 normalMatrix = transpose(inverse(mat3(uModel)));
         vNormal = normalize(normalMatrix * aNormal);
+
+        vFragPos = vec3(uModel * vec4(aPos, 1.0));
         gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
     }
 
@@ -47,8 +50,11 @@ static const char* defaultFragment = R"(
     #version 330 core
 
     uniform vec3 uColor;
+    uniform float uShininess;
+    uniform vec3 uCameraPos;
 
     in vec3 vNormal;
+    in vec3 vFragPos;
     out vec4 FragColor;
 
     #define MAX_POINT_LIGHTS 32
@@ -85,13 +91,20 @@ static const char* defaultFragment = R"(
 
     void main(){
         vec3 N = normalize(vNormal);
+        vec3 V = normalize(uCameraPos - vFragPos);
+
         vec3 result = ambientLight.color * ambientLight.intensity * uColor;
 
         for (int i = 0; i < counts.y; i++) {
+            // directional
             vec3 L = normalize(-directionalLights[i].direction);
             float diff = max(dot(N, L), 0.0);
-
             result += diff * directionalLights[i].color * directionalLights[i].intensity;
+
+            // specular
+            vec3 H = normalize(L + V);
+            float spec = pow(max(dot(N, H), 0.0), uShininess);
+            result += spec * directionalLights[i].color * directionalLights[i].intensity;
         }
 
         FragColor = vec4(result, 1.0);
