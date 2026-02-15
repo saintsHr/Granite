@@ -20,12 +20,13 @@ enum class Module {
     INPUT,
     RENDER,
     SCENE,
-    WINDOW
+    WINDOW,
+    ASSETS
 };
 
-inline const char* SeverityString[] = { "INFO", "WARNING", "ERROR", "FATAL" };
-inline const char* SeverityColor[]  = { "\033[96m", "\033[95m", "\033[91m", "\033[31m" };
-inline const char* ModuleString[]   = { "Core", "Input", "Render", "Scene", "Window" };
+inline const char* SeverityString[] = {"INFO", "WARNING", "ERROR", "FATAL"};
+inline const char* SeverityColor[]  = {"\033[96m", "\033[95m", "\033[91m", "\033[31m"};
+inline const char* ModuleString[]   = {"Core", "Input", "Render", "Scene", "Window", "Assets"};
 
 inline void log(Severity sev, Module mod, const char* fmt, ...) {
     double t = gr::Time::GetElapsedTimeS();

@@ -1,6 +1,8 @@
 #pragma once
 
 #define GLFW_INCLUDE_NONE
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "granite/core/core.hpp"
 #include "granite/window/window.hpp"
 #include "granite/render/render.hpp"
