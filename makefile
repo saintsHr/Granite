@@ -18,7 +18,11 @@ TARGET       := granite
 LIB          := lib/lib$(TARGET).a
 
 SRC_DIR      := src
-BUILD_DIR    := build
+
+BUILD_TYPE 	   ?= debug
+BUILD_BASE_DIR  = build
+BUILD_DIR  	    = $(BUILD_BASE_DIR)/$(BUILD_TYPE)
+
 LIB_DIR      := lib
 INC_DIR      := include
 THIRD_PARTY  := third-party
@@ -38,14 +42,13 @@ C_ALL   := $(shell find $(SRC_DIR) -type f -name '*.c')
 CPP_EXTERNAL := $(shell find $(THIRD_SRC) -type f -name '*.cpp')
 C_EXTERNAL   := $(shell find $(THIRD_SRC) -type f -name '*.c')
 
-OBJ_GRANITE := $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(CPP_ALL))
+OBJ_GRANITE = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(CPP_ALL))
 OBJ_GRANITE += $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_ALL))
 
-OBJ_EXTERNAL := $(patsubst $(THIRD_SRC)/%.cpp,$(BUILD_DIR)/third-party/src/%.o,$(CPP_EXTERNAL))
+OBJ_EXTERNAL = $(patsubst $(THIRD_SRC)/%.cpp,$(BUILD_DIR)/third-party/src/%.o,$(CPP_EXTERNAL))
 OBJ_EXTERNAL += $(patsubst $(THIRD_SRC)/%.c,$(BUILD_DIR)/third-party/src/%.o,$(C_EXTERNAL))
 
-OBJ_ALL := $(OBJ_GRANITE) $(OBJ_EXTERNAL)
-OBJ_CURRENT := $(OBJ_ALL)
+OBJ_CURRENT = $(OBJ_GRANITE) $(OBJ_EXTERNAL)
 
 # ====================================================
 # Base Flags
@@ -55,6 +58,30 @@ CXXFLAGS := -Wall -Wextra -std=c++20 $(DEFS) $(INCLUDE) $(DEPFLAGS)
 
 RELEASE_CFLAGS   := -O3 -DNDEBUG $(CFLAGS)
 RELEASE_CXXFLAGS := -O3 -DNDEBUG $(CXXFLAGS)
+
+DEBUG_CFLAGS := \
+-O0 \
+-g3 \
+-fdiagnostics-color=always \
+-fdiagnostics-show-option \
+-fdiagnostics-show-caret \
+-fmessage-length=0 \
+-ftemplate-backtrace-limit=0 \
+-fno-omit-frame-pointer \
+-D_GLIBCXX_ASSERTIONS \
+$(CFLAGS)
+
+DEBUG_CXXFLAGS := \
+-O0 \
+-g3 \
+-fdiagnostics-color=always \
+-fdiagnostics-show-option \
+-fdiagnostics-show-caret \
+-fmessage-length=0 \
+-ftemplate-backtrace-limit=0 \
+-fno-omit-frame-pointer \
+-D_GLIBCXX_ASSERTIONS \
+$(CXXFLAGS)
 
 # ====================================================
 # CI Strict Flags
@@ -105,17 +132,29 @@ CI_CXX_EXTRA := \
 
 all: $(LIB)
 
-release: CFLAGS   := $(RELEASE_CFLAGS)
-release: CXXFLAGS := $(RELEASE_CXXFLAGS)
-release: $(LIB)
+release:
+	$(MAKE) BUILD_TYPE=release
 
-ci: CFLAGS := $(CI_BASE) $(CI_C_EXTRA) -std=c17 $(DEFS) $(INCLUDE) $(DEPFLAGS)
-ci: CXXFLAGS := $(CI_BASE) $(CI_CXX_EXTRA) -std=c++20 $(DEFS) $(INCLUDE) $(DEPFLAGS)
-ci: $(LIB)
+ci:
+	$(MAKE) BUILD_TYPE=ci
 
-ci-release: CFLAGS := $(CI_BASE) $(CI_C_EXTRA) -O3 -DNDEBUG -std=c17 $(DEFS) $(INCLUDE) $(DEPFLAGS)
-ci-release: CXXFLAGS := $(CI_BASE) $(CI_CXX_EXTRA) -O3 -DNDEBUG -std=c++20 $(DEFS) $(INCLUDE) $(DEPFLAGS)
-ci-release: $(LIB)
+ci-release:
+	$(MAKE) BUILD_TYPE=ci-release
+
+ifeq ($(BUILD_TYPE),release)
+CFLAGS   := $(RELEASE_CFLAGS)
+CXXFLAGS := $(RELEASE_CXXFLAGS)
+endif
+
+ifeq ($(BUILD_TYPE),debug)
+CFLAGS   := $(DEBUG_CFLAGS)
+CXXFLAGS := $(DEBUG_CXXFLAGS)
+endif
+
+ifeq ($(BUILD_TYPE),ci)
+CFLAGS   := $(CI_BASE) $(CI_C_EXTRA) -std=c17 $(DEFS) $(INCLUDE) $(DEPFLAGS)
+CXXFLAGS := $(CI_BASE) $(CI_CXX_EXTRA) -std=c++20 $(DEFS) $(INCLUDE) $(DEPFLAGS)
+endif
 
 # ====================================================
 # Library
@@ -138,11 +177,11 @@ $(BUILD_DIR)/%.o: %.c
 # External sources (minimal warnings)
 $(BUILD_DIR)/third-party/src/%.o: $(THIRD_SRC)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) -std=c17 -O2 -I$(THIRD_PARTY)/include -c $< -o $@
+	$(CC) -std=c17 -I$(THIRD_PARTY)/include -c $< -o $@
 
 $(BUILD_DIR)/third-party/src/%.o: $(THIRD_SRC)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -std=c++20 -O2 -I$(THIRD_PARTY)/include -c $< -o $@
+	$(CXX) -std=c++20 -I$(THIRD_PARTY)/include -c $< -o $@
 
 # ====================================================
 # cloc
@@ -159,4 +198,4 @@ cloc:
 # Clean
 # ====================================================
 clean:
-	$(RM) $(BUILD_DIR) $(LIB_DIR)
+	$(RM) $(BUILD_BASE_DIR) $(LIB_DIR)
