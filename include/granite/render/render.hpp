@@ -22,4 +22,4 @@ void addToQueue(const gr::Scene::RenderObject& obj);
 
 void endFrame();
 
-};
+}

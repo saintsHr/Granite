@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "external/stb_image.h"
+#include "stb_image/stb_image.h"
 #include "granite/core/vector.hpp"
 
 namespace gr::Assets {

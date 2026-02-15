@@ -42,7 +42,7 @@ void Image::load(const std::string& filename) {
             gr::internal::Severity::ERROR,
             gr::internal::Module::ASSETS,
             "Cannot load image %s",
-            filename
+            filename.c_str()
         );
 
         size_.x = 0.0f;

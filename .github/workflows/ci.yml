@@ -22,5 +22,6 @@ jobs:
 
       - name: build
         run: |
-          make clean || true
+          make clean
           make ci
+          make ci-release

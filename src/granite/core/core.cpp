@@ -1,7 +1,7 @@
 #include "granite/core/core.hpp"
 #include "granite/core/log.hpp"
 
-#include "external/glad/glad.h"
+#include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
 namespace gr::Core{

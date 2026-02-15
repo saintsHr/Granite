@@ -42,8 +42,22 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     );
 
     // configs VAO
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), static_cast<void*>(0));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3*sizeof(float)));
+    glVertexAttribPointer(
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        6 * sizeof(float),
+        nullptr
+    );
+    glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        6 * sizeof(float),
+        reinterpret_cast<void*>(3*sizeof(float))
+    );
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -61,7 +75,7 @@ void Mesh::draw(const Shader& shader) const{
 
     // draws the mesh
     if(indexCount_ > 0){
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, static_cast<void*>(0));
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, nullptr);
     }else{
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertexCount_));
     }
@@ -207,8 +221,8 @@ void Mesh::newCircle(int segments){
 
     for (int i = 0; i < segments; i++){
         float angle = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(angle));
-        float y = static_cast<float>(sin(angle));
+        float x = std::cos(angle);
+        float y = std::sin(angle);
 
         vertices.insert(vertices.end(), {x, y, 0.f});
         normals.insert(normals.end(), {0.f, 0.f, 1.f});
@@ -230,8 +244,8 @@ void Mesh::newCircle(int segments){
 
     for (int i = 0; i < segments; i++){
         float angle = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(angle));
-        float y = static_cast<float>(sin(angle));
+        float x = std::cos(angle);
+        float y = std::sin(angle);
 
         vertices.insert(vertices.end(), {x, y, 0.f});
         normals.insert(normals.end(), {0.f, 0.f, -1.f});
@@ -259,9 +273,9 @@ void Mesh::newSphere(int latSeg, int lonSeg){
         for (int lon = 0; lon <= lonSeg; lon++){
             float phi = static_cast<float>(lon) * 2.f * gr::Math::PI / static_cast<float>(lonSeg);
 
-            float x = static_cast<float>(sin(static_cast<float>(theta))) * static_cast<float>(cos(static_cast<float>(phi)));
-            float y = static_cast<float>(cos(static_cast<float>(theta)));
-            float z = static_cast<float>(sin(static_cast<float>(theta))) * static_cast<float>(sin(static_cast<float>(phi)));
+            float x = std::sin(theta) * std::cos(phi);
+            float y = std::cos(theta);
+            float z = std::sin(theta) * std::sin(phi);
 
             vertices.insert(vertices.end(), {x,y,z});
             normals.insert(normals.end(), {x, y, z});
@@ -299,8 +313,8 @@ void Mesh::newCylinder(int segments){
 
     for(int i = 0; i < segments; i++){
         float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(a));
-        float z = static_cast<float>(sin(a));
+        float x = std::cos(a);
+        float z = std::sin(a);
 
         vertices.insert(vertices.end(), {x, yBottom, z});
         normals.insert(normals.end(),  {0.f, -1.f, 0.f});
@@ -323,8 +337,8 @@ void Mesh::newCylinder(int segments){
 
     for(int i = 0; i < segments; i++){
         float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(a));
-        float z = static_cast<float>(sin(a));
+        float x = std::cos(a);
+        float z = std::sin(a);
 
         vertices.insert(vertices.end(), {x, yTop, z});
         normals.insert(normals.end(),  {0.f, 1.f, 0.f});
@@ -343,8 +357,8 @@ void Mesh::newCylinder(int segments){
 
     for(int i = 0; i < segments; i++){
         float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(a));
-        float z = static_cast<float>(sin(a));
+        float x = std::cos(a);
+        float z = std::sin(a);
 
         vertices.insert(vertices.end(), {x, yBottom, z});
         normals.insert(normals.end(),  {x, 0.f, z});
@@ -495,8 +509,8 @@ void Mesh::newCone(int segments){
 
     for(int i = 0; i < segments; i++){
         float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(a));
-        float z = static_cast<float>(sin(a));
+        float x = std::cos(a);
+        float z = std::sin(a);
 
         vertices.insert(vertices.end(), {x, yBottom, z});
         normals.insert(normals.end(),  {0.f, -1.f, 0.f});
@@ -515,8 +529,8 @@ void Mesh::newCone(int segments){
 
     for(int i = 0; i < segments; i++){
         float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = static_cast<float>(cos(a));
-        float z = static_cast<float>(sin(a));
+        float x = std::cos(a);
+        float z = std::sin(a);
 
         vertices.insert(vertices.end(), {x, yBottom, z});
         {

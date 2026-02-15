@@ -1,6 +1,6 @@
 #pragma once
 
-#include "external/glad/glad.h"
+#include "glad/glad.h"
 #include <vector>
 
 #include "granite/render/shader.hpp"

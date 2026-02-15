@@ -40,13 +40,13 @@ Window::Window(const std::string& title, gr::Vec2 size) {
     glfwSetFramebufferSizeCallback(raw_, framebuffer_size_callback_);
 
     glEnable(GL_MULTISAMPLE);
-};
+}
 
 Window::~Window() {
     size_ = {0.0f, 0.0f};
     title_ = "";
     raw_ = nullptr;
-};
+}
 
 bool Window::shouldClose() const {
     return glfwWindowShouldClose(raw_);

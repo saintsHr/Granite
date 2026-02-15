@@ -2,9 +2,9 @@
 
 #include "granite/core/time.hpp"
 
-#include <cstdio>
+#include <format>
+#include <iostream>
 #include <cstdlib>
-#include <cstdarg>
 
 namespace gr::internal {
 
@@ -24,35 +24,46 @@ enum class Module {
     ASSETS
 };
 
-inline const char* SeverityString[] = {"INFO", "WARNING", "ERROR", "FATAL"};
-inline const char* SeverityColor[]  = {"\033[96m", "\033[95m", "\033[91m", "\033[31m"};
-inline const char* ModuleString[]   = {"Core", "Input", "Render", "Scene", "Window", "Assets"};
+inline constexpr std::string_view SeverityString[] = {
+    "INFO", "WARNING", "ERROR", "FATAL"
+};
 
-inline void log(Severity sev, Module mod, const char* fmt, ...) {
-    double t = gr::Time::GetElapsedTimeS();
+inline constexpr std::string_view SeverityColor[] = {
+    "\033[96m", "\033[95m", "\033[91m", "\033[31m"
+};
 
-    int h = static_cast<int>(t / 3600);
-    int m = static_cast<int>((t / 60)) % 60;
-    int s = static_cast<int>(t) % 60;
-    int ms = static_cast<int>((t - static_cast<int>(t)) * 1000);
+inline constexpr std::string_view ModuleString[] = {
+    "Core", "Input", "Render", "Scene", "Window", "Assets"
+};
 
-    std::printf(
-        "[%02d:%02d:%02d.%03d][%s%s\033[0m][%s] ",
+template<typename... Args>
+inline void log(
+    Severity sev,
+    Module mod,
+    std::format_string<Args...> fmt,
+    Args&&... args)
+{
+    const float t = gr::Time::GetElapsedTimeS();
+
+    const int h  = static_cast<int>(t / 3600.0f);
+    const int m  = static_cast<int>(t / 60.0f) % 60;
+    const int s  = static_cast<int>(t) % 60;
+    const int ms = static_cast<int>((t - static_cast<float>(static_cast<int>(t))) * 1000.0f);
+
+    std::string message = std::format(fmt, std::forward<Args>(args)...);
+
+    std::string header = std::format(
+        "[{:02}:{:02}:{:02}.{:03}][{}{}\033[0m][{}] ",
         h, m, s, ms,
         SeverityColor[static_cast<int>(sev)],
         SeverityString[static_cast<int>(sev)],
         ModuleString[static_cast<int>(mod)]
     );
 
-    va_list args;
-    va_start(args, fmt);
-    std::vprintf(fmt, args);
-    va_end(args);
+    std::cout << header << message << '\n';
 
-    std::printf("\n");
-    std::fflush(stdout);
-
-    if (sev == Severity::FATAL) std::exit(EXIT_FAILURE);
+    if (sev == Severity::FATAL)
+        std::exit(EXIT_FAILURE);
 }
 
 }
