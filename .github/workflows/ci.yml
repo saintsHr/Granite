@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        shell: bash -euo pipefail
+        shell: bash -euo pipefail {0}
 
     env:
       CC: ${{ matrix.compiler == 'gcc' && 'gcc' || 'clang' }}
