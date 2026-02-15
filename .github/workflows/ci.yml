@@ -6,22 +6,49 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.compiler }}
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: true
+      matrix:
+        compiler: [gcc, clang]
+
+    defaults:
+      run:
+        shell: bash -euo pipefail
+
+    env:
+      CC: ${{ matrix.compiler == 'gcc' && 'gcc' || 'clang' }}
+      CXX: ${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: dependencies
+      - name: Install Dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
-            build-essential \
+          sudo apt-get update
+          sudo apt-get install -y \
             libgl1-mesa-dev \
             libglfw3-dev \
-            libglm-dev \
+            libglm-dev
 
-      - name: build
+      - name: Compiler Version
+        run: |
+          $CC --version
+          $CXX --version
+
+      - name: Build (CI Debug)
         run: |
           make clean
-          make ci
-          make ci-release
+          make ci -j$(nproc)
+
+      - name: Build (CI Release)
+        run: |
+          make clean
+          make ci-release -j$(nproc)
+
+      - name: Verify Engine
+        run: |
+          test -s lib/libgranite.a

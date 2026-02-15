@@ -14,9 +14,10 @@ void Camera::update(const gr::Window& window) {
 
     glm::vec3 front;
     float yawAdjusted = rotation.y - 90.0f;
-    front.x = float(cos(glm::radians(yawAdjusted)) * cos(glm::radians(rotation.x)));
-    front.y = float(sin(glm::radians(rotation.x)));
-    front.z = float(sin(glm::radians(yawAdjusted)) * cos(glm::radians(rotation.x)));
+    front.x = glm::cos(glm::radians(yawAdjusted)) * glm::cos(glm::radians(rotation.x));
+    front.y = glm::sin(glm::radians(rotation.x));
+    front.z = glm::sin(glm::radians(yawAdjusted)) * glm::cos(glm::radians(rotation.x));
+
     front = glm::normalize(front);
 
     glm::vec3 posGLM = {pos.x, pos.y, pos.z};
