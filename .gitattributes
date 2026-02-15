@@ -1,2 +1,5 @@
-include/glad/* linguist-vendored
-src/glad/* linguist-vendored
+third-party/include/glad/* linguist-vendored
+third-party/include/stb_image/* linguist-vendored
+
+third-party/src/glad/* linguist-vendored
+third-party/src/stb_image/* linguist-vendored
