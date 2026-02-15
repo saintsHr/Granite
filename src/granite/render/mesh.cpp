@@ -4,12 +4,12 @@
 #include <glm/glm.hpp>
 #include <cmath>
 
-namespace gr::Render{
+namespace gr::Render {
 
-void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals){
+void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs) {
     size_t numVertices = vertices.size() / 3;
     std::vector<float> interleaved;
-    interleaved.reserve(numVertices * 6);
+    interleaved.reserve(numVertices * 8);
 
     for (size_t i = 0; i < numVertices; ++i){
         interleaved.push_back(vertices[i*3 + 0]);
@@ -19,6 +19,9 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         interleaved.push_back(normals[i*3 + 0]);
         interleaved.push_back(normals[i*3 + 1]);
         interleaved.push_back(normals[i*3 + 2]);
+
+        interleaved.push_back(uvs[i*2 + 0]);
+        interleaved.push_back(uvs[i*2 + 1]);
     }
 
     glBindVertexArray(vao_);
@@ -47,7 +50,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         3,
         GL_FLOAT,
         GL_FALSE,
-        6 * sizeof(float),
+        8 * sizeof(float),
         nullptr
     );
     glVertexAttribPointer(
@@ -55,12 +58,21 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         3,
         GL_FLOAT,
         GL_FALSE,
-        6 * sizeof(float),
+        8 * sizeof(float),
         reinterpret_cast<void*>(3*sizeof(float))
+    );
+    glVertexAttribPointer(
+        2,
+        2,
+        GL_FLOAT,
+        GL_FALSE,
+        8 * sizeof(float),
+        reinterpret_cast<void*>(6*sizeof(float))
     );
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
 
@@ -68,7 +80,7 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
     indexCount_  = static_cast<unsigned int>(index.size());
 }
 
-void Mesh::draw(const Shader& shader) const{
+void Mesh::draw(const Shader& shader) const {
     shader.use();
 
     glBindVertexArray(vao_);
@@ -83,7 +95,7 @@ void Mesh::draw(const Shader& shader) const{
     glBindVertexArray(0);
 }
 
-void Mesh::newTriangle(){
+void Mesh::newTriangle() {
     std::vector<float> vertices = {
        -1.0f, -0.866f, 0.0f,
         1.0f, -0.866f, 0.0f,
@@ -99,9 +111,19 @@ void Mesh::newTriangle(){
         0.0f, 0.0f,  1.0f,
         0.0f, 0.0f,  1.0f,
 
-        0.0f, 0.f, -1.0f,
-        0.0f, 0.f, -1.0f,
-        0.0f, 0.f, -1.0f
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f,
+        0.0f, 0.0f, -1.0f
+    };
+
+    std::vector<float> uvs = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.5f, 1.0f,
+
+        0.0f, 0.0f,
+        0.5f, 1.0f,
+        1.0f, 0.0f
     };
 
     std::vector<unsigned int> index = {
@@ -109,10 +131,10 @@ void Mesh::newTriangle(){
         3, 4, 5
     };
 
-    upload(vertices, index, normals);
+    upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newQuad(){
+void Mesh::newQuad() {
     std::vector<float> vertices = {
         -1.0f, -1.0f, 0.0f,
          1.0f, -1.0f, 0.0f,
@@ -132,10 +154,17 @@ void Mesh::newQuad(){
         0, 2, 3
     };
 
-    upload(vertices, index, normals);
+    std::vector<float> uvs = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f
+	};
+
+    upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newCube(){
+void Mesh::newCube() {
     std::vector<float> vertices = {
        -1.0f,-1.0f, 1.0f,
         1.0f,-1.0f, 1.0f,
@@ -205,53 +234,83 @@ void Mesh::newCube(){
         20, 22, 23
     };
 
+    std::vector<float> uvs = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
 
-    upload(vertices, index, normals);
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f
+    };
+
+    upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newCircle(int segments){
+void Mesh::newCircle(int segments) {
     std::vector<float> vertices;
     std::vector<unsigned int> index;
     std::vector<float> normals;
+    std::vector<float> uvs;
 
     unsigned int frontCenter = 0;
-
     vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
     normals.insert(normals.end(), {0.f, 0.f, 1.f});
+    uvs.insert(uvs.end(), {0.5f, 0.5f});
 
-    for (int i = 0; i < segments; i++){
+    for (int i = 0; i < segments; i++) {
         float angle = 2.f * gr::Math::PI * float(i) / float(segments);
         float x = std::cos(angle);
         float y = std::sin(angle);
 
         vertices.insert(vertices.end(), {x, y, 0.f});
         normals.insert(normals.end(), {0.f, 0.f, 1.f});
+        uvs.insert(uvs.end(), {x * 0.5f + 0.5f, 1.0f - (y * 0.5f + 0.5f)});
     }
 
-    for (int i = 1; i <= segments; i++){
+    for (int i = 1; i <= segments; i++) {
         unsigned int next = static_cast<unsigned int>(i % segments) + 1;
-        index.insert(index.end(), {
-            frontCenter,
-            static_cast<unsigned>(i),
-            next
-        });
+        index.insert(index.end(), {frontCenter, static_cast<unsigned>(i), next});
     }
 
     unsigned int backCenter = static_cast<unsigned int>(vertices.size()) / 3;
-
     vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
     normals.insert(normals.end(), {0.f, 0.f, -1.f});
+    uvs.insert(uvs.end(), {0.5f, 0.5f});
 
-    for (int i = 0; i < segments; i++){
+    for (int i = 0; i < segments; i++) {
         float angle = 2.f * gr::Math::PI * float(i) / float(segments);
         float x = std::cos(angle);
         float y = std::sin(angle);
 
         vertices.insert(vertices.end(), {x, y, 0.f});
         normals.insert(normals.end(), {0.f, 0.f, -1.f});
+        uvs.insert(uvs.end(), {1.0f - (x * 0.5f + 0.5f), 1.0f - (y * 0.5f + 0.5f)});
     }
 
-    for (int i = 1; i <= segments; i++){
+    for (int i = 1; i <= segments; i++) {
         unsigned int next = static_cast<unsigned int>(i % segments) + 1;
         index.insert(index.end(), {
             backCenter,
@@ -260,131 +319,145 @@ void Mesh::newCircle(int segments){
         });
     }
 
-    upload(vertices, index, normals);
+    upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newSphere(int latSeg, int lonSeg){
-    std::vector<float> vertices;
-    std::vector<unsigned int> index;
-    std::vector<float> normals;
+void Mesh::newSphere(int latSeg, int lonSeg) {
+	std::vector<float> vertices;
+	std::vector<unsigned int> index;
+	std::vector<float> normals;
+	std::vector<float> uvs;
 
-    for (int lat = 0; lat <= latSeg; lat++){
-        float theta = static_cast<float>(lat) * gr::Math::PI / static_cast<float>(latSeg);
-        for (int lon = 0; lon <= lonSeg; lon++){
-            float phi = static_cast<float>(lon) * 2.f * gr::Math::PI / static_cast<float>(lonSeg);
+	for (int lat = 0; lat <= latSeg; lat++) {
+		float theta = static_cast<float>(lat) * gr::Math::PI / static_cast<float>(latSeg);
+		float v = static_cast<float>(lat) / static_cast<float>(latSeg);
 
-            float x = std::sin(theta) * std::cos(phi);
-            float y = std::cos(theta);
-            float z = std::sin(theta) * std::sin(phi);
+		for (int lon = 0; lon <= lonSeg; lon++){
+			float phi = static_cast<float>(lon) * 2.f * gr::Math::PI / static_cast<float>(lonSeg);
+			float u = static_cast<float>(lon) / static_cast<float>(lonSeg);
 
-            vertices.insert(vertices.end(), {x,y,z});
-            normals.insert(normals.end(), {x, y, z});
-        }
-    }
+			float x = std::sin(theta) * std::cos(phi);
+			float y = std::cos(theta);
+			float z = std::sin(theta) * std::sin(phi);
 
-    for (int lat = 0; lat < latSeg; lat++){
-        for (int lon = 0; lon < lonSeg; lon++){
-            int a = lat * (lonSeg + 1) + lon;
-            int b = a + lonSeg + 1;
+			vertices.insert(vertices.end(), {x, y, z});
+			normals.insert(normals.end(), {x, y, z});
+			uvs.insert(uvs.end(), {u, 1.0f - v});
+		}
+	}
 
-            index.insert(index.end(), {
-                static_cast<unsigned>(a), static_cast<unsigned>(b), static_cast<unsigned>(a + 1),
-                static_cast<unsigned>(b), static_cast<unsigned>(b+1), static_cast<unsigned>(a+1)
-            });
-        }
-    }
+	for (int lat = 0; lat < latSeg; lat++) {
+		for (int lon = 0; lon < lonSeg; lon++){
+			int a = lat * (lonSeg + 1) + lon;
+			int b = a + lonSeg + 1;
 
-    upload(vertices, index, normals);
+			index.insert(index.end(), {
+				static_cast<unsigned>(a), static_cast<unsigned>(b), static_cast<unsigned>(a + 1),
+				static_cast<unsigned>(b), static_cast<unsigned>(b + 1), static_cast<unsigned>(a + 1)
+			});
+		}
+	}
+
+	upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newCylinder(int segments){
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<unsigned int> index;
+void Mesh::newCylinder(int segments) {
+	std::vector<float> vertices;
+	std::vector<float> normals;
+	std::vector<unsigned int> index;
+	std::vector<float> uvs;
 
-    const float yBottom = -1.f;
-    const float yTop    =  1.f;
+	const float yBottom = -1.f;
+	const float yTop    =  1.f;
 
-    unsigned int baseCenter = 0;
-    vertices.insert(vertices.end(), {0.f, yBottom, 0.f});
-    normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+	unsigned int baseCenter = 0;
+	vertices.insert(vertices.end(), {0.f, yBottom, 0.f});
+	normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+	uvs.insert(uvs.end(), {0.5f, 0.5f});
 
-    unsigned int baseRingStart = static_cast<unsigned int>(vertices.size()) / 3;
+	unsigned int baseRingStart = static_cast<unsigned int>(vertices.size()) / 3;
 
-    for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = std::cos(a);
-        float z = std::sin(a);
+	for (int i = 0; i < segments; i++) {
+		float a = 2.f * gr::Math::PI * float(i) / float(segments);
+		float x = std::cos(a);
+		float z = std::sin(a);
 
-        vertices.insert(vertices.end(), {x, yBottom, z});
-        normals.insert(normals.end(),  {0.f, -1.f, 0.f});
-    }
+		vertices.insert(vertices.end(), {x, yBottom, z});
+		normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+		uvs.insert(uvs.end(), {x * 0.5f + 0.5f, z * 0.5f + 0.5f});
+	}
 
-    for(int i = 0; i < segments; i++){
-        unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
-            index.insert(index.end(), {
-            baseCenter,
-            baseRingStart + static_cast<unsigned int>(i),
-            baseRingStart + next
-        });
-    }
+	for (int i = 0; i < segments; i++) {
+		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
+		index.insert(index.end(), {
+			baseCenter,
+			baseRingStart + static_cast<unsigned int>(i),
+			baseRingStart + next
+		});
+	}
 
-    unsigned int topCenter = static_cast<unsigned int>(vertices.size()) / 3;
-    vertices.insert(vertices.end(), {0.f, yTop, 0.f});
-    normals.insert(normals.end(),  {0.f, 1.f, 0.f});
+	unsigned int topCenter = static_cast<unsigned int>(vertices.size()) / 3;
+	vertices.insert(vertices.end(), {0.f, yTop, 0.f});
+	normals.insert(normals.end(),  {0.f, 1.f, 0.f});
+	uvs.insert(uvs.end(), {0.5f, 0.5f});
 
-    unsigned int topRingStart = static_cast<unsigned int>(vertices.size()) / 3;
+	unsigned int topRingStart = static_cast<unsigned int>(vertices.size()) / 3;
 
-    for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = std::cos(a);
-        float z = std::sin(a);
+	for (int i = 0; i < segments; i++) {
+		float a = 2.f * gr::Math::PI * float(i) / float(segments);
+		float x = std::cos(a);
+		float z = std::sin(a);
 
-        vertices.insert(vertices.end(), {x, yTop, z});
-        normals.insert(normals.end(),  {0.f, 1.f, 0.f});
-    }
+		vertices.insert(vertices.end(), {x, yTop, z});
+		normals.insert(normals.end(),  {0.f, 1.f, 0.f});
+		uvs.insert(uvs.end(), {x * 0.5f + 0.5f, z * 0.5f + 0.5f});
+	}
 
-    for(int i = 0; i < segments; i++){
-        unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
-        index.insert(index.end(), {
-            topCenter,
-            topRingStart + next,
-            topRingStart + static_cast<unsigned int>(i)
-        });
-    }
+	for (int i = 0; i < segments; i++) {
+		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
+		index.insert(index.end(), {
+			topCenter,
+			topRingStart + next,
+			topRingStart + static_cast<unsigned int>(i)
+		});
+	}
 
-    unsigned int sideStart = static_cast<unsigned int>(vertices.size()) / 3;
+	unsigned int sideStart = static_cast<unsigned int>(vertices.size()) / 3;
 
-    for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = std::cos(a);
-        float z = std::sin(a);
+	for (int i = 0; i < segments; i++) {
+		float a = 2.f * gr::Math::PI * float(i) / float(segments);
+		float x = std::cos(a);
+		float z = std::sin(a);
 
-        vertices.insert(vertices.end(), {x, yBottom, z});
-        normals.insert(normals.end(),  {x, 0.f, z});
+		float u = static_cast<float>(i) / static_cast<float>(segments);
 
-        vertices.insert(vertices.end(), {x, yTop, z});
-        normals.insert(normals.end(),  {x, 0.f, z});
-    }
+		vertices.insert(vertices.end(), {x, yBottom, z});
+		normals.insert(normals.end(),  {x, 0.f, z});
+		uvs.insert(uvs.end(), {u, 0.f});
 
-    for(int i = 0; i < segments; i++){
-        unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
+		vertices.insert(vertices.end(), {x, yTop, z});
+		normals.insert(normals.end(),  {x, 0.f, z});
+		uvs.insert(uvs.end(), {u, 1.f});
+	}
 
-        unsigned int b0 = sideStart + static_cast<unsigned int>(i) * 2;
-        unsigned int t0 = b0 + 1;
-        unsigned int b1 = sideStart + next * 2;
-        unsigned int t1 = b1 + 1;
+	for (int i = 0; i < segments; i++) {
+		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
 
-        index.insert(index.end(), {
-            b0, t0, b1,
-            b1, t0, t1
-        });
-    }
+		unsigned int b0 = sideStart + static_cast<unsigned int>(i) * 2;
+		unsigned int t0 = b0 + 1;
+		unsigned int b1 = sideStart + next * 2;
+		unsigned int t1 = b1 + 1;
 
-    upload(vertices, index, normals);
+		index.insert(index.end(), {
+			b0, t0, b1,
+			b1, t0, t1
+		});
+	}
+
+	upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newPyramid(){
+void Mesh::newPyramid() {
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<unsigned int> index;
@@ -398,8 +471,7 @@ void Mesh::newPyramid(){
          1.f, -1.f, -1.f
     });
 
-    for(int i = 0; i < 4; i++)
-        normals.insert(normals.end(), {0.f, -1.f, 0.f});
+    for (int i = 0; i < 4; i++) normals.insert(normals.end(), {0.f, -1.f, 0.f});
 
     index.insert(index.end(), {
         baseStart + 0, baseStart + 1, baseStart + 2,
@@ -423,8 +495,7 @@ void Mesh::newPyramid(){
             apex.x, apex.y, apex.z
         });
 
-        for(int i = 0; i < 3; i++)
-            normals.insert(normals.end(), {n.x, n.y, n.z});
+        for (int i = 0; i < 3; i++) normals.insert(normals.end(), {n.x, n.y, n.z});
 
         index.insert(index.end(), {start, start + 2, start + 1});
     }
@@ -443,8 +514,7 @@ void Mesh::newPyramid(){
             apex.x, apex.y, apex.z
         });
 
-        for(int i = 0; i < 3; i++)
-            normals.insert(normals.end(), {n.x, n.y, n.z});
+        for (int i = 0; i < 3; i++) normals.insert(normals.end(), {n.x, n.y, n.z});
 
         index.insert(index.end(), {start, start + 2, start + 1});
     }
@@ -463,8 +533,7 @@ void Mesh::newPyramid(){
             apex.x, apex.y, apex.z
         });
 
-        for(int i = 0; i < 3; i++)
-            normals.insert(normals.end(), {n.x, n.y, n.z});
+        for (int i = 0; i < 3; i++) normals.insert(normals.end(), {n.x, n.y, n.z});
 
         index.insert(index.end(), {start, start + 2, start + 1});
     }
@@ -483,93 +552,122 @@ void Mesh::newPyramid(){
             apex.x, apex.y, apex.z
         });
 
-        for(int i = 0; i < 3; i++)
-            normals.insert(normals.end(), {n.x, n.y, n.z});
+        for (int i = 0; i < 3; i++) normals.insert(normals.end(), {n.x, n.y, n.z});
 
         index.insert(index.end(), {start, start + 2, start + 1});
     }
 
-    upload(vertices, index, normals);
+    std::vector<float> uvs = {
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.5f, 1.0f,
+
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.5f, 1.0f,
+
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.5f, 1.0f,
+
+        1.0f, 0.0f,
+        0.0f, 0.0f,
+        0.5f, 1.0f
+    };
+
+    upload(vertices, index, normals, uvs);
 }
 
-void Mesh::newCone(int segments){
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<unsigned int> index;
+void Mesh::newCone(int segments) {
+	std::vector<float> vertices;
+	std::vector<float> normals;
+	std::vector<unsigned int> index;
+	std::vector<float> uvs;
 
-    const float yTop    =  1.f;
-    const float yBottom = -1.f;
-    const float slope   = 0.5f;
+	const float yTop    =  1.f;
+	const float yBottom = -1.f;
+	const float slope   = 0.5f;
 
-    unsigned int baseCenter = 0;
-    vertices.insert(vertices.end(), {0.f, yBottom, 0.f});
-    normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+	unsigned int baseCenter = 0;
+	vertices.insert(vertices.end(), {0.f, yBottom, 0.f});
+	normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+	uvs.insert(uvs.end(), {0.5f, 0.5f});
 
-    unsigned int baseRingStart = static_cast<unsigned int>(vertices.size()) / 3;
+	unsigned int baseRingStart = static_cast<unsigned int>(vertices.size()) / 3;
 
-    for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = std::cos(a);
-        float z = std::sin(a);
+	for (int i = 0; i < segments; i++) {
+		float a = 2.f * gr::Math::PI * float(i) / float(segments);
+		float x = std::cos(a);
+		float z = std::sin(a);
 
-        vertices.insert(vertices.end(), {x, yBottom, z});
-        normals.insert(normals.end(),  {0.f, -1.f, 0.f});
-    }
+		vertices.insert(vertices.end(), {x, yBottom, z});
+		normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+		uvs.insert(uvs.end(), {x * 0.5f + 0.5f, z * 0.5f + 0.5f});
+	}
 
-    for(int i = 0; i < segments; i++){
-        unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
-        index.insert(index.end(), {
-            baseCenter,
-            baseRingStart + static_cast<unsigned int>(i),
-            baseRingStart + next
-        });
-    }
+	for (int i = 0; i < segments; i++) {
+		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
+		index.insert(index.end(), {
+			baseCenter,
+			baseRingStart + static_cast<unsigned int>(i),
+			baseRingStart + next
+		});
+	}
 
-    unsigned int sideStart = static_cast<unsigned int>(vertices.size()) / 3;
+	unsigned int sideStart = static_cast<unsigned int>(vertices.size()) / 3;
 
-    for(int i = 0; i < segments; i++){
-        float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = std::cos(a);
-        float z = std::sin(a);
+	for (int i = 0; i < segments; i++) {
+		float a = 2.f * gr::Math::PI * float(i) / float(segments);
+		float x = std::cos(a);
+		float z = std::sin(a);
 
-        vertices.insert(vertices.end(), {x, yBottom, z});
-        {
-            glm::vec3 n = glm::normalize(glm::vec3(x, slope, z));
-            normals.insert(normals.end(), {n.x, n.y, n.z});
-        }
+		float u = static_cast<float>(i) / static_cast<float>(segments);
 
-        vertices.insert(vertices.end(), {0.f, yTop, 0.f});
-        {
-            glm::vec3 n = glm::normalize(glm::vec3(x, slope, z));
-            normals.insert(normals.end(), {n.x, n.y, n.z});
-        }
-    }
+		vertices.insert(vertices.end(), {x, yBottom, z});
+		{
+			glm::vec3 n = glm::normalize(glm::vec3(x, slope, z));
+			normals.insert(normals.end(), {n.x, n.y, n.z});
+		}
+		uvs.insert(uvs.end(), {u, 0.f});
 
-    for(int i = 0; i < segments; i++){
-        unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
+		vertices.insert(vertices.end(), {0.f, yTop, 0.f});
+		{
+			glm::vec3 n = glm::normalize(glm::vec3(x, slope, z));
+			normals.insert(normals.end(), {n.x, n.y, n.z});
+		}
+		uvs.insert(uvs.end(), {u, 1.f});
+	}
 
-        unsigned int b0 = sideStart + static_cast<unsigned int>(i) * 2;
-        unsigned int t0 = b0 + 1;
-        unsigned int b1 = sideStart + next * 2;
-        unsigned int t1 = b1 + 1;
+	for (int i = 0; i < segments; i++) {
+		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
 
-        index.insert(index.end(), {
-            b0, t0, b1,
-            b1, t0, t1
-        });
-    }
+		unsigned int b0 = sideStart + static_cast<unsigned int>(i) * 2;
+		unsigned int t0 = b0 + 1;
+		unsigned int b1 = sideStart + next * 2;
+		unsigned int t1 = b1 + 1;
 
-    upload(vertices, index, normals);
+		index.insert(index.end(), {
+			b0, t0, b1,
+			b1, t0, t1
+		});
+	}
+
+	upload(vertices, index, normals, uvs);
 }
 
-Mesh::~Mesh(){
+Mesh::~Mesh() {
     glBindVertexArray(0);
     glDeleteVertexArrays(1, &vao_);
     glDeleteBuffers(1, &vbo_);
     glDeleteBuffers(1, &ebo_);
 }
 
-Mesh::Mesh(){
+Mesh::Mesh() {
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
     glGenBuffers(1, &ebo_);

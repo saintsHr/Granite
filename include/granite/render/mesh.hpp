@@ -12,7 +12,7 @@ class Mesh {
 public:
     Mesh();
     ~Mesh();
-    void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals);
+    void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs);
     void draw(const Shader& shader) const;
 
     void newTriangle();
