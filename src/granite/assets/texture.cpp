@@ -32,7 +32,7 @@ void Texture::load(const gr::Assets::Image& image) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     
-    switch(filter_) {
+    switch (filter_) {
         case TextureFilter::NEAREST:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useMipmaps_ ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -40,6 +40,8 @@ void Texture::load(const gr::Assets::Image& image) {
         case TextureFilter::LINEAR:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useMipmaps_ ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            break;
+        default:
             break;
     }
 
@@ -60,6 +62,8 @@ void Texture::setFilter(TextureFilter filter, bool useMipmaps) {
         case TextureFilter::LINEAR:
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            break;
+        default:
             break;
     }
 
