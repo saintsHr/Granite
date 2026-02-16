@@ -123,7 +123,7 @@ void main() {
     vec3 N = normalize(vNormal);
     vec3 V = normalize(uCameraPos - vFragPos);
 
-    vec3 result = ambientLight.color * ambientLight.intensity * uColor;
+    vec3 result = ambientLight.color * ambientLight.intensity;
 
     // directional lights
     for (int i = 0; i < counts.y; i++) {
@@ -188,14 +188,9 @@ void main() {
         }
     }
 
-    vec3 finalColor = uColor;
+    vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
 
-    if (uHasTexture) {
-        vec4 texColor = texture(uTexture, vTexCoord);
-        finalColor = texColor.rgb;
-    }
-
-    vFragColor = vec4(result * finalColor, uOpacity);
+    vFragColor = vec4(result * baseColor, uOpacity);
 }
 
 // ------------------------------------------------------------------------------//

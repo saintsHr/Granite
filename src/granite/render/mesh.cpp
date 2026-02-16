@@ -580,11 +580,11 @@ void Mesh::newCone(int segments) {
 	}
 
 	for (int i = 0; i < segments; i++) {
-		unsigned int next = (i + 1) % segments;
+		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
 		index.insert(index.end(), {
 			baseCenter,
-			baseRingStart + i,
-			baseRingStart + next
+			baseRingStart + static_cast<unsigned int>(i),
+			baseRingStart + static_cast<unsigned int>(next)
 		});
 	}
 
@@ -609,9 +609,9 @@ void Mesh::newCone(int segments) {
 	}
 
 	for (int i = 0; i < segments; i++) {
-		unsigned int b0 = sideStart + i * 2;
+		unsigned int b0 = sideStart + static_cast<unsigned int>(i) * 2;
 		unsigned int t0 = b0 + 1;
-		unsigned int b1 = sideStart + (i + 1) * 2;
+		unsigned int b1 = sideStart + (static_cast<unsigned int>(i) + 1) * 2;
 		unsigned int t1 = b1 + 1;
 
 		index.insert(index.end(), {

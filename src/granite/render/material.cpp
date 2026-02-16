@@ -35,13 +35,7 @@ void Material::bind(){
         );
     }
 
-    if (tL_ != -1) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.id());
-        glUniform1i(glGetUniformLocation(shader->getProgram(), "uTexture"), 0);
-    }
-
-    if (texture.id() != 0) {
+    if (tL_ != -1 && texture.id() != 0) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id());
         glUniform1i(tL_, 0);
@@ -50,7 +44,7 @@ void Material::bind(){
     if (hL_ != -1) {
         glUniform1i(
             hL_,
-            texture.id() != 0 ? 1 : 0
+            texture.id() != 0 ? true : false
         );
     }
 

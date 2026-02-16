@@ -1,5 +1,3 @@
-#pragma once
-
 #include "granite/assets/texture.hpp"
 #include "granite/core/log.hpp"
 
@@ -16,6 +14,7 @@ void Texture::load(const gr::Assets::Image& image) {
             "Cannot load texture of id {}",
             id_
         );
+        id_ = 0;
     } else {
         glTexImage2D(
             GL_TEXTURE_2D,
