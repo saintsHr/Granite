@@ -39,6 +39,7 @@ void init() {
     glDepthMask(GL_TRUE);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_FRAMEBUFFER_SRGB);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
     glEnable(GL_BLEND);

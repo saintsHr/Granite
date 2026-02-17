@@ -19,7 +19,7 @@ void Texture::load(const gr::Assets::Image& image) {
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
-            GL_RGBA,
+            GL_SRGB_ALPHA,
             image.width(),
             image.height(),
             0,
