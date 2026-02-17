@@ -164,8 +164,7 @@ void main() {
         vec3 L = lightVec / distance;
         vec3 H = normalize(L + V);
 
-        float attenuation = clamp(1.0 - distance / pointLights[i].radius, 0.0, 1.0);
-        attenuation *= attenuation;
+        float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
 
         vec3 lightColor = pointLights[i].color;
         float intensity = pointLights[i].intensity;
@@ -200,8 +199,7 @@ void main() {
         vec3 L = lightVec / distance;
         vec3 H = normalize(L + V);
 
-        float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
-        attenuation *= attenuation;
+        float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
         if (attenuation <= 0.0) continue;
 
         float theta = dot(L, normalize(-spotLights[i].direction));
@@ -242,6 +240,7 @@ void main() {
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
 
     vec3 finalColor = diffuseAccum * baseColor + specAccum;
+    finalColor = finalColor / (finalColor + vec3(1.0));
 
     vFragColor = vec4(finalColor, uOpacity);
 }

@@ -287,6 +287,78 @@ void Mesh::newCube() {
     upload(vertices, index, normals, uvs);
 }
 
+void Mesh::newCircle(int segments) {
+	std::vector<float> vertices;
+	std::vector<unsigned int> index;
+	std::vector<float> normals;
+	std::vector<float> uvs;
+
+	const float radius = 1.0f;
+
+	// center
+	vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
+	normals.insert(normals.end(), {0.f, 0.f, 1.f});
+	uvs.insert(uvs.end(), {0.5f, 0.5f});
+
+	// borders
+	for (int i = 0; i <= segments; i++) {
+		float angle = (float)i * 2.f * gr::Math::PI / (float)segments;
+
+		float x = std::cos(angle) * radius;
+		float y = std::sin(angle) * radius;
+
+		vertices.insert(vertices.end(), {x, y, 0.f});
+		normals.insert(normals.end(), {0.f, 0.f, 1.f});
+
+		// UV mapeado para [0,1]
+		float u = (x / radius + 1.f) * 0.5f;
+		float v = (y / radius + 1.f) * 0.5f;
+		uvs.insert(uvs.end(), {u, v});
+	}
+
+	// front indexes
+	for (int i = 1; i <= segments; i++) {
+		index.insert(index.end(), {
+			0,
+			(unsigned int)i,
+			(unsigned int)(i + 1)
+		});
+	}
+
+	unsigned int baseIndex = vertices.size() / 3;
+
+	// center (back)
+	vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
+	normals.insert(normals.end(), {0.f, 0.f, -1.f});
+	uvs.insert(uvs.end(), {0.5f, 0.5f});
+
+	// borders (back)
+	for (int i = 0; i <= segments; i++) {
+		float angle = (float)i * 2.f * gr::Math::PI / (float)segments;
+
+		float x = std::cos(angle) * radius;
+		float y = std::sin(angle) * radius;
+
+		vertices.insert(vertices.end(), {x, y, 0.f});
+		normals.insert(normals.end(), {0.f, 0.f, -1.f});
+
+		float u = (x / radius + 1.f) * 0.5f;
+		float v = (y / radius + 1.f) * 0.5f;
+		uvs.insert(uvs.end(), {u, v});
+	}
+
+	// back index
+	for (int i = 1; i <= segments; i++) {
+		index.insert(index.end(), {
+			baseIndex,
+			baseIndex + i + 1,
+			baseIndex + i
+		});
+	}
+
+	upload(vertices, index, normals, uvs);
+}
+
 void Mesh::newSphere(int latSeg, int lonSeg) {
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
