@@ -144,6 +144,9 @@ void main() {
             vec3 H = normalize(L + V);
             float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
             specAccum += spec * lightColor * intensity;
+            float F0 = 0.04;
+            float fresnel = F0 + (1.0 - F0) * pow(1.0 - max(dot(H, V), 0.0), 5.0);
+            spec *= fresnel;
         }
     }
 
@@ -170,6 +173,9 @@ void main() {
             vec3 H = normalize(L + V);
             float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
             specAccum += spec * lightColor * intensity * attenuation;
+            float F0 = 0.04;
+            float fresnel = F0 + (1.0 - F0) * pow(1.0 - max(dot(H, V), 0.0), 5.0);
+            spec *= fresnel;
         }
     }
 
@@ -209,11 +215,14 @@ void main() {
         float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
 
         specAccum += spec * lightColor * intensity * attenuation * spotIntensity;
+        float F0 = 0.04;
+        float fresnel = F0 + (1.0 - F0) * pow(1.0 - max(dot(H, V), 0.0), 5.0);
+        spec *= fresnel;
     }
 
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
 
-    vec3 finalColor = diffuseAccum * baseColor + specAccum;
+    vec3 finalColor = diffuseAccum * baseColor * (1.0 - 0.5) + specAccum * 0.5;
 
     vFragColor = vec4(finalColor, uOpacity);
 }
