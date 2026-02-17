@@ -123,7 +123,8 @@ void main() {
     vec3 N = normalize(vNormal);
     vec3 V = normalize(uCameraPos - vFragPos);
 
-    vec3 result = ambientLight.color * ambientLight.intensity;
+    vec3 diffuseAccum = ambientLight.color * ambientLight.intensity;
+    vec3 specAccum = vec3(0.0);
 
     // directional lights
     for (int i = 0; i < counts.y; i++) {
@@ -137,12 +138,12 @@ void main() {
             float intensity = directionalLights[i].intensity;
 
             // diffuse
-            result += diff * lightColor * intensity;
+            diffuseAccum += diff * lightColor * intensity;
 
             // specular
             vec3 H = normalize(L + V);
-            float spec = pow(max(dot(N, H), 0.0), uShininess);
-            result += spec * lightColor * intensity;
+            float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
+            specAccum += spec * lightColor * intensity;
         }
     }
 
@@ -162,12 +163,12 @@ void main() {
             float intensity = pointLights[i].intensity;
 
             // diffuse
-            result += diff * lightColor * intensity * attenuation;
+            diffuseAccum += diff * lightColor * intensity * attenuation;
 
             // specular
             vec3 H = normalize(L + V);
-            float spec = pow(max(dot(N, H), 0.0), uShininess);
-            result += spec * lightColor * intensity * attenuation;
+            float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
+            specAccum += spec * lightColor * intensity * attenuation;
         }
     }
 
@@ -200,18 +201,20 @@ void main() {
         float intensity = spotLights[i].intensity;
 
         // diffuse
-        result += diff * lightColor * intensity * attenuation * spotIntensity;
+        diffuseAccum += diff * lightColor * intensity * attenuation * spotIntensity;
 
         // specular
         vec3 H = normalize(L + V);
-        float spec = pow(max(dot(N, H), 0.0), uShininess);
+        float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
 
-        result += spec * lightColor * intensity * attenuation * spotIntensity;
+        specAccum += spec * lightColor * intensity * attenuation * spotIntensity;
     }
 
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
 
-    vFragColor = vec4(result * baseColor, uOpacity);
+    vec3 finalColor = diffuseAccum * baseColor + specAccum;
+
+    vFragColor = vec4(finalColor, uOpacity);
 }
 
 // ------------------------------------------------------------------------------//
