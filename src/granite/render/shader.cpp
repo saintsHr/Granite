@@ -122,6 +122,7 @@ layout(std140) uniform LightBlock {
 void main() {
     vec3 N = normalize(vNormal);
     vec3 V = normalize(uCameraPos - vFragPos);
+    const float F0 = 0.04;
 
     vec3 diffuseAccum = ambientLight.color * ambientLight.intensity;
     vec3 specAccum = vec3(0.0);
@@ -129,54 +130,65 @@ void main() {
     // directional lights
     for (int i = 0; i < counts.y; i++) {
         vec3 L = normalize(-directionalLights[i].direction);
-        float diff = dot(N, L);
+        vec3 H = normalize(L + V);
 
-        if (diff > 0.0) {
-            diff = max(diff, 0.0);
+        vec3 lightColor = directionalLights[i].color;
+        float intensity = directionalLights[i].intensity;
 
-            vec3 lightColor = directionalLights[i].color;
-            float intensity = directionalLights[i].intensity;
+        float NdotH = max(dot(N, H), 0.0);
+        float NdotL = max(dot(N, L), 0.0);
+        float VdotH = max(dot(V, H), 0.0);
 
-            // diffuse
-            diffuseAccum += diff * lightColor * intensity;
+        if (NdotL <= 0.0) continue;
 
-            // specular
-            vec3 H = normalize(L + V);
-            float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
-            specAccum += spec * lightColor * intensity;
-            float F0 = 0.04;
-            float fresnel = F0 + (1.0 - F0) * pow(1.0 - max(dot(H, V), 0.0), 5.0);
-            spec *= fresnel;
-        }
+        float specBase = pow(NdotH, uShininess);
+
+        // Fresnel (Schlick)
+        float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
+
+        // Energy conservation
+        float kD = 1.0 - kS;
+
+        // Diffuse
+        diffuseAccum += kD * NdotL * lightColor * intensity;
+
+        // Specular
+        specAccum += kS * specBase * lightColor * intensity;
     }
 
     // point lights
     for (int i = 0; i < counts.x; i++) {
         vec3 lightVec = pointLights[i].position - vFragPos;
         float distance = max(length(lightVec), 0.001);
+
         vec3 L = lightVec / distance;
+        vec3 H = normalize(L + V);
 
         float attenuation = clamp(1.0 - distance / pointLights[i].radius, 0.0, 1.0);
         attenuation *= attenuation;
 
-        float diff = dot(N, L);
-        if (diff > 0.0) {
-            diff = max(diff, 0.0);
+        vec3 lightColor = pointLights[i].color;
+        float intensity = pointLights[i].intensity;
 
-            vec3 lightColor = pointLights[i].color;
-            float intensity = pointLights[i].intensity;
+        float NdotH = max(dot(N, H), 0.0);
+        float NdotL = max(dot(N, L), 0.0);
+        float VdotH = max(dot(V, H), 0.0);
 
-            // diffuse
-            diffuseAccum += diff * lightColor * intensity * attenuation;
+        if (NdotL <= 0.0) continue;
 
-            // specular
-            vec3 H = normalize(L + V);
-            float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
-            specAccum += spec * lightColor * intensity * attenuation;
-            float F0 = 0.04;
-            float fresnel = F0 + (1.0 - F0) * pow(1.0 - max(dot(H, V), 0.0), 5.0);
-            spec *= fresnel;
-        }
+        float specBase = pow(NdotH, uShininess);
+
+        // Fresnel (Schlick)
+        float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
+
+        // Energy conservation
+        float kD = 1.0 - kS;
+
+        // Diffuse
+        diffuseAccum += kD * NdotL * lightColor * intensity * attenuation;
+
+        // Specular
+        specAccum += kS * specBase * lightColor * intensity * attenuation;
     }
 
     // spot lights
@@ -184,7 +196,13 @@ void main() {
 
         vec3 lightVec = spotLights[i].position - vFragPos;
         float distance = max(length(lightVec), 0.001);
+
         vec3 L = lightVec / distance;
+        vec3 H = normalize(L + V);
+
+        float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
+        attenuation *= attenuation;
+        if (attenuation <= 0.0) continue;
 
         float theta = dot(L, normalize(-spotLights[i].direction));
 
@@ -197,32 +215,33 @@ void main() {
 
         if (spotIntensity <= 0.0) continue;
 
-        float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
-        attenuation *= attenuation;
-        if (attenuation <= 0.0) continue;
+        float NdotH = max(dot(N, H), 0.0);
+        float NdotL = max(dot(N, L), 0.0);
+        float VdotH = max(dot(V, H), 0.0);
 
-        float diff = dot(N, L);
-        if (diff <= 0.0) continue;
+        if (NdotL <= 0.0) continue;
+
+        float specBase = pow(NdotH, uShininess);
 
         vec3 lightColor = spotLights[i].color;
         float intensity = spotLights[i].intensity;
 
-        // diffuse
-        diffuseAccum += diff * lightColor * intensity * attenuation * spotIntensity;
+        // Fresnel (Schlick)
+        float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
 
-        // specular
-        vec3 H = normalize(L + V);
-        float spec = pow(max(dot(N, H), 0.0), uShininess) * diff;
+        // Energy conservation
+        float kD = 1.0 - kS;
 
-        specAccum += spec * lightColor * intensity * attenuation * spotIntensity;
-        float F0 = 0.04;
-        float fresnel = F0 + (1.0 - F0) * pow(1.0 - max(dot(H, V), 0.0), 5.0);
-        spec *= fresnel;
+        // Diffuse
+        diffuseAccum += kD * NdotL * lightColor * intensity * attenuation * spotIntensity;
+
+        // Specular
+        specAccum += kS * specBase * lightColor * intensity * attenuation * spotIntensity;
     }
 
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
 
-    vec3 finalColor = diffuseAccum * baseColor * (1.0 - 0.5) + specAccum * 0.5;
+    vec3 finalColor = diffuseAccum * baseColor + specAccum;
 
     vFragColor = vec4(finalColor, uOpacity);
 }
