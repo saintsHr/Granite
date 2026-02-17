@@ -150,7 +150,9 @@ void main() {
     for (int i = 0; i < counts.x; i++) {
         vec3 L = normalize(pointLights[i].position - vFragPos);
         float distance = length(pointLights[i].position - vFragPos);
+
         float attenuation = clamp(1.0 - distance / pointLights[i].radius, 0.0, 1.0);
+        attenuation *= attenuation;
 
         float diff = dot(N, L);
         if (diff > 0.0) {
@@ -188,6 +190,7 @@ void main() {
         if (spotIntensity <= 0.0) continue;
 
         float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
+        attenuation *= attenuation;
         if (attenuation <= 0.0) continue;
 
         float diff = dot(N, L);
