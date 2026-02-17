@@ -128,13 +128,22 @@ void main() {
     // directional lights
     for (int i = 0; i < counts.y; i++) {
         vec3 L = normalize(-directionalLights[i].direction);
-        float diff = max(dot(N, L), 0.0);
-        result += diff * directionalLights[i].color * directionalLights[i].intensity;
+        float diff = dot(N, L);
 
-        // specular
-        vec3 H = normalize(L + V);
-        float spec = pow(max(dot(N, H), 0.0), uShininess);
-        result += spec * directionalLights[i].color * directionalLights[i].intensity;
+        if (diff > 0.0) {
+            diff = max(diff, 0.0);
+
+            vec3 lightColor = directionalLights[i].color;
+            float intensity = directionalLights[i].intensity;
+
+            // diffuse
+            result += diff * lightColor * intensity;
+
+            // specular
+            vec3 H = normalize(L + V);
+            float spec = pow(max(dot(N, H), 0.0), uShininess);
+            result += spec * lightColor * intensity;
+        }
     }
 
     // point lights
@@ -143,19 +152,30 @@ void main() {
         float distance = length(pointLights[i].position - vFragPos);
         float attenuation = clamp(1.0 - distance / pointLights[i].radius, 0.0, 1.0);
 
-        // diffuse
-        float diff = max(dot(N, L), 0.0);
-        result += diff * pointLights[i].color * pointLights[i].intensity * attenuation;
+        float diff = dot(N, L);
+        if (diff > 0.0) {
+            diff = max(diff, 0.0);
 
-        // specular
-        vec3 H = normalize(L + V);
-        float spec = pow(max(dot(N, H), 0.0), uShininess);
-        result += spec * pointLights[i].color * pointLights[i].intensity * attenuation;
+            vec3 lightColor = pointLights[i].color;
+            float intensity = pointLights[i].intensity;
+
+            // diffuse
+            result += diff * lightColor * intensity * attenuation;
+
+            // specular
+            vec3 H = normalize(L + V);
+            float spec = pow(max(dot(N, H), 0.0), uShininess);
+            result += spec * lightColor * intensity * attenuation;
+        }
     }
 
     // spot lights
     for (int i = 0; i < counts.z; i++) {
-        vec3 L = normalize(spotLights[i].position - vFragPos);
+
+        vec3 lightVec = spotLights[i].position - vFragPos;
+        float distance = length(lightVec);
+        vec3 L = lightVec / distance;
+
         float theta = dot(L, normalize(-spotLights[i].direction));
 
         float softness = 0.04;
@@ -165,27 +185,25 @@ void main() {
             theta
         );
 
-        if (spotIntensity > 0.0) {
-            float distance = length(spotLights[i].position - vFragPos);
-            float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
+        if (spotIntensity <= 0.0) continue;
 
-            // diffuse
-            float diff = max(dot(N, L), 0.0);
-            vec3 diffuse = diff * spotLights[i].color
-                                * spotLights[i].intensity
-                                * attenuation
-                                * spotIntensity;
+        float attenuation = clamp(1.0 - distance / spotLights[i].radius, 0.0, 1.0);
+        if (attenuation <= 0.0) continue;
 
-            // specular
-            vec3 H = normalize(L + V);
-            float spec = pow(max(dot(N, H), 0.0), uShininess);
-            vec3 specular = spec * spotLights[i].color
-                                * spotLights[i].intensity
-                                * attenuation
-                                * spotIntensity;
+        float diff = dot(N, L);
+        if (diff <= 0.0) continue;
 
-            result += diffuse + specular;
-        }
+        vec3 lightColor = spotLights[i].color;
+        float intensity = spotLights[i].intensity;
+
+        // diffuse
+        result += diff * lightColor * intensity * attenuation * spotIntensity;
+
+        // specular
+        vec3 H = normalize(L + V);
+        float spec = pow(max(dot(N, H), 0.0), uShininess);
+
+        result += spec * lightColor * intensity * attenuation * spotIntensity;
     }
 
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
