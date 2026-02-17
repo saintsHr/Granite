@@ -149,8 +149,9 @@ void main() {
 
     // point lights
     for (int i = 0; i < counts.x; i++) {
-        vec3 L = normalize(pointLights[i].position - vFragPos);
-        float distance = length(pointLights[i].position - vFragPos);
+        vec3 lightVec = pointLights[i].position - vFragPos;
+        float distance = max(length(lightVec), 0.001);
+        vec3 L = lightVec / distance;
 
         float attenuation = clamp(1.0 - distance / pointLights[i].radius, 0.0, 1.0);
         attenuation *= attenuation;
@@ -176,12 +177,12 @@ void main() {
     for (int i = 0; i < counts.z; i++) {
 
         vec3 lightVec = spotLights[i].position - vFragPos;
-        float distance = length(lightVec);
+        float distance = max(length(lightVec), 0.001);
         vec3 L = lightVec / distance;
 
         float theta = dot(L, normalize(-spotLights[i].direction));
 
-        float softness = 0.04;
+        float softness = (1.0 - spotLights[i].cutoff) * 0.2;
         float spotIntensity = smoothstep(
             spotLights[i].cutoff - softness,
             spotLights[i].cutoff,
