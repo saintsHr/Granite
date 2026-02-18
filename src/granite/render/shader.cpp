@@ -165,6 +165,14 @@ void main() {
         vec3 H = normalize(L + V);
 
         float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
+        float radiusFade = smoothstep(
+            pointLights[i].radius,
+            pointLights[i].radius * 0.9,
+            distance
+        );
+        attenuation *= radiusFade;
+
+        if (attenuation <= 0.0) continue;
 
         vec3 lightColor = pointLights[i].color;
         float intensity = pointLights[i].intensity;
@@ -179,8 +187,6 @@ void main() {
 
         // Fresnel (Schlick)
         float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
-
-        // Energy conservation
         float kD = 1.0 - kS;
 
         // Diffuse
@@ -199,11 +205,18 @@ void main() {
         vec3 L = lightVec / distance;
         vec3 H = normalize(L + V);
 
+        // attenuation
         float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
+        float radiusFade = smoothstep(
+            spotLights[i].radius,
+            spotLights[i].radius * 0.9,
+            distance
+        );
+        attenuation *= radiusFade;
+
         if (attenuation <= 0.0) continue;
 
         float theta = dot(L, normalize(-spotLights[i].direction));
-
         float softness = (1.0 - spotLights[i].cutoff) * 0.2;
         float spotIntensity = smoothstep(
             spotLights[i].cutoff - softness,
@@ -226,8 +239,6 @@ void main() {
 
         // Fresnel (Schlick)
         float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
-
-        // Energy conservation
         float kD = 1.0 - kS;
 
         // Diffuse
