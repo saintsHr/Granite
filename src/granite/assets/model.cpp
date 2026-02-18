@@ -54,14 +54,14 @@ gr::Render::Mesh* load(const std::string& filename) {
             tinyobj::index_t idx = shape.mesh.indices[i];
 
             // vertices
-            const float* v = &attrib.vertices[3 * idx.vertex_index];
+            const float* v = &attrib.vertices[static_cast<unsigned long int>(3 * idx.vertex_index)];
             vertices.push_back(v[0]);
             vertices.push_back(v[1]);
             vertices.push_back(v[2]);
 
             // normals
             if (hasNormals && idx.normal_index >= 0) {
-                const float* n = &attrib.normals[3 * idx.normal_index];
+                const float* n = &attrib.normals[static_cast<unsigned long int>(3 * idx.normal_index)];
                 normals.push_back(n[0]);
                 normals.push_back(n[1]);
                 normals.push_back(n[2]);
@@ -73,7 +73,7 @@ gr::Render::Mesh* load(const std::string& filename) {
 
             // uvs
             if (hasUVs && idx.texcoord_index >= 0) {
-                const float* t = &attrib.texcoords[2 * idx.texcoord_index];
+                const float* t = &attrib.texcoords[static_cast<unsigned long int>(2 * idx.texcoord_index)];
                 uvs.push_back(t[0]);
                 uvs.push_back(t[1]);
             } else {

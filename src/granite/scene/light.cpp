@@ -1,5 +1,7 @@
 #include "granite/scene/light.hpp"
 
+#include <cmath>
+
 namespace gr::Scene {
 
 LightID LightManager::nextID_ = 1;
@@ -23,7 +25,7 @@ LightID LightManager::create(const DirectionalLight& light) {
 
 LightID LightManager::create(const SpotLight& light) {
     SpotLight light_ = light;
-    light_.cutoff = cos(light.cutoff);
+    light_.cutoff = std::cos(light.cutoff);
     LightID id = nextID_++;
     spotLights_.emplace(id, light_);
     return id;
