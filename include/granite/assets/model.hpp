@@ -4,6 +4,6 @@
 
 namespace gr::Assets::Model {
 
-gr::Scene::RenderObject load(const std::string& filename);
+gr::Render::Mesh* load(const std::string& filename);
 
 }

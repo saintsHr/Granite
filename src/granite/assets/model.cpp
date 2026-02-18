@@ -5,9 +5,8 @@
 
 namespace gr::Assets::Model {
 
-gr::Scene::RenderObject load(const std::string& filename) {
-    gr::Scene::RenderObject renderObject;
-    gr::Scene::RenderObject nullObject;
+gr::Render::Mesh* load(const std::string& filename) {
+    gr::Render::Mesh* mesh = new gr::Render::Mesh();
 
     // .obj data
     tinyobj::attrib_t attrib;
@@ -28,7 +27,7 @@ gr::Scene::RenderObject load(const std::string& filename) {
             "Cannot load model from file '{}'",
             filename
         );
-        return nullObject;
+        return nullptr;
     }
 
     // mesh data
@@ -87,10 +86,9 @@ gr::Scene::RenderObject load(const std::string& filename) {
     }
 
     // loads data into mesh
-    renderObject.mesh = new gr::Render::Mesh();
-    renderObject.mesh->upload(vertices, indices, normals, uvs);
+    mesh->upload(vertices, indices, normals, uvs);
 
-    return renderObject;
+    return mesh;
 }
 
 }
