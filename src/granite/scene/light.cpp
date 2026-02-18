@@ -22,8 +22,10 @@ LightID LightManager::create(const DirectionalLight& light) {
 }
 
 LightID LightManager::create(const SpotLight& light) {
+    SpotLight light_ = light;
+    light_.cutoff = cos(light.cutoff);
     LightID id = nextID_++;
-    spotLights_.emplace(id, light);
+    spotLights_.emplace(id, light_);
     return id;
 }
 
