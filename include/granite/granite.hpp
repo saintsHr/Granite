@@ -8,3 +8,4 @@
 #include "granite/scene/scene.hpp"
 #include "granite/input/input.hpp"
 #include "granite/scene/light.hpp"
+#include "granite/assets/model.hpp"
