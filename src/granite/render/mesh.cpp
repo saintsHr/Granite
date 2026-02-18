@@ -302,7 +302,7 @@ void Mesh::newCircle(int segments) {
 
 	// borders
 	for (int i = 0; i <= segments; i++) {
-		float angle = (float)i * 2.f * gr::Math::PI / (float)segments;
+		float angle = static_cast<float>(i) * 2.f * gr::Math::PI / static_cast<float>(segments);
 
 		float x = std::cos(angle) * radius;
 		float y = std::sin(angle) * radius;
@@ -320,12 +320,12 @@ void Mesh::newCircle(int segments) {
 	for (int i = 1; i <= segments; i++) {
 		index.insert(index.end(), {
 			0,
-			(unsigned int)i,
-			(unsigned int)(i + 1)
+			static_cast<unsigned int>(i),
+			static_cast<unsigned int>(i + 1)
 		});
 	}
 
-	unsigned int baseIndex = vertices.size() / 3;
+	unsigned int baseIndex = static_cast<unsigned int>(vertices.size() / 3);
 
 	// center (back)
 	vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
@@ -334,7 +334,7 @@ void Mesh::newCircle(int segments) {
 
 	// borders (back)
 	for (int i = 0; i <= segments; i++) {
-		float angle = (float)i * 2.f * gr::Math::PI / (float)segments;
+		float angle = static_cast<float>(i) * 2.f * gr::Math::PI / static_cast<float>(segments);
 
 		float x = std::cos(angle) * radius;
 		float y = std::sin(angle) * radius;
@@ -351,8 +351,8 @@ void Mesh::newCircle(int segments) {
 	for (int i = 1; i <= segments; i++) {
 		index.insert(index.end(), {
 			baseIndex,
-			baseIndex + i + 1,
-			baseIndex + i
+			baseIndex + static_cast<unsigned int>(i + 1),
+			baseIndex + static_cast<unsigned int>(i)
 		});
 	}
 
