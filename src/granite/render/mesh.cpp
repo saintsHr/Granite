@@ -6,69 +6,52 @@
 
 namespace gr::Render {
 
-void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs) {
+void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs){
     size_t numVertices = vertices.size() / 3;
-    std::vector<float> interleaved;
-    interleaved.reserve(numVertices * 8);
-
-    for (size_t i = 0; i < numVertices; ++i){
-        interleaved.push_back(vertices[i*3 + 0]);
-        interleaved.push_back(vertices[i*3 + 1]);
-        interleaved.push_back(vertices[i*3 + 2]);
-
-        interleaved.push_back(normals[i*3 + 0]);
-        interleaved.push_back(normals[i*3 + 1]);
-        interleaved.push_back(normals[i*3 + 2]);
-
-        interleaved.push_back(uvs[i*2 + 0]);
-        interleaved.push_back(uvs[i*2 + 1]);
-    }
+    size_t totalSize = numVertices * 8 * sizeof(float);
 
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
 
-    // VBO data
-    glBufferData(
+    glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW);
+
+    float* buffer = (float*)glMapBufferRange(
         GL_ARRAY_BUFFER,
-        static_cast<GLsizeiptr>(interleaved.size() * static_cast<long int>(sizeof(float))),
-        interleaved.data(),
-        GL_STATIC_DRAW
+        0,
+        totalSize,
+        GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT
     );
 
-    // EBO data
+    if (buffer) {
+        for (size_t i = 0; i < numVertices; ++i) {
+            size_t base = i * 8;
+
+            buffer[base + 0] = vertices[i*3 + 0];
+            buffer[base + 1] = vertices[i*3 + 1];
+            buffer[base + 2] = vertices[i*3 + 2];
+
+            buffer[base + 3] = normals[i*3 + 0];
+            buffer[base + 4] = normals[i*3 + 1];
+            buffer[base + 5] = normals[i*3 + 2];
+
+            buffer[base + 6] = uvs[i*2 + 0];
+            buffer[base + 7] = uvs[i*2 + 1];
+        }
+
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
+
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
-        static_cast<GLsizeiptr>(index.size() * static_cast<long int>(sizeof(unsigned int))),
+        index.size() * sizeof(unsigned int),
         index.data(),
         GL_STATIC_DRAW
     );
 
-    // configs VAO
-    glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        nullptr
-    );
-    glVertexAttribPointer(
-        1,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        reinterpret_cast<void*>(3*sizeof(float))
-    );
-    glVertexAttribPointer(
-        2,
-        2,
-        GL_FLOAT,
-        GL_FALSE,
-        8 * sizeof(float),
-        reinterpret_cast<void*>(6*sizeof(float))
-    );
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), nullptr);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);

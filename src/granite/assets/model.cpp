@@ -41,33 +41,48 @@ gr::Scene::RenderObject load(const std::string& filename) {
     bool hasNormals = !attrib.normals.empty();
     bool hasUVs = !attrib.texcoords.empty();
 
+    size_t indexCount = 0;
+    unsigned int currentIndex = 0;
+
+    for (auto& shape : shapes) indexCount += shape.mesh.indices.size();
+    vertices.reserve(indexCount * 3);
+    normals.reserve(indexCount * 3);
+    uvs.reserve(indexCount * 2);
+    indices.reserve(indexCount);
+
     for (auto& shape : shapes) {
         for (size_t i = 0; i < shape.mesh.indices.size(); i++) {
             tinyobj::index_t idx = shape.mesh.indices[i];
 
             // vertices
-            vertices.push_back(attrib.vertices[3*idx.vertex_index + 0]);
-            vertices.push_back(attrib.vertices[3*idx.vertex_index + 1]);
-            vertices.push_back(attrib.vertices[3*idx.vertex_index + 2]);
+            const float* v = &attrib.vertices[3 * idx.vertex_index];
+            vertices.push_back(v[0]);
+            vertices.push_back(v[1]);
+            vertices.push_back(v[2]);
 
             // normals
             if (hasNormals && idx.normal_index >= 0) {
-                normals.push_back(attrib.normals[3*idx.normal_index + 0]);
-                normals.push_back(attrib.normals[3*idx.normal_index + 1]);
-                normals.push_back(attrib.normals[3*idx.normal_index + 2]);
+                const float* n = &attrib.normals[3 * idx.normal_index];
+                normals.push_back(n[0]);
+                normals.push_back(n[1]);
+                normals.push_back(n[2]);
             } else {
-                normals.insert(normals.end(), {0.f, 0.f, 0.f});
+                normals.push_back(0.f);
+                normals.push_back(0.f);
+                normals.push_back(0.f);
             }
 
             // uvs
             if (hasUVs && idx.texcoord_index >= 0) {
-                uvs.push_back(attrib.texcoords[2*idx.texcoord_index + 0]);
-                uvs.push_back(attrib.texcoords[2*idx.texcoord_index + 1]);
+                const float* t = &attrib.texcoords[2 * idx.texcoord_index];
+                uvs.push_back(t[0]);
+                uvs.push_back(t[1]);
             } else {
-                uvs.insert(uvs.end(), {0.f, 0.f});
+                uvs.push_back(0.f);
+                uvs.push_back(0.f);
             }
 
-            indices.push_back(static_cast<unsigned int>(vertices.size()/3 - 1));
+            indices.push_back(currentIndex++);
         }
     }
 

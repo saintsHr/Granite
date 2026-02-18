@@ -11,7 +11,7 @@ public:
     gr::Vec2 rotation = {0.0f, 0.0f};
     gr::Vec2 aspect = {1.0f, 1.0f};
     float fov = 75.0f;
-    float near = 0.1f;
+    float near = 0.01f;
     float far = 100.0f;
 
     glm::mat4 getProjection() const;
