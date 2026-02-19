@@ -34,16 +34,25 @@ void init() {
 
     // configs OpenGL
     while (glGetError() != GL_NO_ERROR) {}
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);
-    glEnable(GL_MULTISAMPLE);
+
+    glEnable(GL_STENCIL_TEST);
+    glClearStencil(0);
+
     glEnable(GL_CULL_FACE);
-    glEnable(GL_FRAMEBUFFER_SRGB);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+
+    glEnable(GL_MULTISAMPLE);
+
+    glEnable(GL_FRAMEBUFFER_SRGB);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     checkGL();
 
     // creates light UBO
@@ -84,6 +93,9 @@ void init() {
 }
 
 void beginFrame(const gr::Scene::Camera& camera){
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
     gFrame.view = camera.getView();
     gFrame.projection = camera.getProjection();
     gFrame.cameraPos = camera.pos;

@@ -57,16 +57,6 @@ void Window::endFrame() {
     glfwPollEvents(); 
 }
 
-void Window::clear(gr::Color3 color) {
-    glClearColor(
-        float(color.r) / 255.0f,
-        float(color.g) / 255.0f,
-        float(color.b) / 255.0f,
-        1.0f
-    );
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
 void Window::close() {
     glfwSetWindowShouldClose(this->getRaw(), GLFW_TRUE);
 }

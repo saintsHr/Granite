@@ -27,8 +27,6 @@ public:
     bool shouldClose() const;
     void endFrame();
 
-    void clear(gr::Color3 color);
-
     GLFWwindow* getRaw();
 private:
     gr::Vec2 size_;
