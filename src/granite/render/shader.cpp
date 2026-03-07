@@ -67,6 +67,7 @@ uniform float uOpacity;
 uniform vec3 uCameraPos;
 uniform sampler2D uTexture;
 uniform bool uHasTexture;
+uniform vec3 uSpecularColor;
 
 in vec3 vNormal;
 in vec3 vFragPos;
@@ -122,7 +123,7 @@ layout(std140) uniform LightBlock {
 void main() {
     vec3 N = normalize(vNormal);
     vec3 V = normalize(uCameraPos - vFragPos);
-    const float F0 = 0.04;
+    vec3 F0 = uSpecularColor;
 
     vec3 diffuseAccum = ambientLight.color * ambientLight.intensity;
     vec3 specAccum = vec3(0.0);
@@ -141,13 +142,11 @@ void main() {
 
         if (NdotL <= 0.0) continue;
 
-        float specBase = pow(NdotH, uShininess);
+        float specBase = pow(NdotH, uShininess) * (uShininess + 2.0) / 8.0;
 
         // Fresnel (Schlick)
-        float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
-
-        // Energy conservation
-        float kD = 1.0 - kS;
+        vec3 kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
+        vec3 kD = vec3(1.0);
 
         // Diffuse
         diffuseAccum += kD * NdotL * lightColor * intensity;
@@ -183,11 +182,11 @@ void main() {
 
         if (NdotL <= 0.0) continue;
 
-        float specBase = pow(NdotH, uShininess);
+        float specBase = pow(NdotH, uShininess) * (uShininess + 2.0) / 8.0;
 
         // Fresnel (Schlick)
-        float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
-        float kD = 1.0 - kS;
+        vec3 kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
+        vec3 kD = vec3(1.0);
 
         // Diffuse
         diffuseAccum += kD * NdotL * lightColor * intensity * attenuation;
@@ -216,7 +215,7 @@ void main() {
 
         if (attenuation <= 0.0) continue;
 
-        float theta = dot(L, normalize(-spotLights[i].direction));
+        float theta = dot(-L, normalize(spotLights[i].direction));
         float softness = (1.0 - spotLights[i].cutoff) * 0.2;
         float spotIntensity = smoothstep(
             spotLights[i].cutoff - softness,
@@ -232,14 +231,14 @@ void main() {
 
         if (NdotL <= 0.0) continue;
 
-        float specBase = pow(NdotH, uShininess);
+        float specBase = pow(NdotH, uShininess) * (uShininess + 2.0) / 8.0;
 
         vec3 lightColor = spotLights[i].color;
         float intensity = spotLights[i].intensity;
 
         // Fresnel (Schlick)
-        float kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
-        float kD = 1.0 - kS;
+        vec3 kS = F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
+        vec3 kD = vec3(1.0);
 
         // Diffuse
         diffuseAccum += kD * NdotL * lightColor * intensity * attenuation * spotIntensity;

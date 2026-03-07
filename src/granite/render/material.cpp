@@ -6,11 +6,12 @@ namespace gr::Render{
 void Material::bind(){
     shader->use();
 
-    if (cL_ == -1) cL_ = glGetUniformLocation(shader->getProgram(), "uColor");
-    if (tL_ == -1) tL_ = glGetUniformLocation(shader->getProgram(), "uTexture");
-    if (sL_ == -1) sL_ = glGetUniformLocation(shader->getProgram(), "uShininess");
-    if (oL_ == -1) oL_ = glGetUniformLocation(shader->getProgram(), "uOpacity");
-    if (hL_ == -1) hL_ = glGetUniformLocation(shader->getProgram(), "uHasTexture");
+    if (cL_  == -1) cL_  = glGetUniformLocation(shader->getProgram(), "uColor");
+    if (tL_  == -1) tL_  = glGetUniformLocation(shader->getProgram(), "uTexture");
+    if (sL_  == -1) sL_  = glGetUniformLocation(shader->getProgram(), "uShininess");
+    if (oL_  == -1) oL_  = glGetUniformLocation(shader->getProgram(), "uOpacity");
+    if (hL_  == -1) hL_  = glGetUniformLocation(shader->getProgram(), "uHasTexture");
+    if (scL_ == -1) scL_ = glGetUniformLocation(shader->getProgram(), "uSpecularColor");
 
     if (cL_ != -1){
         glUniform3f(
@@ -18,6 +19,15 @@ void Material::bind(){
             static_cast<float>(color.r) * (1.0f / 255.0f),
             static_cast<float>(color.g) * (1.0f / 255.0f),
             static_cast<float>(color.b) * (1.0f / 255.0f)
+        );
+    }
+
+    if (scL_ != -1){
+        glUniform3f(
+            scL_,
+            static_cast<float>(specularColor.r) * (1.0f / 255.0f),
+            static_cast<float>(specularColor.g) * (1.0f / 255.0f),
+            static_cast<float>(specularColor.b) * (1.0f / 255.0f)
         );
     }
 
