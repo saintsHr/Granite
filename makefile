@@ -28,7 +28,7 @@ INC_DIR      := include
 THIRD_PARTY  := third-party
 THIRD_SRC    := $(THIRD_PARTY)/src
 
-INCLUDE := -I$(INC_DIR) -I$(THIRD_PARTY)/include
+INCLUDE := -I$(INC_DIR) -I$(THIRD_PARTY)/include -I/usr/include/bullet
 DEFS := -DGLFW_INCLUDE_NONE
 
 DEPFLAGS := -MMD -MP

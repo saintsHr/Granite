@@ -1,4 +1,4 @@
 #pragma once
 
-#include "physics/body.hpp"
-#include "physics/world.hpp"
+#include "granite/physics/body.hpp"
+#include "granite/physics/world.hpp"

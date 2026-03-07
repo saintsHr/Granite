@@ -9,3 +9,4 @@
 #include "granite/input/input.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/assets/model.hpp"
+#include "granite/physics/physics.hpp"

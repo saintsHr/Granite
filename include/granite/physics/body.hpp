@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/vector.hpp"
+#include "granite/core/vector.hpp"
 
 namespace gr::Physics {
 
