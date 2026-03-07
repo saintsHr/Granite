@@ -107,13 +107,13 @@ void Mesh::draw(const Shader& shader) const {
 
 void Mesh::newTriangle() {
     std::vector<float> vertices = {
-       -1.0f, -0.866f, 0.0f,
-        1.0f, -0.866f, 0.0f,
-        0.0f,  0.866f, 0.0f,
+       -0.5f, -0.433f, 0.0f,
+        0.5f, -0.433f, 0.0f,
+        0.0f,  0.433f, 0.0f,
 
-       -1.0f, -0.866f, 0.0f,
-        0.0f,  0.866f, 0.0f,
-        1.0f, -0.866f, 0.0f
+       -0.5f, -0.433f, 0.0f,
+        0.0f,  0.433f, 0.0f,
+        0.5f, -0.433f, 0.0f
     };
 
     std::vector<float> normals = {
@@ -146,15 +146,15 @@ void Mesh::newTriangle() {
 
 void Mesh::newQuad() {
     std::vector<float> vertices = {
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-         1.0f,  1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f,
 
-        -1.0f, -1.0f, 0.0f,
-         1.0f, -1.0f, 0.0f,
-         1.0f,  1.0f, 0.0f,
-        -1.0f,  1.0f, 0.0f
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
     };
 
     std::vector<float> normals = {
@@ -194,30 +194,30 @@ void Mesh::newQuad() {
 
 void Mesh::newCube() {
     std::vector<float> vertices = {
-       -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-       -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-       -1.0f,-1.0f,-1.0f,
-       -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-       -1.0f,-1.0f,-1.0f,
-       -1.0f,-1.0f, 1.0f,
-       -1.0f, 1.0f, 1.0f,
-       -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-       -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-       -1.0f, 1.0f,-1.0f,
-       -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-       -1.0f,-1.0f, 1.0f
+       -0.5f,-0.5f, 0.5f,
+        0.5f,-0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+       -0.5f, 0.5f, 0.5f,
+        0.5f,-0.5f,-0.5f,
+       -0.5f,-0.5f,-0.5f,
+       -0.5f, 0.5f,-0.5f,
+        0.5f, 0.5f,-0.5f,
+       -0.5f,-0.5f,-0.5f,
+       -0.5f,-0.5f, 0.5f,
+       -0.5f, 0.5f, 0.5f,
+       -0.5f, 0.5f,-0.5f,
+        0.5f,-0.5f, 0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f, 0.5f,-0.5f,
+        0.5f, 0.5f, 0.5f,
+       -0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f,-0.5f,
+       -0.5f, 0.5f,-0.5f,
+       -0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f,-0.5f,
+        0.5f,-0.5f, 0.5f,
+       -0.5f,-0.5f, 0.5f
     };
 
     std::vector<float> normals = {
@@ -303,7 +303,7 @@ void Mesh::newCircle(int segments) {
 	std::vector<float> normals;
 	std::vector<float> uvs;
 
-	const float radius = 1.0f;
+	const float radius = 0.5f;
 
 	// center
 	vertices.insert(vertices.end(), {0.f, 0.f, 0.f});
@@ -375,6 +375,8 @@ void Mesh::newSphere(int latSeg, int lonSeg) {
 	std::vector<float> normals;
 	std::vector<float> uvs;
 
+	const float radius = 0.5f;
+
 	for (int lat = 0; lat <= latSeg; lat++) {
 		float theta = static_cast<float>(lat) * gr::Math::PI / static_cast<float>(latSeg);
 		float v = static_cast<float>(lat) / static_cast<float>(latSeg);
@@ -387,7 +389,7 @@ void Mesh::newSphere(int latSeg, int lonSeg) {
 			float y = std::cos(theta);
 			float z = std::sin(theta) * std::sin(phi);
 
-			vertices.insert(vertices.end(), {x, y, z});
+			vertices.insert(vertices.end(), {x * radius, y * radius, z * radius});
 			normals.insert(normals.end(), {x, y, z});
 			uvs.insert(uvs.end(), {1.0f - u, v});
 		}
@@ -400,7 +402,7 @@ void Mesh::newSphere(int latSeg, int lonSeg) {
 
 			index.insert(index.end(), {
 				static_cast<unsigned>(a), static_cast<unsigned>(a+1), static_cast<unsigned>(b),
-				static_cast<unsigned>(a + 1), static_cast<unsigned>(b + 1), static_cast<unsigned>(b)
+				static_cast<unsigned>(a+1), static_cast<unsigned>(b+1), static_cast<unsigned>(b)
 			});
 		}
 	}
@@ -414,8 +416,9 @@ void Mesh::newCylinder(int segments) {
 	std::vector<unsigned int> index;
 	std::vector<float> uvs;
 
-	const float yBottom = -1.f;
-	const float yTop    =  1.f;
+	const float radius = 0.5f;
+	const float yBottom = -0.5f;
+	const float yTop    =  0.5f;
 
 	unsigned int baseCenter = 0;
 	vertices.insert(vertices.end(), {0.f, yBottom, 0.f});
@@ -429,7 +432,7 @@ void Mesh::newCylinder(int segments) {
 		float x = std::cos(a);
 		float z = std::sin(a);
 
-		vertices.insert(vertices.end(), {x, yBottom, z});
+		vertices.insert(vertices.end(), {x * radius, yBottom, z * radius});
 		normals.insert(normals.end(),  {0.f, -1.f, 0.f});
 		uvs.insert(uvs.end(), {x * 0.5f + 0.5f, z * 0.5f + 0.5f});
 	}
@@ -455,7 +458,7 @@ void Mesh::newCylinder(int segments) {
 		float x = std::cos(a);
 		float z = std::sin(a);
 
-		vertices.insert(vertices.end(), {x, yTop, z});
+		vertices.insert(vertices.end(), {x * radius, yTop, z * radius});
 		normals.insert(normals.end(),  {0.f, 1.f, 0.f});
 		uvs.insert(uvs.end(), {x * 0.5f + 0.5f, z * 0.5f + 0.5f});
 	}
@@ -471,23 +474,23 @@ void Mesh::newCylinder(int segments) {
 
 	unsigned int sideStart = static_cast<unsigned int>(vertices.size()) / 3;
 
-    for (int i = 0; i <= segments; i++) {
-        float a = 2.f * gr::Math::PI * float(i) / float(segments);
-        float x = std::cos(a);
-        float z = std::sin(a);
+	for (int i = 0; i <= segments; i++) {
+		float a = 2.f * gr::Math::PI * float(i) / float(segments);
+		float x = std::cos(a);
+		float z = std::sin(a);
 
-        float u = 1.f - static_cast<float>(i) / static_cast<float>(segments);
-        float vBottom = 1.f;
-        float vTop    = 0.f;
+		float u = 1.f - static_cast<float>(i) / static_cast<float>(segments);
+		float vBottom = 1.f;
+		float vTop    = 0.f;
 
-        vertices.insert(vertices.end(), {x, yBottom, z});
-        normals.insert(normals.end(), {x, 0.f, z});
-        uvs.insert(uvs.end(), {u, vBottom});
+		vertices.insert(vertices.end(), {x * radius, yBottom, z * radius});
+		normals.insert(normals.end(), {x, 0.f, z});
+		uvs.insert(uvs.end(), {u, vBottom});
 
-        vertices.insert(vertices.end(), {x, yTop, z});
-        normals.insert(normals.end(), {x, 0.f, z});
-        uvs.insert(uvs.end(), {u, vTop});
-    }
+		vertices.insert(vertices.end(), {x * radius, yTop, z * radius});
+		normals.insert(normals.end(), {x, 0.f, z});
+		uvs.insert(uvs.end(), {u, vTop});
+	}
 
 	for (int i = 0; i < segments; i++) {
 		unsigned int next = (static_cast<unsigned int>(i) + 1) % static_cast<unsigned int>(segments);
@@ -514,10 +517,10 @@ void Mesh::newPyramid() {
     unsigned int baseStart = 0;
 
     vertices.insert(vertices.end(), {
-         1.f, -1.f,  1.f,
-        -1.f, -1.f,  1.f,
-        -1.f, -1.f, -1.f,
-         1.f, -1.f, -1.f
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f
     });
 
     for (int i = 0; i < 4; i++) normals.insert(normals.end(), {0.f, -1.f, 0.f});
@@ -527,12 +530,11 @@ void Mesh::newPyramid() {
         baseStart + 0, baseStart + 2, baseStart + 3
     });
 
-
-    glm::vec3 apex(0.f, 1.f, 0.f);
+    glm::vec3 apex(0.f, 0.5f, 0.f);
 
     {
-        glm::vec3 a( 1.f, -1.f,  1.f);
-        glm::vec3 b(-1.f, -1.f,  1.f);
+        glm::vec3 a( 0.5f, -0.5f,  0.5f);
+        glm::vec3 b(-0.5f, -0.5f,  0.5f);
 
         glm::vec3 n = glm::normalize(glm::cross(b - apex, a - apex));
 
@@ -550,8 +552,8 @@ void Mesh::newPyramid() {
     }
 
     {
-        glm::vec3 a(-1.f, -1.f,  1.f);
-        glm::vec3 b(-1.f, -1.f, -1.f);
+        glm::vec3 a(-0.5f, -0.5f,  0.5f);
+        glm::vec3 b(-0.5f, -0.5f, -0.5f);
 
         glm::vec3 n = glm::normalize(glm::cross(b - apex, a - apex));
 
@@ -569,12 +571,12 @@ void Mesh::newPyramid() {
     }
 
     {
-        glm::vec3 a(-1.f, -1.f, -1.f);
-        glm::vec3 b( 1.f, -1.f, -1.f);
+        glm::vec3 a(-0.5f, -0.5f, -0.5f);
+        glm::vec3 b( 0.5f, -0.5f, -0.5f);
 
         glm::vec3 n = glm::normalize(glm::cross(b - apex, a - apex));
 
-        unsigned int start = static_cast<unsigned int>(vertices.size() )/ 3;
+        unsigned int start = static_cast<unsigned int>(vertices.size()) / 3;
 
         vertices.insert(vertices.end(), {
             a.x, a.y, a.z,
@@ -588,8 +590,8 @@ void Mesh::newPyramid() {
     }
 
     {
-        glm::vec3 a( 1.f, -1.f, -1.f);
-        glm::vec3 b( 1.f, -1.f,  1.f);
+        glm::vec3 a( 0.5f, -0.5f, -0.5f);
+        glm::vec3 b( 0.5f, -0.5f,  0.5f);
 
         glm::vec3 n = glm::normalize(glm::cross(b - apex, a - apex));
 
@@ -638,8 +640,9 @@ void Mesh::newCone(int segments) {
 	std::vector<unsigned int> index;
 	std::vector<float> uvs;
 
-	const float yTop    =  1.f;
-	const float yBottom = -1.f;
+	const float radius  = 0.5f;
+	const float yTop    =  0.5f;
+	const float yBottom = -0.5f;
 	const float slope   = 0.5f;
 
 	unsigned int baseCenter = 0;
@@ -654,8 +657,9 @@ void Mesh::newCone(int segments) {
 		float x = std::cos(a);
 		float z = std::sin(a);
 
-		vertices.insert(vertices.end(), {x, yBottom, z});
+		vertices.insert(vertices.end(), {x * radius, yBottom, z * radius});
 		normals.insert(normals.end(),  {0.f, -1.f, 0.f});
+
 		float u = (x + 1.f) * 0.5f;
 		float v = (1.f - z) * 0.5f;
 		uvs.insert(uvs.end(), {u, v});
@@ -671,6 +675,7 @@ void Mesh::newCone(int segments) {
 	}
 
 	unsigned int sideStart = static_cast<unsigned int>(vertices.size()) / 3;
+
 	for (int i = 0; i <= segments; i++) {
 		float a = 2.f * gr::Math::PI * float(i) / float(segments);
 		float x = std::cos(a);
@@ -680,7 +685,8 @@ void Mesh::newCone(int segments) {
 		float vBottom = 1.f;
 		float vTop    = 0.f;
 
-		vertices.insert(vertices.end(), {x, yBottom, z});
+		vertices.insert(vertices.end(), {x * radius, yBottom, z * radius});
+
 		glm::vec3 n = glm::normalize(glm::vec3(x, slope, z));
 		normals.insert(normals.end(), {n.x, n.y, n.z});
 		uvs.insert(uvs.end(), {u, vBottom});

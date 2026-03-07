@@ -20,6 +20,12 @@ namespace gr::Physics {
     }
 
     World::~World() {
+        for (int i = 0; i < bodies_.size(); i++) {
+            world_->removeRigidBody(bodies_.at(i)->getRaw_());
+        }
+
+        bodies_.clear();
+
         delete world_;
         delete solver_;
         delete broadphase_;
@@ -28,7 +34,11 @@ namespace gr::Physics {
     }
 
     void World::step(float dt){
+        world_->stepSimulation(dt, 10, 1.0f / 60.0f);
 
+        for (int i = 0; i < bodies_.size(); i++) {
+            bodies_.at(i)->sync();
+        }
     }
 
     void World::removeBody(gr::Physics::Body* body){
@@ -36,9 +46,11 @@ namespace gr::Physics {
             std::remove(bodies_.begin(), bodies_.end(), body),
             bodies_.end()
         );
+        world_->removeRigidBody(body->getRaw_());
     }
 
     void World::addBody(gr::Physics::Body* body){
         bodies_.push_back(body);
+        world_->addRigidBody(body->getRaw_());
     }
 }
