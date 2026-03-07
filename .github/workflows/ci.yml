@@ -32,7 +32,8 @@ jobs:
           sudo apt-get install -y \
             libgl1-mesa-dev \
             libglfw3-dev \
-            libglm-dev
+            libglm-dev \
+            libbullet-dev
 
       - name: Compiler Version
         run: |
