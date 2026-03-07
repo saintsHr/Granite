@@ -20,7 +20,7 @@ namespace gr::Physics {
     }
 
     World::~World() {
-        for (int i = 0; i < bodies_.size(); i++) {
+        for (long unsigned int i = 0; i < bodies_.size(); i++) {
             world_->removeRigidBody(bodies_.at(i)->getRaw_());
         }
 
@@ -36,7 +36,7 @@ namespace gr::Physics {
     void World::step(float dt){
         world_->stepSimulation(dt, 10, 1.0f / 60.0f);
 
-        for (int i = 0; i < bodies_.size(); i++) {
+        for (long unsigned int i = 0; i < bodies_.size(); i++) {
             bodies_.at(i)->sync();
         }
     }
