@@ -92,6 +92,7 @@ void Body::build() {
     }
 
     body_->setActivationState(DISABLE_DEACTIVATION);
+    body_->setDamping(0.1f, 0.1f);
 }
 
 void Body::sync() {
