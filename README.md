@@ -19,13 +19,14 @@ if you find any issue or have a cool idea/suggestion, share it on github issues 
 
 ### 🚀 Features:
 - 3D Rendering
-- Transform
+- Transforms
 - Custom Meshes
 - Primitives
 - Custom Shaders
 - Lights
 - Window Management
 - Keyboard & Mouse Input
+- 3D Physics
 
 ---
 
