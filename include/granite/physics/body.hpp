@@ -46,13 +46,13 @@ enum class Shape {
 
 class PhysicsMaterial {
 public:
-    float mass             = 1.0f;
-    float friction         = 0.5f;
-    float linearDamping    = 0.02f;
-    float angularDamping   = 0.1f;
-    float rollingFriction  = 0.02f;
+    float bounciness       = 0.00f;
+    float friction         = 0.50f;
+    float mass             = 1.00f;
+    float linearDamping    = 0.01f;
+    float angularDamping   = 0.05f;
+    float rollingFriction  = 0.00f;
     float spinningFriction = 0.02f;
-    float bounciness       = 0.2f;
 };
 
 class Body {
