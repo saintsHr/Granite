@@ -56,6 +56,24 @@ public:
 
     void build();
     void sync();
+
+    void applyCentralForce(gr::Vec3 force);
+    void applyForce(gr::Vec3 force, gr::Vec3 pos);
+
+    void applyCentralImpulse(gr::Vec3 impulse);
+    void applyImpulse(gr::Vec3 impulse, gr::Vec3 pos);
+
+    void applyTorqueImpulse(gr::Vec3 torque);
+    void applyTorque(gr::Vec3 torque);
+
+    void setLinearVelocity(gr::Vec3 velocity);
+    void setAngularVelocity(gr::Vec3 velocity);
+
+    gr::Vec3 getLinearVelocity();
+    gr::Vec3 getAngularVelocity();
+
+    void clearForces();
+
     btRigidBody* getRaw_();
 private:
     btRigidBody*      body_   = nullptr;

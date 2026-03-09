@@ -28,12 +28,22 @@ namespace gr::Physics {
 
 void Body::build() {
     btTransform btTransform;
+    btQuaternion rot;
     btTransform.setIdentity();
+
     btTransform.setOrigin(btVector3(
         static_cast<btScalar>(transform.position.x),
         static_cast<btScalar>(transform.position.y),
         static_cast<btScalar>(transform.position.z)
     ));
+
+    rot.setEulerZYX(
+        transform.rotation.z * gr::Math::PI / 180.0f,
+        transform.rotation.y * gr::Math::PI / 180.0f,
+        transform.rotation.x * gr::Math::PI / 180.0f
+    );
+
+    btTransform.setRotation(rot);
 
     motion_ = new btDefaultMotionState(btTransform);
 
@@ -116,7 +126,11 @@ void Body::build() {
     }
 
     body_->setActivationState(DISABLE_DEACTIVATION);
+    body_->setSleepingThresholds(0,0);
     body_->setDamping(0.1f, 0.1f);
+    body_->setFriction(1.0f);
+    body_->setRollingFriction(0.2f);
+    body_->setSpinningFriction(0.2f);
 }
 
 void Body::sync() {
@@ -135,10 +149,82 @@ void Body::sync() {
     };
 
     transform.rotation = {
-        static_cast<float>(pitch),
-        static_cast<float>(yaw),
-        static_cast<float>(roll)
+        static_cast<float>(roll  * 180.0f / gr::Math::PI),
+        static_cast<float>(pitch * 180.0f / gr::Math::PI),
+        static_cast<float>(yaw   * 180.0f / gr::Math::PI)
     };
+}
+
+void Body::applyCentralForce(gr::Vec3 force) {
+    btVector3 f(
+        force.x,
+        force.y,
+        force.z
+    );
+
+    body_->applyCentralForce(f);
+}
+
+void Body::applyForce(gr::Vec3 force, gr::Vec3 pos) {
+    btVector3 f(
+        force.x,
+        force.y,
+        force.z
+    );
+
+    btVector3 p(
+       -pos.x,
+       -pos.y,
+        pos.z
+    );
+
+    body_->applyForce(f, p);
+}
+
+void Body::applyCentralImpulse(gr::Vec3 impulse) {
+    btVector3 i(
+        impulse.x,
+        impulse.y,
+        impulse.z
+    );
+
+    body_->applyCentralImpulse(i);
+}
+
+void Body::applyImpulse(gr::Vec3 impulse, gr::Vec3 pos) {
+    btVector3 i(
+        impulse.x,
+        impulse.y,
+        impulse.z
+    );
+
+    btVector3 p(
+       -pos.x,
+       -pos.y,
+        pos.z
+    );
+
+    body_->applyImpulse(i, p);
+}
+
+void Body::applyTorque(gr::Vec3 torque) {
+    btVector3 t(
+        torque.z,
+        torque.y,
+       -torque.x
+    );
+
+    body_->applyTorque(t);
+}
+
+void Body::applyTorqueImpulse(gr::Vec3 torque) {
+    btVector3 t(
+        torque.z,
+        torque.y,
+       -torque.x
+    );
+
+    body_->applyTorqueImpulse(t);
 }
 
 Body::~Body() {
