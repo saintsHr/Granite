@@ -149,9 +149,9 @@ void Body::sync() {
     };
 
     transform.rotation = {
-        static_cast<float>(roll  * 180.0f / gr::Math::PI),
-        static_cast<float>(pitch * 180.0f / gr::Math::PI),
-        static_cast<float>(yaw   * 180.0f / gr::Math::PI)
+        roll  * 180.0f / gr::Math::PI,
+        pitch * 180.0f / gr::Math::PI,
+        yaw   * 180.0f / gr::Math::PI
     };
 }
 
