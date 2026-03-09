@@ -44,12 +44,24 @@ enum class Shape {
     CYLINDER
 };
 
+class PhysicsMaterial {
+public:
+    float mass             = 1.0f;
+    float friction         = 0.5f;
+    float linearDamping    = 0.02f;
+    float angularDamping   = 0.1f;
+    float rollingFriction  = 0.02f;
+    float spinningFriction = 0.02f;
+    float bounciness       = 0.2f;
+};
+
 class Body {
 public:
     ~Body();
 
     gr::Transform transform;
-    float mass = 1.0f;
+
+    PhysicsMaterial material;
 
     BodyType type = BodyType::DYNAMIC;
     Shape shape = Shape::CUBE;

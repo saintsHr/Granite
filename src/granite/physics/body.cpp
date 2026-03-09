@@ -102,7 +102,7 @@ void Body::build() {
         break;
     }
 
-    float bodyMass = (type == BodyType::DYNAMIC) ? mass : 0.0f;
+    float bodyMass = (type == BodyType::DYNAMIC) ? material.mass : 0.0f;
 
     btVector3 inertia(0,0,0);
     if (bodyMass != 0) shape_->calculateLocalInertia(bodyMass, inertia);
@@ -127,10 +127,12 @@ void Body::build() {
 
     body_->setActivationState(DISABLE_DEACTIVATION);
     body_->setSleepingThresholds(0,0);
-    body_->setDamping(0.1f, 0.1f);
-    body_->setFriction(1.0f);
-    body_->setRollingFriction(0.2f);
-    body_->setSpinningFriction(0.2f);
+
+    body_->setDamping(material.linearDamping, material.angularDamping);
+    body_->setFriction(material.friction);
+    body_->setRollingFriction(material.rollingFriction);
+    body_->setSpinningFriction(material.spinningFriction);
+    body_->setRestitution(material.bounciness);
 }
 
 void Body::sync() {
