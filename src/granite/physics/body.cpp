@@ -125,8 +125,9 @@ void Body::build() {
         body_->setActivationState(DISABLE_DEACTIVATION);
     }
 
-    body_->setActivationState(DISABLE_DEACTIVATION);
-    body_->setSleepingThresholds(0,0);
+    body_->setActivationState(ACTIVE_TAG);
+    body_->setSleepingThresholds(0.05f, 0.05f);
+    body_->setDeactivationTime(1.0f);
 
     body_->setDamping(material.linearDamping, material.angularDamping);
     body_->setFriction(material.friction);
