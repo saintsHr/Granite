@@ -173,8 +173,8 @@ void Body::applyForce(gr::Vec3 force, gr::Vec3 pos) {
     );
 
     btVector3 p(
-       -pos.x,
-       -pos.y,
+        pos.x,
+        pos.y,
         pos.z
     );
 
@@ -199,8 +199,8 @@ void Body::applyImpulse(gr::Vec3 impulse, gr::Vec3 pos) {
     );
 
     btVector3 p(
-       -pos.x,
-       -pos.y,
+        pos.x,
+        pos.y,
         pos.z
     );
 
