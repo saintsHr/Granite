@@ -28,6 +28,6 @@ SOFTWARE.
 
 namespace gr::Assets::Model {
 
-gr::Render::Mesh* load(const std::string& filename);
+gr::Render::Mesh load(const std::string& filename);
 
 }

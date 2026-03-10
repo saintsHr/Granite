@@ -29,8 +29,9 @@ SOFTWARE.
 
 namespace gr::Assets::Model {
 
-gr::Render::Mesh* load(const std::string& filename) {
-    gr::Render::Mesh* mesh = new gr::Render::Mesh();
+gr::Render::Mesh load(const std::string& filename) {
+    gr::Render::Mesh mesh;
+    gr::Render::Mesh nullmesh;
 
     // .obj data
     tinyobj::attrib_t attrib;
@@ -51,7 +52,7 @@ gr::Render::Mesh* load(const std::string& filename) {
             "Cannot load model from file '{}'",
             filename
         );
-        return nullptr;
+        return nullmesh;
     }
 
     // mesh data
@@ -110,7 +111,7 @@ gr::Render::Mesh* load(const std::string& filename) {
     }
 
     // loads data into mesh
-    mesh->upload(vertices, indices, normals, uvs);
+    mesh.upload(vertices, indices, normals, uvs);
 
     return mesh;
 }

@@ -129,7 +129,9 @@ void Mesh::draw(const Shader& shader) const {
     glBindVertexArray(0);
 }
 
-void Mesh::newTriangle() {
+gr::Render::Mesh Mesh::newTriangle() {
+    gr::Render::Mesh mesh;
+
     std::vector<float> vertices = {
        -0.5f, -0.433f, 0.0f,
         0.5f, -0.433f, 0.0f,
@@ -165,10 +167,13 @@ void Mesh::newTriangle() {
         3, 4, 5
     };
 
-    upload(vertices, index, normals, uvs);
+    mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newQuad() {
+gr::Render::Mesh Mesh::newQuad() {
+    gr::Render::Mesh mesh;
+
     std::vector<float> vertices = {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
@@ -213,10 +218,13 @@ void Mesh::newQuad() {
         1.0f, 0.0f
     };
 
-    upload(vertices, index, normals, uvs);
+    mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newCube() {
+gr::Render::Mesh Mesh::newCube() {
+    gr::Render::Mesh mesh;
+
     std::vector<float> vertices = {
        -0.5f,-0.5f, 0.5f,
         0.5f,-0.5f, 0.5f,
@@ -318,10 +326,13 @@ void Mesh::newCube() {
         0.0f, 0.0f
     };
 
-    upload(vertices, index, normals, uvs);
+    mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newCircle(int segments) {
+gr::Render::Mesh Mesh::newCircle(int segments) {
+    gr::Render::Mesh mesh;
+
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
 	std::vector<float> normals;
@@ -390,10 +401,13 @@ void Mesh::newCircle(int segments) {
 		});
 	}
 
-	upload(vertices, index, normals, uvs);
+	mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newSphere(int latSeg, int lonSeg) {
+gr::Render::Mesh Mesh::newSphere(int latSeg, int lonSeg) {
+    gr::Render::Mesh mesh;
+
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
 	std::vector<float> normals;
@@ -431,10 +445,13 @@ void Mesh::newSphere(int latSeg, int lonSeg) {
 		}
 	}
 
-	upload(vertices, index, normals, uvs);
+	mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newCylinder(int segments) {
+gr::Render::Mesh Mesh::newCylinder(int segments) {
+    gr::Render::Mesh mesh;
+
 	std::vector<float> vertices;
 	std::vector<float> normals;
 	std::vector<unsigned int> index;
@@ -530,10 +547,13 @@ void Mesh::newCylinder(int segments) {
 		});
 	}
 
-	upload(vertices, index, normals, uvs);
+	mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newPyramid() {
+gr::Render::Mesh Mesh::newPyramid() {
+    gr::Render::Mesh mesh;
+
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<unsigned int> index;
@@ -655,10 +675,13 @@ void Mesh::newPyramid() {
         0.5f, 0.0f
     };
 
-    upload(vertices, index, normals, uvs);
+    mesh.upload(vertices, index, normals, uvs);
+    return mesh;
 }
 
-void Mesh::newCone(int segments) {
+gr::Render::Mesh Mesh::newCone(int segments) {
+    gr::Render::Mesh mesh;
+
 	std::vector<float> vertices;
 	std::vector<float> normals;
 	std::vector<unsigned int> index;
@@ -732,14 +755,46 @@ void Mesh::newCone(int segments) {
 		});
 	}
 
-	upload(vertices, index, normals, uvs);
+	mesh.upload(vertices, index, normals, uvs);
+    return mesh;
+}
+
+Mesh::Mesh(Mesh&& other) noexcept {
+    vao_ = other.vao_;
+    vbo_ = other.vbo_;
+    ebo_ = other.ebo_;
+    vertexCount_ = other.vertexCount_;
+    indexCount_ = other.indexCount_;
+
+    other.vao_ = 0;
+    other.vbo_ = 0;
+    other.ebo_ = 0;
+}
+
+Mesh& Mesh::operator=(Mesh&& other) noexcept {
+    if (this != &other) {
+        glDeleteVertexArrays(1, &vao_);
+        glDeleteBuffers(1, &vbo_);
+        glDeleteBuffers(1, &ebo_);
+
+        vao_ = other.vao_;
+        vbo_ = other.vbo_;
+        ebo_ = other.ebo_;
+        vertexCount_ = other.vertexCount_;
+        indexCount_ = other.indexCount_;
+
+        other.vao_ = 0;
+        other.vbo_ = 0;
+        other.ebo_ = 0;
+    }
+    return *this;
 }
 
 Mesh::~Mesh() {
     glBindVertexArray(0);
-    glDeleteVertexArrays(1, &vao_);
-    glDeleteBuffers(1, &vbo_);
-    glDeleteBuffers(1, &ebo_);
+    if (vao_) glDeleteVertexArrays(1, &vao_);
+    if (vbo_) glDeleteBuffers(1, &vbo_);
+    if (ebo_) glDeleteBuffers(1, &ebo_);
 }
 
 Mesh::Mesh() {
