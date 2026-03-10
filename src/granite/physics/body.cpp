@@ -230,6 +230,50 @@ void Body::applyTorqueImpulse(gr::Vec3 torque) {
     body_->applyTorqueImpulse(t);
 }
 
+void Body::setLinearVelocity(gr::Vec3 velocity) {
+    btVector3 v(
+        velocity.x,
+        velocity.y,
+        velocity.z
+    );
+
+    body_->setLinearVelocity(v);
+}
+
+void Body::setAngularVelocity(gr::Vec3 velocity) {
+    btVector3 v(
+        velocity.x,
+        velocity.y,
+        velocity.z
+    );
+
+    body_->setAngularVelocity(v);
+}
+
+gr::Vec3 Body::getLinearVelocity(){
+    btVector3 vel = body_->getLinearVelocity();
+
+    gr::Vec3 v = {
+        vel.x(),
+        vel.y(),
+        vel.z()
+    };
+
+    return v;
+}
+
+gr::Vec3 Body::getAngularVelocity(){
+    btVector3 vel = body_->getAngularVelocity();
+
+    gr::Vec3 v = {
+        vel.x(),
+        vel.y(),
+        vel.z()
+    };
+
+    return v;
+}
+
 Body::~Body() {
     delete body_;
     delete shape_;
