@@ -30,17 +30,17 @@ namespace gr::Time {
 
 using Clock = std::chrono::steady_clock;
 
-inline float GetElapsedTimeMS() {
+inline float getElapsedTimeMS() {
     static auto start = Clock::now();
     auto now = Clock::now();
     return std::chrono::duration<float, std::milli>(now - start).count();
 }
 
-inline float GetElapsedTimeS() {
-    return GetElapsedTimeMS() * 0.001f;
+inline float getElapsedTimeS() {
+    return getElapsedTimeMS() * 0.001f;
 }
 
-inline float GetDeltaTimeMS() {
+inline float getDeltaTimeMS() {
     static bool first = true;
     static auto last = Clock::now();
 
@@ -57,11 +57,11 @@ inline float GetDeltaTimeMS() {
     return dt;
 }
 
-inline float GetDeltaTimeS() {
-    return GetDeltaTimeMS() * 0.001f;
+inline float getDeltaTimeS() {
+    return getDeltaTimeMS() * 0.001f;
 }
 
-inline float GetFPS(float dt) {
+inline float getFPS(float dt) {
     static float lastFPS = 0.0f;
     if (dt <= 0.0f) return lastFPS;
     lastFPS = 1.0f / dt;

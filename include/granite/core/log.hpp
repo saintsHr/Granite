@@ -67,7 +67,7 @@ inline void log(
     std::format_string<Args...> fmt,
     Args&&... args)
 {
-    const float t = gr::Time::GetElapsedTimeS();
+    const float t = gr::Time::getElapsedTimeS();
 
     const int h  = static_cast<int>(t / 3600.0f);
     const int m  = static_cast<int>(t / 60.0f) % 60;
