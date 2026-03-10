@@ -27,7 +27,23 @@ SOFTWARE.
 #include <cmath>
 
 namespace gr::Math{
-    
+
+namespace Huge {
+    constexpr int                Int     = 2147483647;
+    constexpr unsigned int       UInt    = 4294967295U;
+    constexpr long               Long    = 9223372036854775807L;
+    constexpr unsigned long      ULong   = 18446744073709551615UL;
+    constexpr long long          LLong   = 9223372036854775807LL;
+    constexpr unsigned long long ULLong  = 18446744073709551615ULL;
+    constexpr short              Short   = 32767;
+    constexpr unsigned short     UShort  = 65535;
+    constexpr char               Char    = 127;
+    constexpr unsigned char      UChar   = 255;
+    constexpr float              Float   = 3.4028235e38f;
+    constexpr double             Double  = 1.7976931348623157e308;
+    constexpr long double        LDouble = 1.189731495357231765e4932L;
+}
+
 inline constexpr float PI = 3.1415927f;
 inline constexpr float TwoPI = PI * 2.0f;
 inline constexpr float HalfPI = PI / 2.0f;
