@@ -146,7 +146,7 @@ public:
 
     AmbientLight() : 
         color(1,1,1),
-        intensity(0.5f),
+        intensity(0.05f),
         enabled(true) {}
 private:
 
