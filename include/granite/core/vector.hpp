@@ -37,15 +37,15 @@ public:
 
     Vec2 Normalize(float min, float max) {
         return {
-            gr::Math::Normalize(this->x, min, max),
-            gr::Math::Normalize(this->y, min, max)
+            gr::Math::normalize(this->x, min, max),
+            gr::Math::normalize(this->y, min, max)
         };
     }
 
     Vec2 Clamp(float min, float max) {
         return {
-            gr::Math::Clamp(this->x, min, max),
-            gr::Math::Clamp(this->y, min, max)
+            gr::Math::clamp(this->x, min, max),
+            gr::Math::clamp(this->y, min, max)
         };
     }
 
@@ -116,17 +116,17 @@ public:
 
     Vec3 Normalize(float min, float max) {
         return {
-            gr::Math::Normalize(this->x, min, max),
-            gr::Math::Normalize(this->y, min, max),
-            gr::Math::Normalize(this->z, min, max)
+            gr::Math::normalize(this->x, min, max),
+            gr::Math::normalize(this->y, min, max),
+            gr::Math::normalize(this->z, min, max)
         };
     }
 
     Vec3 Clamp(float min, float max) {
         return {
-            gr::Math::Clamp(this->x, min, max),
-            gr::Math::Clamp(this->y, min, max),
-            gr::Math::Clamp(this->z, min, max)
+            gr::Math::clamp(this->x, min, max),
+            gr::Math::clamp(this->y, min, max),
+            gr::Math::clamp(this->z, min, max)
         };
     }
 

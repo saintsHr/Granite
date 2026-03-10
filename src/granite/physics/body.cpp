@@ -38,9 +38,9 @@ void Body::build() {
     ));
 
     rot.setEulerZYX(
-        transform.rotation.z * gr::Math::PI / 180.0f,
-        transform.rotation.y * gr::Math::PI / 180.0f,
-        transform.rotation.x * gr::Math::PI / 180.0f
+        gr::Math::deg2rad(transform.rotation.z),
+        gr::Math::deg2rad(transform.rotation.y),
+        gr::Math::deg2rad(transform.rotation.x)
     );
 
     btTransform.setRotation(rot);
@@ -152,9 +152,9 @@ void Body::sync() {
     };
 
     transform.rotation = {
-        roll  * 180.0f / gr::Math::PI,
-        pitch * 180.0f / gr::Math::PI,
-        yaw   * 180.0f / gr::Math::PI
+        gr::Math::rad2deg(roll),
+        gr::Math::rad2deg(pitch),
+        gr::Math::rad2deg(yaw)
     };
 }
 

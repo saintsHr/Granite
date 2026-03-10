@@ -33,9 +33,9 @@ namespace gr::Core{
 void init(const Config& cfg){
     // converts & clamps cfg info
     float depth, stencil, samples;
-    depth   = gr::Math::Clamp(static_cast<float>(cfg.depthBits),   16.0f, 32.0f);
-    stencil = gr::Math::Clamp(static_cast<float>(cfg.stencilBits),  0.0f,  8.0f);
-    samples = gr::Math::Clamp(static_cast<float>(cfg.msaaSamples),  0.0f,  8.0f);
+    depth   = gr::Math::clamp(static_cast<float>(cfg.depthBits),   16.0f, 32.0f);
+    stencil = gr::Math::clamp(static_cast<float>(cfg.stencilBits),  0.0f,  8.0f);
+    samples = gr::Math::clamp(static_cast<float>(cfg.msaaSamples),  0.0f,  8.0f);
 
     // tryes to init GLFW
     if (!glfwInit()) {

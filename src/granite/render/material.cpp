@@ -40,18 +40,18 @@ void Material::bind(){
     if (cL_ != -1){
         glUniform3f(
             cL_,
-            static_cast<float>(color.r) * (1.0f / 255.0f),
-            static_cast<float>(color.g) * (1.0f / 255.0f),
-            static_cast<float>(color.b) * (1.0f / 255.0f)
+            gr::Math::normalize(static_cast<float>(color.r), 0.0f, 255.0f),
+            gr::Math::normalize(static_cast<float>(color.g), 0.0f, 255.0f),
+            gr::Math::normalize(static_cast<float>(color.b), 0.0f, 255.0f)
         );
     }
 
     if (scL_ != -1){
         glUniform3f(
             scL_,
-            static_cast<float>(specularColor.r) * (1.0f / 255.0f),
-            static_cast<float>(specularColor.g) * (1.0f / 255.0f),
-            static_cast<float>(specularColor.b) * (1.0f / 255.0f)
+            gr::Math::normalize(static_cast<float>(specularColor.r), 0.0f, 255.0f),
+            gr::Math::normalize(static_cast<float>(specularColor.g), 0.0f, 255.0f),
+            gr::Math::normalize(static_cast<float>(specularColor.b), 0.0f, 255.0f)
         );
     }
 
