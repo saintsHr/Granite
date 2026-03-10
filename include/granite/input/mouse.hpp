@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace gr::Input {
 
-gr::Vec2 GetMousePosition(gr::Window window);
-gr::Vec2 GetMouseDelta(gr::Window window);
+gr::Vec2 getMousePosition(gr::Window window);
+gr::Vec2 getMouseDelta(gr::Window window);
 
 }

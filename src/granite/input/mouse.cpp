@@ -26,7 +26,7 @@ SOFTWARE.
 
 namespace gr::Input{
 
-gr::Vec2 GetMousePosition(gr::Window window){
+gr::Vec2 getMousePosition(gr::Window window){
     double x, y;
     glfwGetCursorPos(window.getRaw(), &x, &y);
     return {static_cast<float>(x), static_cast<float>(y)};
@@ -55,7 +55,7 @@ static void _mouseCallback(GLFWwindow*, double x, double y) {
     s_lastY = y;
 }
 
-gr::Vec2 GetMouseDelta(gr::Window window){
+gr::Vec2 getMouseDelta(gr::Window window){
     if (!s_init || s_window != window.getRaw()){
         s_window = window.getRaw();
         glfwSetCursorPosCallback(window.getRaw(), _mouseCallback);

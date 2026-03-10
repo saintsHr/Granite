@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace gr::Input{
 
-bool KeyPressed(gr::Window window, Input::Key key){
+bool keyPressed(gr::Window window, Input::Key key){
     if (glfwGetKey(window.getRaw(), static_cast<int>(key)) == GLFW_PRESS){
         return true;
     } else {

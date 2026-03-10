@@ -106,6 +106,6 @@ enum class Key {
     F12 = GLFW_KEY_F12
 };
 
-bool KeyPressed(gr::Window window, Input::Key key);
+bool keyPressed(gr::Window window, Input::Key key);
 
 }
