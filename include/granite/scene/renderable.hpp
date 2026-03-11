@@ -27,6 +27,11 @@ SOFTWARE.
 #include "granite/core/vector.hpp"
 #include "granite/render/mesh.hpp"
 #include "granite/render/material.hpp"
+#include "granite/assets/model.hpp"
+
+namespace gr::Assets {
+class Model;
+}
 
 namespace gr::Scene {
 
@@ -40,6 +45,15 @@ private:
     GLint mL_ = -1;
     GLint vL_ = -1;
     GLint pL_ = -1;
+};
+
+class ModelObject {
+public:
+    Transform transform;
+    std::vector<RenderObject> parts;
+
+    void build(gr::Assets::Model& model, gr::Render::Shader* shader);
+    void draw();
 };
 
 }

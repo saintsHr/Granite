@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace gr::Scene{
 
-void RenderObject::draw(){
+void RenderObject::draw() {
     if (!mesh || !material.shader) return;
     material.bind();
 
@@ -62,6 +62,30 @@ void RenderObject::draw(){
     if (material.opacity < 1.0f) {
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
+    }
+}
+
+void ModelObject::build(gr::Assets::Model& model, gr::Render::Shader* shader) {
+    parts.clear();
+    parts.reserve(model.meshes.size());
+
+    for (size_t i = 0; i < model.meshes.size(); i++) {
+
+        RenderObject obj;
+
+        obj.mesh = &model.meshes[i];
+        obj.material = model.materials[i];
+        obj.material.shader = shader;
+        obj.transform = transform;
+
+        parts.push_back(std::move(obj));
+    }
+}
+
+void ModelObject::draw() {
+    for (auto& p : parts) {
+        p.transform = transform;
+        gr::Render::addToQueue(p);
     }
 }
 
