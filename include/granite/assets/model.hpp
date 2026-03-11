@@ -26,8 +26,15 @@ SOFTWARE.
 
 #include "granite/scene/renderable.hpp"
 
-namespace gr::Assets::Model {
+namespace gr::Assets {
 
-gr::Render::Mesh load(const std::string& filename);
+class Model {
+public:
+    static gr::Assets::Model upload(const std::string& filename);
+
+private:
+    std::vector<gr::Render::Mesh>     meshes_;
+    std::vector<gr::Render::Material> materials_;
+};
 
 }

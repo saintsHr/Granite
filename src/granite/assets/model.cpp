@@ -27,66 +27,62 @@ SOFTWARE.
 
 #include "tiny_obj_loader/tiny_obj_loader.hpp"
 
-namespace gr::Assets::Model {
+namespace gr::Assets {
 
-gr::Render::Mesh load(const std::string& filename) {
-    gr::Render::Mesh mesh;
-    gr::Render::Mesh nullmesh;
+gr::Assets::Model Model::upload(const std::string& filename) {
+    gr::Assets::Model model;
+    gr::Assets::Model nullmodel;
 
-    // .obj data
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> objMaterials;
 
     if (!tinyobj::LoadObj(
         &attrib,
         &shapes,
-        nullptr,
+        &objMaterials,
         nullptr,
         filename.c_str(),
         NULL,
         true
-    )){
+    )) {
         gr::internal::log(
             gr::internal::Severity::ERROR,
             gr::internal::Module::ASSETS,
             "Cannot load model from file '{}'",
             filename
         );
-        return nullmesh;
+        return nullmodel;
     }
 
-    // mesh data
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<float> uvs;
-    std::vector<unsigned int> indices;
+    model.meshes_.clear();
+    model.materials_.clear();
 
-    // flags
     bool hasNormals = !attrib.normals.empty();
     bool hasUVs = !attrib.texcoords.empty();
 
-    size_t indexCount = 0;
-    unsigned int currentIndex = 0;
-
-    for (auto& shape : shapes) indexCount += shape.mesh.indices.size();
-    vertices.reserve(indexCount * 3);
-    normals.reserve(indexCount * 3);
-    uvs.reserve(indexCount * 2);
-    indices.reserve(indexCount);
-
     for (auto& shape : shapes) {
+
+        std::vector<float> vertices;
+        std::vector<float> normals;
+        std::vector<float> uvs;
+        std::vector<unsigned int> indices;
+
+        unsigned int currentIndex = 0;
+
         for (size_t i = 0; i < shape.mesh.indices.size(); i++) {
+
             tinyobj::index_t idx = shape.mesh.indices[i];
 
-            // vertices
-            const float* v = &attrib.vertices[static_cast<unsigned long int>(3 * idx.vertex_index)];
+            // vertex
+            const float* v = &attrib.vertices[3 * idx.vertex_index];
             vertices.push_back(v[0]);
             vertices.push_back(v[1]);
             vertices.push_back(v[2]);
 
-            // normals
+            // normal
             if (hasNormals && idx.normal_index >= 0) {
-                const float* n = &attrib.normals[static_cast<unsigned long int>(3 * idx.normal_index)];
+                const float* n = &attrib.normals[3 * idx.normal_index];
                 normals.push_back(n[0]);
                 normals.push_back(n[1]);
                 normals.push_back(n[2]);
@@ -96,9 +92,9 @@ gr::Render::Mesh load(const std::string& filename) {
                 normals.push_back(0.f);
             }
 
-            // uvs
+            // uv
             if (hasUVs && idx.texcoord_index >= 0) {
-                const float* t = &attrib.texcoords[static_cast<unsigned long int>(2 * idx.texcoord_index)];
+                const float* t = &attrib.texcoords[2 * idx.texcoord_index];
                 uvs.push_back(t[0]);
                 uvs.push_back(t[1]);
             } else {
@@ -108,12 +104,49 @@ gr::Render::Mesh load(const std::string& filename) {
 
             indices.push_back(currentIndex++);
         }
+
+        // create mesh
+        gr::Render::Mesh mesh;
+        mesh.upload(vertices, indices, normals, uvs);
+        model.meshes_.push_back(std::move(mesh));
+
+        // create material
+        gr::Render::Material material;
+
+        int matID = -1;
+        if (!shape.mesh.material_ids.empty())
+            matID = shape.mesh.material_ids[0];
+
+        if (matID >= 0 && static_cast<size_t>(matID) < objMaterials.size()) {
+
+            const auto& m = objMaterials[matID];
+
+            material.color = {
+                m.diffuse[0] * 255.0f,
+                m.diffuse[1] * 255.0f,
+                m.diffuse[2] * 255.0f
+            };
+
+            material.specularColor = {
+                m.specular[0] * 255.0f,
+                m.specular[1] * 255.0f,
+                m.specular[2] * 255.0f
+            };
+
+            material.shininess = m.shininess;
+            material.opacity   = m.dissolve;
+
+            if (!m.diffuse_texname.empty()) {
+                gr::Assets::Image img;
+                img.load(m.diffuse_texname);
+                material.texture.load(img);
+            }
+        }
+
+        model.materials_.push_back(material);
     }
 
-    // loads data into mesh
-    mesh.upload(vertices, indices, normals, uvs);
-
-    return mesh;
+    return model;
 }
 
 }
