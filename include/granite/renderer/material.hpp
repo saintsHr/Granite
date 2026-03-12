@@ -24,41 +24,33 @@ SOFTWARE.
 
 #pragma once
 
-#include "glad/glad.h"
-#include <vector>
-
-#include "granite/render/shader.hpp"
+#include "granite/renderer/shader.hpp"
 #include "granite/core/color.hpp"
+#include "granite/assets/texture.hpp"
+
+#include <memory>
 
 namespace gr::Render {
 
-class Mesh {
+class Material {
 public:
-    Mesh();
-    ~Mesh();
+    Material();
 
-    Mesh(const Mesh&) = delete;
-    Mesh& operator=(const Mesh&) = delete;
+    gr::Color3 color = {255.0f, 255.0f, 255.0f};
+    gr::Color3 specularColor = {255.0f, 255.0f, 255.0f};
+    float shininess = 32.0f;
+    float opacity = 1.0f;
+    std::shared_ptr<Shader> shader;
+    gr::Assets::Texture texture;
 
-    Mesh(Mesh&& other) noexcept;
-    Mesh& operator=(Mesh&& other) noexcept;
-
-    void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs);
-    void draw(const Shader& shader) const;
-
-    static gr::Render::Mesh newTriangle();
-    static gr::Render::Mesh newQuad();
-    static gr::Render::Mesh newCircle(int segments = 64);
-
-    static gr::Render::Mesh newCube();
-    static gr::Render::Mesh newSphere(int latSegments = 32, int longSegments = 64);
-    static gr::Render::Mesh newCylinder(int segments = 64);
-    static gr::Render::Mesh newPyramid();
-    static gr::Render::Mesh newCone(int segments = 64);
+    void bind();
 private:
-    GLuint vbo_, vao_, ebo_;
-    uint32_t vertexCount_;
-    uint32_t indexCount_;
+    GLint cL_  = -1;
+    GLint sL_  = -1;
+    GLint oL_  = -1;
+    GLint tL_  = -1;
+    GLint hL_  = -1;
+    GLint scL_ = -1;
 };
 
 }

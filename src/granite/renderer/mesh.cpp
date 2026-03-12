@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "granite/render/mesh.hpp"
+#include "granite/renderer/mesh.hpp"
 #include "granite/core/math.hpp"
 
 #include <glm/glm.hpp>

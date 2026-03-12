@@ -27,7 +27,7 @@ SOFTWARE.
 #include <glm/glm.hpp>
 #include <glm/vector_relational.hpp>
 
-#include "granite/render/render.hpp"
+#include "granite/renderer/renderer.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/core/log.hpp"
 #include <algorithm>

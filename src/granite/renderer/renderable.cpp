@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "granite/scene/renderable.hpp"
-#include "granite/render/render.hpp"
+#include "granite/renderer/renderable.hpp"
+#include "granite/renderer/renderer.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 

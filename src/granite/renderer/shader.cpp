@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "granite/render/shader.hpp"
+#include "granite/renderer/shader.hpp"
 #include "granite/core/log.hpp"
 
 #include <cstddef>

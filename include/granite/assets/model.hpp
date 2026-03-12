@@ -24,7 +24,7 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/scene/renderable.hpp"
+#include "granite/renderer/renderable.hpp"
 
 namespace gr::Assets {
 

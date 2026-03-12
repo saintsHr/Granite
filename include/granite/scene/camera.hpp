@@ -24,7 +24,7 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/render/shader.hpp"
+#include "granite/renderer/shader.hpp"
 #include "granite/window/window.hpp"
 
 namespace gr::Scene {

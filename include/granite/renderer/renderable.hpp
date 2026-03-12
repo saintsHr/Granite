@@ -24,26 +24,37 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/render/mesh.hpp"
-#include "granite/render/shader.hpp"
-#include "granite/scene/camera.hpp"
-#include "granite/scene/renderable.hpp"
+#include "granite/core/vector.hpp"
+#include "granite/renderer/mesh.hpp"
+#include "granite/renderer/material.hpp"
+#include "granite/assets/model.hpp"
 
-namespace gr::Render {
+namespace gr::Assets {
+class Model;
+}
 
-struct FrameContext {
-    glm::mat4 view;
-    glm::mat4 projection;
-    gr::Vec3 cameraPos;
+namespace gr::Scene {
+
+class RenderObject {
+public:
+    gr::Render::Mesh* mesh;
+    Transform transform;
+    gr::Render::Material material;
+    void draw();
+private:
+    GLint mL_ = -1;
+    GLint vL_ = -1;
+    GLint pL_ = -1;
 };
 
-extern FrameContext gFrame;
-    
-void init();
-void beginFrame(const gr::Scene::Camera& camera);
+class ModelObject {
+public:
+    Transform transform;
+    std::vector<RenderObject> parts;
 
-void addToQueue(const gr::Scene::RenderObject& obj);
-
-void endFrame();
+    void upload(gr::Assets::Model& model);
+    void upload(gr::Assets::Model& model, std::shared_ptr<gr::Render::Shader> shader);
+    void draw();
+};
 
 }
