@@ -53,6 +53,27 @@ struct Vertex {
 
 namespace gr::Assets {
 
+static void computeNormal(const float v0[3], const float v1[3], const float v2[3], float out[3]) {
+    float e1x = v1[0] - v0[0];
+    float e1y = v1[1] - v0[1];
+    float e1z = v1[2] - v0[2];
+
+    float e2x = v2[0] - v0[0];
+    float e2y = v2[1] - v0[1];
+    float e2z = v2[2] - v0[2];
+
+    out[0] = e1y * e2z - e1z * e2y;
+    out[1] = e1z * e2x - e1x * e2z;
+    out[2] = e1x * e2y - e1y * e2x;
+
+    float len = std::sqrt(out[0]*out[0] + out[1]*out[1] + out[2]*out[2]);
+    if (len > 0.0f) {
+        out[0] /= len;
+        out[1] /= len;
+        out[2] /= len;
+    }
+}
+
 gr::Assets::Model Model::upload(const std::string& filename) {
     gr::Assets::Model model;
     gr::Assets::Model nullmodel;
@@ -85,11 +106,10 @@ gr::Assets::Model Model::upload(const std::string& filename) {
         size_t indexOffset = 0;
         const auto& numFaceVerts = shape.mesh.num_face_vertices;
 
-        // Map de material_id -> vertices/indices agrupados
         std::unordered_map<int, std::vector<tinyobj::index_t>> facesByMaterial;
 
         for (size_t f = 0; f < numFaceVerts.size(); ++f) {
-            int fv = numFaceVerts[f]; // número de vértices da face (triângulo normalmente)
+            size_t fv = numFaceVerts[f];
             int matID = -1;
             if (f < shape.mesh.material_ids.size())
                 matID = shape.mesh.material_ids[f];
@@ -101,7 +121,6 @@ gr::Assets::Model Model::upload(const std::string& filename) {
             indexOffset += fv;
         }
 
-        // Agora cria uma mesh por material
         for (auto& [matID, indicesList] : facesByMaterial) {
             std::vector<float> vertices;
             std::vector<float> normals;
@@ -109,47 +128,59 @@ gr::Assets::Model Model::upload(const std::string& filename) {
             std::vector<unsigned int> indices;
             unsigned int currentIndex = 0;
 
-            for (auto& idx : indicesList) {
-                // Vertex
-                const float* v = &attrib.vertices[3 * idx.vertex_index];
-                vertices.push_back(v[0]);
-                vertices.push_back(v[1]);
-                vertices.push_back(v[2]);
+            for (size_t i = 0; i < indicesList.size(); i += 3) {
+                float faceNormal[3] = {0,0,0};
 
-                // Normal
-                if (hasNormals && idx.normal_index >= 0) {
-                    const float* n = &attrib.normals[3 * idx.normal_index];
-                    normals.push_back(n[0]);
-                    normals.push_back(n[1]);
-                    normals.push_back(n[2]);
-                } else {
-                    normals.push_back(0.f);
-                    normals.push_back(0.f);
-                    normals.push_back(0.f);
+                if (!hasNormals) {
+                    const float* v0 = &attrib.vertices[3 * static_cast<size_t>(indicesList[i+0].vertex_index)];
+                    const float* v1 = &attrib.vertices[3 * static_cast<size_t>(indicesList[i+1].vertex_index)];
+                    const float* v2 = &attrib.vertices[3 * static_cast<size_t>(indicesList[i+2].vertex_index)];
+
+                    computeNormal(v0, v1, v2, faceNormal);
                 }
 
-                // UV
-                if (hasUVs && idx.texcoord_index >= 0) {
-                    const float* t = &attrib.texcoords[2 * idx.texcoord_index];
-                    uvs.push_back(t[0]);
-                    uvs.push_back(t[1]);
-                } else {
-                    uvs.push_back(0.f);
-                    uvs.push_back(0.f);
-                }
+                for (int k = 0; k < 3; k++)
+                {
+                    auto& idx = indicesList[static_cast<size_t>(i) + static_cast<size_t>(k)];
 
-                indices.push_back(currentIndex++);
+                    const float* v = &attrib.vertices[3 * static_cast<size_t>(idx.vertex_index)];
+                    vertices.push_back(v[0]);
+                    vertices.push_back(v[1]);
+                    vertices.push_back(v[2]);
+
+                    // normal
+                    if (hasNormals && idx.normal_index >= 0) {
+                        const float* n = &attrib.normals[3 * static_cast<size_t>(idx.normal_index)];
+                        normals.push_back(n[0]);
+                        normals.push_back(n[1]);
+                        normals.push_back(n[2]);
+                    } else {
+                        normals.push_back(faceNormal[0]);
+                        normals.push_back(faceNormal[1]);
+                        normals.push_back(faceNormal[2]);
+                    }
+
+                    // uv
+                    if (hasUVs && idx.texcoord_index >= 0) {
+                        const float* t = &attrib.texcoords[2 * static_cast<size_t>(idx.texcoord_index)];
+                        uvs.push_back(t[0]);
+                        uvs.push_back(t[1]);
+                    } else {
+                        uvs.push_back(0.f);
+                        uvs.push_back(0.f);
+                    }
+
+                    indices.push_back(currentIndex++);
+                }
             }
 
-            // Cria mesh
             gr::Render::Mesh mesh;
             mesh.upload(vertices, indices, normals, uvs);
             model.meshes.push_back(std::move(mesh));
 
-            // Cria material
             gr::Render::Material material;
             if (matID >= 0 && static_cast<size_t>(matID) < objMaterials.size()) {
-                const auto& m = objMaterials[matID];
+                const auto& m = objMaterials[static_cast<size_t>(matID)];
                 material.color = { m.diffuse[0]*255.f, m.diffuse[1]*255.f, m.diffuse[2]*255.f };
                 material.specularColor = { m.specular[0]*255.f, m.specular[1]*255.f, m.specular[2]*255.f };
                 material.shininess = m.shininess;
