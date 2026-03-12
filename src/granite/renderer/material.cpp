@@ -25,7 +25,7 @@ SOFTWARE.
 #include "granite/renderer/renderer.hpp"
 #include "granite/renderer/material.hpp"
 
-namespace gr::Render{
+namespace gr::Renderer{
 
 void Material::bind(){
     shader->use();

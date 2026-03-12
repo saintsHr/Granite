@@ -28,7 +28,7 @@ SOFTWARE.
 
 #include <string>
 
-namespace gr::Render {
+namespace gr::Renderer {
 
 class Shader;
 const extern Shader* currentShader;

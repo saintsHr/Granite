@@ -174,11 +174,11 @@ gr::Assets::Model Model::upload(const std::string& filename) {
                 }
             }
 
-            gr::Render::Mesh mesh;
+            gr::Renderer::Mesh mesh;
             mesh.upload(vertices, indices, normals, uvs);
             model.meshes.push_back(std::move(mesh));
 
-            gr::Render::Material material;
+            gr::Renderer::Material material;
             if (matID >= 0 && static_cast<size_t>(matID) < objMaterials.size()) {
                 const auto& m = objMaterials[static_cast<size_t>(matID)];
                 material.color = { m.diffuse[0]*255.f, m.diffuse[1]*255.f, m.diffuse[2]*255.f };

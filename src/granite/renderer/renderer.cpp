@@ -32,7 +32,7 @@ SOFTWARE.
 #include "granite/core/log.hpp"
 #include <algorithm>
 
-namespace gr::Render {
+namespace gr::Renderer {
 
 FrameContext gFrame;
 
@@ -125,7 +125,7 @@ void beginFrame(const gr::Scene::Camera& camera){
     gFrame.cameraPos = camera.pos;
 
     // sends camera position to shader
-    if (gr::Render::currentShader) {
+    if (gr::Renderer::currentShader) {
         GLint camLoc = glGetUniformLocation(currentShader->getProgram(), "uCameraPos");
         glUniform3f(camLoc, camera.pos.x, camera.pos.y, camera.pos.z);
     }
@@ -221,8 +221,8 @@ void endFrame() {
         transparentObjects.begin(),
         transparentObjects.end(),
         [](const gr::Scene::RenderObject& a, const gr::Scene::RenderObject& b) {
-            float da = (gr::Render::gFrame.cameraPos - a.transform.position).length();
-            float db = (gr::Render::gFrame.cameraPos - b.transform.position).length();
+            float da = (gr::Renderer::gFrame.cameraPos - a.transform.position).length();
+            float db = (gr::Renderer::gFrame.cameraPos - b.transform.position).length();
             return da > db;
         }
     );

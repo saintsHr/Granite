@@ -28,7 +28,7 @@ SOFTWARE.
 #include <glm/glm.hpp>
 #include <cmath>
 
-namespace gr::Render {
+namespace gr::Renderer {
 
 void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs){
     size_t numVertices = vertices.size() / 3;
@@ -129,8 +129,8 @@ void Mesh::draw(const Shader& shader) const {
     glBindVertexArray(0);
 }
 
-gr::Render::Mesh Mesh::newTriangle() {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newTriangle() {
+    gr::Renderer::Mesh mesh;
 
     std::vector<float> vertices = {
        -0.5f, -0.433f, 0.0f,
@@ -171,8 +171,8 @@ gr::Render::Mesh Mesh::newTriangle() {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newQuad() {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newQuad() {
+    gr::Renderer::Mesh mesh;
 
     std::vector<float> vertices = {
         -0.5f, -0.5f, 0.0f,
@@ -222,8 +222,8 @@ gr::Render::Mesh Mesh::newQuad() {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newCube() {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newCube() {
+    gr::Renderer::Mesh mesh;
 
     std::vector<float> vertices = {
        -0.5f,-0.5f, 0.5f,
@@ -330,8 +330,8 @@ gr::Render::Mesh Mesh::newCube() {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newCircle(int segments) {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newCircle(int segments) {
+    gr::Renderer::Mesh mesh;
 
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
@@ -405,8 +405,8 @@ gr::Render::Mesh Mesh::newCircle(int segments) {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newSphere(int latSeg, int lonSeg) {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newSphere(int latSeg, int lonSeg) {
+    gr::Renderer::Mesh mesh;
 
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
@@ -449,8 +449,8 @@ gr::Render::Mesh Mesh::newSphere(int latSeg, int lonSeg) {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newCylinder(int segments) {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newCylinder(int segments) {
+    gr::Renderer::Mesh mesh;
 
 	std::vector<float> vertices;
 	std::vector<float> normals;
@@ -551,8 +551,8 @@ gr::Render::Mesh Mesh::newCylinder(int segments) {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newPyramid() {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newPyramid() {
+    gr::Renderer::Mesh mesh;
 
     std::vector<float> vertices;
     std::vector<float> normals;
@@ -679,8 +679,8 @@ gr::Render::Mesh Mesh::newPyramid() {
     return mesh;
 }
 
-gr::Render::Mesh Mesh::newCone(int segments) {
-    gr::Render::Mesh mesh;
+gr::Renderer::Mesh Mesh::newCone(int segments) {
+    gr::Renderer::Mesh mesh;
 
 	std::vector<float> vertices;
 	std::vector<float> normals;

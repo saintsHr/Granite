@@ -53,8 +53,8 @@ void RenderObject::draw() {
 
     // applies transform, projection and view if valid location
     if (mLoc != -1) glUniformMatrix4fv(mLoc, 1, GL_FALSE, &model[0][0]);
-    if (vLoc != -1) glUniformMatrix4fv(vLoc, 1, GL_FALSE, &gr::Render::gFrame.view[0][0]);
-    if (pLoc != -1) glUniformMatrix4fv(pLoc, 1, GL_FALSE, &gr::Render::gFrame.projection[0][0]);
+    if (vLoc != -1) glUniformMatrix4fv(vLoc, 1, GL_FALSE, &gr::Renderer::gFrame.view[0][0]);
+    if (pLoc != -1) glUniformMatrix4fv(pLoc, 1, GL_FALSE, &gr::Renderer::gFrame.projection[0][0]);
 
     // draws mesh
     mesh->draw(*material.shader);
@@ -81,7 +81,7 @@ void ModelObject::upload(gr::Assets::Model& model) {
     }
 }
 
-void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Render::Shader> shader) {
+void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader) {
     parts.clear();
     parts.reserve(model.meshes.size());
 
@@ -101,7 +101,7 @@ void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Render::S
 void ModelObject::draw() {
     for (auto& p : parts) {
         p.transform = transform;
-        gr::Render::addToQueue(p);
+        gr::Renderer::addToQueue(p);
     }
 }
 

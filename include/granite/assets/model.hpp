@@ -32,8 +32,8 @@ class Model {
 public:
     static gr::Assets::Model upload(const std::string& filename);
 
-    std::vector<gr::Render::Mesh>     meshes;
-    std::vector<gr::Render::Material> materials;
+    std::vector<gr::Renderer::Mesh>     meshes;
+    std::vector<gr::Renderer::Material> materials;
 };
 
 }

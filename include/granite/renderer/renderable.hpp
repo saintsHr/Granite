@@ -37,9 +37,9 @@ namespace gr::Scene {
 
 class RenderObject {
 public:
-    gr::Render::Mesh* mesh;
+    gr::Renderer::Mesh* mesh;
     Transform transform;
-    gr::Render::Material material;
+    gr::Renderer::Material material;
     void draw();
 private:
     GLint mL_ = -1;
@@ -53,7 +53,7 @@ public:
     std::vector<RenderObject> parts;
 
     void upload(gr::Assets::Model& model);
-    void upload(gr::Assets::Model& model, std::shared_ptr<gr::Render::Shader> shader);
+    void upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader);
     void draw();
 };
 

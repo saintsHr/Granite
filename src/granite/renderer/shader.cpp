@@ -285,7 +285,7 @@ void main() {
 
 }
 
-namespace gr::Render {
+namespace gr::Renderer {
 
 const Shader* currentShader = nullptr;
 

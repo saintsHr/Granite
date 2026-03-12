@@ -29,7 +29,7 @@ SOFTWARE.
 #include "granite/scene/camera.hpp"
 #include "granite/renderer/renderable.hpp"
 
-namespace gr::Render {
+namespace gr::Renderer {
 
 struct FrameContext {
     glm::mat4 view;

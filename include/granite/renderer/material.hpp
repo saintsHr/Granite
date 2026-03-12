@@ -30,7 +30,7 @@ SOFTWARE.
 
 #include <memory>
 
-namespace gr::Render {
+namespace gr::Renderer {
 
 class Material {
 public:
