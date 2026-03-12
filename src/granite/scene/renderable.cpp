@@ -65,7 +65,23 @@ void RenderObject::draw() {
     }
 }
 
-void ModelObject::build(gr::Assets::Model& model, gr::Render::Shader* shader) {
+void ModelObject::upload(gr::Assets::Model& model) {
+    parts.clear();
+    parts.reserve(model.meshes.size());
+
+    for (size_t i = 0; i < model.meshes.size(); i++) {
+
+        RenderObject obj;
+
+        obj.mesh = &model.meshes[i];
+        obj.material = model.materials[i];
+        obj.transform = transform;
+
+        parts.push_back(std::move(obj));
+    }
+}
+
+void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Render::Shader> shader) {
     parts.clear();
     parts.reserve(model.meshes.size());
 

@@ -92,4 +92,8 @@ void Material::bind(){
     }
 }
 
+Material::Material() {
+    shader = std::make_shared<Shader>();
+}
+
 }

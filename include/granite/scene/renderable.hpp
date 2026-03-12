@@ -52,7 +52,8 @@ public:
     Transform transform;
     std::vector<RenderObject> parts;
 
-    void build(gr::Assets::Model& model, gr::Render::Shader* shader);
+    void upload(gr::Assets::Model& model);
+    void upload(gr::Assets::Model& model, std::shared_ptr<gr::Render::Shader> shader);
     void draw();
 };
 

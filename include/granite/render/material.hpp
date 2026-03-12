@@ -28,15 +28,19 @@ SOFTWARE.
 #include "granite/core/color.hpp"
 #include "granite/assets/texture.hpp"
 
+#include <memory>
+
 namespace gr::Render {
 
 class Material {
 public:
+    Material();
+
     gr::Color3 color = {255.0f, 255.0f, 255.0f};
     gr::Color3 specularColor = {255.0f, 255.0f, 255.0f};
     float shininess = 32.0f;
     float opacity = 1.0f;
-    gr::Render::Shader* shader = nullptr;
+    std::shared_ptr<Shader> shader;
     gr::Assets::Texture texture;
 
     void bind();
