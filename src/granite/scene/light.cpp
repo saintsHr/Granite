@@ -36,20 +36,40 @@ std::unordered_map<LightID, DirectionalLight> LightManager::directionalLights_;
 AmbientLight LightManager::ambientLight_;
 
 LightID LightManager::create(const PointLight& light) {
+    PointLight light_ = light;
+    light_.color = {
+        light_.color.r / 255,
+        light_.color.g / 255,
+        light_.color.b / 255
+    };
+
     LightID id = nextID_++;
-    pointLights_.emplace(id, light);
+    pointLights_.emplace(id, light_);
     return id;
 }
 
 LightID LightManager::create(const DirectionalLight& light) {
+    DirectionalLight light_ = light;
+    light_.color = {
+        light_.color.r / 255,
+        light_.color.g / 255,
+        light_.color.b / 255
+    };
+
     LightID id = nextID_++;
-    directionalLights_.emplace(id, light);
+    directionalLights_.emplace(id, light_);
     return id;
 }
 
 LightID LightManager::create(const SpotLight& light) {
     SpotLight light_ = light;
+    light_.color = {
+        light_.color.r / 255,
+        light_.color.g / 255,
+        light_.color.b / 255
+    };
     light_.cutoff = std::cos(glm::radians(light.cutoff));
+
     LightID id = nextID_++;
     spotLights_.emplace(id, light_);
     return id;
