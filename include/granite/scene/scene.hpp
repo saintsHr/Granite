@@ -25,4 +25,6 @@ SOFTWARE.
 #pragma once
 
 #include "granite/scene/camera.hpp"
+#include "granite/scene/object.hpp"
+#include "granite/scene/light.hpp"
 #include "granite/renderer/renderable.hpp"
