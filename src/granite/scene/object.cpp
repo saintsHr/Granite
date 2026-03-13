@@ -10,34 +10,22 @@ gr::Vec3 calculateDirection(gr::Vec3 rotation, gr::Direction direction) {
     float cy = std::cos(ry), sy = std::sin(ry);
     float cz = std::cos(rz), sz = std::sin(rz);
 
-    float Rx[3][3] = {{1,0,0},{0,cx,-sx},{0,sx,cx}};
-    float Ry[3][3] = {{cy,0,sy},{0,1,0},{-sy,0,cy}};
-    float Rz[3][3] = {{cz,-sz,0},{sz,cz,0},{0,0,1}};
-
-    float R[3][3] = {{0}};
-    for(int i=0;i<3;i++)
-        for(int j=0;j<3;j++)
-            for(int k=0;k<3;k++)
-                for(int l=0;l<3;l++)
-                    R[i][j] += Rz[i][k] * Ry[k][l] * Rx[l][j];
-
-    gr::Vec3 local;
+    gr::Vec3 v;
     switch(direction){
-        case gr::Direction::FRONT:  local = {0,0,1}; break;
-        case gr::Direction::BACK:   local = {0,0,-1}; break;
-        case gr::Direction::RIGHT:  local = {1,0,0}; break;
-        case gr::Direction::LEFT:   local = {-1,0,0}; break;
-        case gr::Direction::UP:     local = {0,1,0}; break;
-        case gr::Direction::DOWN:   local = {0,-1,0}; break;
+        case gr::Direction::FRONT:  v = { 0.0f,  0.0f,  1.0f}; break;
+        case gr::Direction::BACK:   v = { 0.0f,  0.0f, -1.0f}; break;
+        case gr::Direction::RIGHT:  v = { 1.0f,  0.0f,  0.0f}; break;
+        case gr::Direction::LEFT:   v = {-1.0f,  0.0f,  0.0f}; break;
+        case gr::Direction::UP:     v = { 0.0f,  1.0f,  0.0f}; break;
+        case gr::Direction::DOWN:   v = { 0.0f, -1.0f,  0.0f}; break;
         default: return {0,0,0};
     }
 
-    gr::Vec3 result;
-    result.x = R[0][0]*local.x + R[0][1]*local.y + R[0][2]*local.z;
-    result.y = R[1][0]*local.x + R[1][1]*local.y + R[1][2]*local.z;
-    result.z = R[2][0]*local.x + R[2][1]*local.y + R[2][2]*local.z;
+    float x = v.x*(cy*cz) + v.y*(sx*sy*cz - cx*sz) + v.z*(cx*sy*cz + sx*sz);
+    float y = v.x*(cy*sz) + v.y*(sx*sy*sz + cx*cz) + v.z*(cx*sy*sz - sx*cz);
+    float z = v.x*(-sy)   + v.y*(sx*cy)            + v.z*(cx*cy);
 
-    return result;
+    return {x, y, z};
 }
 
 namespace gr::Scene {
