@@ -14,7 +14,7 @@ gr::Vec3 calculateDirection(gr::Vec3 rotation, gr::Direction direction) {
     float Ry[3][3] = {{cy,0,sy},{0,1,0},{-sy,0,cy}};
     float Rz[3][3] = {{cz,-sz,0},{sz,cz,0},{0,0,1}};
 
-    float R[3][3] = {0};
+    float R[3][3] = {{0}};
     for(int i=0;i<3;i++)
         for(int j=0;j<3;j++)
             for(int k=0;k<3;k++)
