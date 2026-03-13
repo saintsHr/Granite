@@ -11,6 +11,7 @@ public:
     gr::Renderer::Mesh mesh;
 
     void draw();
+    gr::Vec3 getDirection(gr::Direction direction);
 private:
     gr::Renderer::RenderObject part_;
 };
@@ -21,6 +22,7 @@ public:
     
     void load(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader = nullptr);
     void draw();
+    gr::Vec3 getDirection(gr::Direction direction);
 private:
     std::vector<gr::Renderer::RenderObject> parts_;
 };

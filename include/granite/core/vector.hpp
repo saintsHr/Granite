@@ -30,6 +30,15 @@ SOFTWARE.
 
 namespace gr {
 
+enum class Direction {
+    FRONT,
+    BACK,
+    RIGHT,
+    LEFT,
+    DOWN,
+    UP
+};
+
 class Vec2 {
 public:
     Vec2() : x(0), y(0) {}
@@ -166,6 +175,10 @@ public:
 
     Vec3 operator*(float s) const {
         return {x * s, y * s, z * s};
+    }
+
+    Vec3 operator*(Vec3 v) const {
+        return {x * v.x, y * v.y, z * v.z};
     }
 
     Vec3 operator/(float s) const {
