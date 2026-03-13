@@ -10,7 +10,7 @@ void Object::draw() {
     gr::Renderer::addToQueue(part_);
 }
 
-void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader) {
+void ModelObject::load(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader) {
     parts_.clear();
     parts_.reserve(model.meshes.size());
 

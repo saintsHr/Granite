@@ -19,7 +19,7 @@ class ModelObject {
 public:
     gr::Transform transform;
     
-    void upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader = nullptr);
+    void load(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader = nullptr);
     void draw();
 private:
     std::vector<gr::Renderer::RenderObject> parts_;
