@@ -10,4 +10,26 @@ void Object::draw() {
     gr::Renderer::addToQueue(part_);
 }
 
+void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader) {
+    parts_.clear();
+    parts_.reserve(model.meshes.size());
+
+    for (size_t i = 0; i < model.meshes.size(); i++) {
+        parts_.emplace_back();
+        auto& obj = parts_.back();
+
+        obj.mesh = &model.meshes[i];
+        obj.material = model.materials[i];
+        if (shader) obj.material.shader = shader;
+        obj.transform = transform;
+    }
+}
+
+void ModelObject::draw() {
+    for (auto& p : parts_) {
+        p.transform = transform;
+        gr::Renderer::addToQueue(p);
+    }
+}
+
 };

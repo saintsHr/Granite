@@ -12,7 +12,17 @@ public:
 
     void draw();
 private:
-    gr::Scene::RenderObject part_;
+    gr::Renderer::RenderObject part_;
+};
+
+class ModelObject {
+public:
+    gr::Transform transform;
+    
+    void upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader = nullptr);
+    void draw();
+private:
+    std::vector<gr::Renderer::RenderObject> parts_;
 };
 
 }

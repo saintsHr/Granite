@@ -27,7 +27,7 @@ SOFTWARE.
 
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace gr::Scene{
+namespace gr::Renderer{
 
 void RenderObject::draw() {
     if (!mesh || !material.shader) return;
@@ -62,46 +62,6 @@ void RenderObject::draw() {
     if (material.opacity < 1.0f) {
         glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
-    }
-}
-
-void ModelObject::upload(gr::Assets::Model& model) {
-    parts.clear();
-    parts.reserve(model.meshes.size());
-
-    for (size_t i = 0; i < model.meshes.size(); i++) {
-
-        RenderObject obj;
-
-        obj.mesh = &model.meshes[i];
-        obj.material = model.materials[i];
-        obj.transform = transform;
-
-        parts.push_back(std::move(obj));
-    }
-}
-
-void ModelObject::upload(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader) {
-    parts.clear();
-    parts.reserve(model.meshes.size());
-
-    for (size_t i = 0; i < model.meshes.size(); i++) {
-
-        RenderObject obj;
-
-        obj.mesh = &model.meshes[i];
-        obj.material = model.materials[i];
-        obj.material.shader = shader;
-        obj.transform = transform;
-
-        parts.push_back(std::move(obj));
-    }
-}
-
-void ModelObject::draw() {
-    for (auto& p : parts) {
-        p.transform = transform;
-        gr::Renderer::addToQueue(p);
     }
 }
 

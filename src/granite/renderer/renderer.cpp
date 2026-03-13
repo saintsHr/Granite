@@ -201,10 +201,10 @@ void beginFrame(const gr::Scene::Camera& camera){
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(block), &block);
 }
 
-std::vector<gr::Scene::RenderObject> opaqueObjects;
-std::vector<gr::Scene::RenderObject> transparentObjects;
+std::vector<gr::Renderer::RenderObject> opaqueObjects;
+std::vector<gr::Renderer::RenderObject> transparentObjects;
 
-void addToQueue(const gr::Scene::RenderObject& obj) {
+void addToQueue(const gr::Renderer::RenderObject& obj) {
     if (obj.material.opacity < 1.0f) {
         transparentObjects.push_back(obj);
     } else {
@@ -220,7 +220,7 @@ void endFrame() {
     std::sort(
         transparentObjects.begin(),
         transparentObjects.end(),
-        [](const gr::Scene::RenderObject& a, const gr::Scene::RenderObject& b) {
+        [](const gr::Renderer::RenderObject& a, const gr::Renderer::RenderObject& b) {
             float da = (gr::Renderer::gFrame.cameraPos - a.transform.position).length();
             float db = (gr::Renderer::gFrame.cameraPos - b.transform.position).length();
             return da > db;

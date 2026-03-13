@@ -42,7 +42,7 @@ extern FrameContext gFrame;
 void init();
 void beginFrame(const gr::Scene::Camera& camera);
 
-void addToQueue(const gr::Scene::RenderObject& obj);
+void addToQueue(const gr::Renderer::RenderObject& obj);
 
 void endFrame();
 
