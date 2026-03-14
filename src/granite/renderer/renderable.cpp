@@ -53,6 +53,14 @@ void RenderObject::draw() {
 
     material.bind();
 
+    GLint camLoc = glGetUniformLocation(material.shader->getProgram(), "uCameraPos");
+    if (camLoc != -1) {
+        glUniform3f(camLoc,
+                    gr::Renderer::gFrame.cameraPos.x,
+                    gr::Renderer::gFrame.cameraPos.y,
+                    gr::Renderer::gFrame.cameraPos.z);
+    }
+
     // calculates transform
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(transform.position.x, transform.position.y, transform.position.z));

@@ -38,9 +38,9 @@ AmbientLight LightManager::ambientLight_;
 LightID LightManager::create(const PointLight& light) {
     PointLight light_ = light;
     light_.color = {
-        light_.color.r / 255,
-        light_.color.g / 255,
-        light_.color.b / 255
+        light_.color.r / 255.0f,
+        light_.color.g / 255.0f,
+        light_.color.b / 255.0f
     };
 
     LightID id = nextID_++;
@@ -51,9 +51,9 @@ LightID LightManager::create(const PointLight& light) {
 LightID LightManager::create(const DirectionalLight& light) {
     DirectionalLight light_ = light;
     light_.color = {
-        light_.color.r / 255,
-        light_.color.g / 255,
-        light_.color.b / 255
+        light_.color.r / 255.0f,
+        light_.color.g / 255.0f,
+        light_.color.b / 255.0f
     };
 
     LightID id = nextID_++;
@@ -64,9 +64,9 @@ LightID LightManager::create(const DirectionalLight& light) {
 LightID LightManager::create(const SpotLight& light) {
     SpotLight light_ = light;
     light_.color = {
-        light_.color.r / 255,
-        light_.color.g / 255,
-        light_.color.b / 255
+        light_.color.r / 255.0f,
+        light_.color.g / 255.0f,
+        light_.color.b / 255.0f
     };
     light_.cutoff = std::cos(glm::radians(light.cutoff));
 
