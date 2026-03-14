@@ -38,9 +38,10 @@ public:
     gr::Renderer::Material material;
     void draw();
 private:
-    GLint mL_ = -1;
-    GLint vL_ = -1;
-    GLint pL_ = -1;
+    GLint mL_  = -1;
+    GLint vL_  = -1;
+    GLint pL_  = -1;
+    GLint cmL_ = -1;
 };
 
 }

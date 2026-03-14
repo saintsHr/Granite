@@ -53,12 +53,15 @@ void RenderObject::draw() {
 
     material.bind();
 
-    GLint camLoc = glGetUniformLocation(material.shader->getProgram(), "uCameraPos");
-    if (camLoc != -1) {
-        glUniform3f(camLoc,
-                    gr::Renderer::gFrame.cameraPos.x,
-                    gr::Renderer::gFrame.cameraPos.y,
-                    gr::Renderer::gFrame.cameraPos.z);
+    // updates uCameraPos
+    if (cmL_ == -1) cmL_ = glGetUniformLocation(material.shader->getProgram(), "uCameraPos");
+    if (cmL_ != -1) {
+        glUniform3f(
+            cmL_,
+            gr::Renderer::gFrame.cameraPos.x,
+            gr::Renderer::gFrame.cameraPos.y,
+            gr::Renderer::gFrame.cameraPos.z
+        );
     }
 
     // calculates transform
