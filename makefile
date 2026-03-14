@@ -209,7 +209,7 @@ $(BUILD_DIR)/third-party/src/%.o: $(THIRD_SRC)/%.cpp
 # cloc
 # ====================================================
 cloc:
-	cloc ./src ./include --exclude-list-file=clocignore.txt
+	cloc ./src ./include
 
 # ====================================================
 # Dependencies
