@@ -42,10 +42,11 @@ enum class Severity {
 enum class Module {
     CORE,
     INPUT,
-    RENDER,
+    RENDERER,
     SCENE,
     WINDOW,
-    ASSETS
+    ASSETS,
+    PHYSICS
 };
 
 inline constexpr std::string_view SeverityString[] = {
@@ -57,7 +58,7 @@ inline constexpr std::string_view SeverityColor[] = {
 };
 
 inline constexpr std::string_view ModuleString[] = {
-    "Core", "Input", "Render", "Scene", "Window", "Assets"
+    "Core", "Input", "Render", "Scene", "Window", "Assets", "Physics"
 };
 
 template<typename... Args>

@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "granite/renderer/mesh.hpp"
 #include "granite/core/math.hpp"
+#include "granite/core/log.hpp"
 
 #include <glm/glm.hpp>
 #include <cmath>
@@ -69,6 +70,12 @@ void Mesh::upload(const std::vector<float>& vertices, const std::vector<unsigned
         }
 
         glUnmapBuffer(GL_ARRAY_BUFFER);
+    } else {
+        gr::internal::log(
+            gr::internal::Severity::ERROR,
+            gr::internal::Module::RENDERER,
+            "Failed to allocate buffer for mesh"
+        );
     }
 
     glBufferData(

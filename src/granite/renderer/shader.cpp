@@ -41,7 +41,7 @@ auto checkShader = [](GLuint shader, const char* name) {
         printf("SHADER COMPILE ERROR (%s):\n%s\n", name, log);
         gr::internal::log(
             gr::internal::Severity::FATAL,
-            gr::internal::Module::RENDER,
+            gr::internal::Module::RENDERER,
             "Cannot compile %s shader",
             name
         );
@@ -290,7 +290,6 @@ namespace gr::Renderer {
 const Shader* currentShader = nullptr;
 
 Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) {
-    // opens & reads shaders
     std::string vertexRead, fragmentRead;
     const char* vertexSource;
     const char* fragmentSource;
@@ -332,7 +331,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) {
         printf("PROGRAM LINK ERROR:\n%s\n", log);
         gr::internal::log(
             gr::internal::Severity::FATAL,
-            gr::internal::Module::RENDER,
+            gr::internal::Module::RENDERER,
             "Cannot link shaders"
         );
     }
@@ -380,7 +379,7 @@ Shader::Shader() {
         printf("PROGRAM LINK ERROR:\n%s\n", log);
         gr::internal::log(
             gr::internal::Severity::FATAL,
-            gr::internal::Module::RENDER,
+            gr::internal::Module::RENDERER,
             "Cannot link shaders"
         );
     }
@@ -407,7 +406,7 @@ std::string Shader::load_(const std::string& filename) const {
     if (!file.is_open()) {
         gr::internal::log(
             gr::internal::Severity::ERROR,
-            gr::internal::Module::RENDER,
+            gr::internal::Module::RENDERER,
             "Cannot read shader file %s",
             filename.c_str()
         );

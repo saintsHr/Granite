@@ -31,7 +31,7 @@ namespace gr::Scene {
 
 class Camera {
 public:
-    gr::Vec3 pos = {0.0f, 0.0f, 0.0f};
+    gr::Vec3 position = {0.0f, 0.0f, 0.0f};
     gr::Vec2 rotation = {0.0f, 0.0f};
     gr::Vec2 aspect = {1.0f, 1.0f};
     float fov = 75.0f;
@@ -42,12 +42,7 @@ public:
     glm::mat4 getView() const;
 
     void update(const gr::Window& window);
-    void moveForward(float speed);
-    void moveBack(float speed);
-    void moveLeft(float speed);
-    void moveRight(float speed);
-    void moveDown(float speed);
-    void moveUp(float speed);
+    gr::Vec3 getDirection(gr::Direction direction);
 private:
     glm::mat4 projection_;
     glm::mat4 view_;

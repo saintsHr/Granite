@@ -104,14 +104,14 @@ void init() {
     if (!success) {
         gr::internal::log(
             gr::internal::Severity::FATAL,
-            gr::internal::Module::RENDER,
+            gr::internal::Module::RENDERER,
             "Cannot initialize renderer"
         );
     }
 
     gr::internal::log(
         gr::internal::Severity::INFO,
-        gr::internal::Module::RENDER,
+        gr::internal::Module::RENDERER,
         "Renderer Initialized (OpenGL)"
     );
 }
@@ -122,12 +122,12 @@ void beginFrame(const gr::Scene::Camera& camera){
 
     gFrame.view = camera.getView();
     gFrame.projection = camera.getProjection();
-    gFrame.cameraPos = camera.pos;
+    gFrame.cameraPos = camera.position;
 
     // sends camera position to shader
     if (gr::Renderer::currentShader) {
         GLint camLoc = glGetUniformLocation(currentShader->getProgram(), "uCameraPos");
-        glUniform3f(camLoc, camera.pos.x, camera.pos.y, camera.pos.z);
+        glUniform3f(camLoc, camera.position.x, camera.position.y, camera.position.z);
     }
 
     // creates empty light block

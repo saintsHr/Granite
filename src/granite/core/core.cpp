@@ -90,6 +90,17 @@ void init(){
 
 void exit(){
     glfwTerminate();
+    gr::internal::log(
+        gr::internal::Severity::INFO,
+        gr::internal::Module::CORE,
+        "Windowing backend (GLFW) shutdown"
+    );
+
+    gr::internal::log(
+        gr::internal::Severity::INFO,
+        gr::internal::Module::CORE,
+        "Core shutdown"
+    );
 }
 
 }

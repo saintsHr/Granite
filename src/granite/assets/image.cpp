@@ -28,6 +28,7 @@ SOFTWARE.
 namespace gr::Assets {
 
 Image::~Image() {
+    if (!data_) return;
     stbi_image_free(data_);
     data_ = nullptr;
 }
@@ -65,7 +66,7 @@ void Image::load(const std::string& filename) {
         gr::internal::log(
             gr::internal::Severity::ERROR,
             gr::internal::Module::ASSETS,
-            "Cannot load image %s",
+            "Cannot load image from file %s",
             filename.c_str()
         );
 

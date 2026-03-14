@@ -74,7 +74,7 @@ void Body::build() {
         ));
         break;
 
-    case Shape::CAPSULE :
+    case Shape::CAPSULE:
         shape_ = new btCapsuleShape(
             (
                 transform.scale.x +
@@ -86,7 +86,7 @@ void Body::build() {
         );
         break;
 
-    case Shape::CONE :
+    case Shape::CONE:
         shape_ = new btConeShape(
             (
                 transform.scale.x +

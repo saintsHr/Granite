@@ -111,8 +111,8 @@ gr::Assets::Model Model::upload(const std::string& filename) {
         for (size_t f = 0; f < numFaceVerts.size(); ++f) {
             size_t fv = numFaceVerts[f];
             int matID = -1;
-            if (f < shape.mesh.material_ids.size())
-                matID = shape.mesh.material_ids[f];
+
+            if (f < shape.mesh.material_ids.size()) matID = shape.mesh.material_ids[f];
 
             for (size_t v = 0; v < fv; ++v) {
                 facesByMaterial[matID].push_back(shape.mesh.indices[indexOffset + v]);
@@ -139,8 +139,7 @@ gr::Assets::Model Model::upload(const std::string& filename) {
                     computeNormal(v0, v1, v2, faceNormal);
                 }
 
-                for (int k = 0; k < 3; k++)
-                {
+                for (int k = 0; k < 3; k++) {
                     auto& idx = indicesList[static_cast<size_t>(i) + static_cast<size_t>(k)];
 
                     const float* v = &attrib.vertices[3 * static_cast<size_t>(idx.vertex_index)];
@@ -192,6 +191,7 @@ gr::Assets::Model Model::upload(const std::string& filename) {
                     material.texture.load(img);
                 }
             }
+            
             model.materials.push_back(material);
         }
     }

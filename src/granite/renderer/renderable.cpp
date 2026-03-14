@@ -24,13 +24,33 @@ SOFTWARE.
 
 #include "granite/renderer/renderable.hpp"
 #include "granite/renderer/renderer.hpp"
+#include "granite/core/log.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace gr::Renderer{
 
 void RenderObject::draw() {
-    if (!mesh || !material.shader) return;
+    if (!mesh) {
+        gr::internal::log(
+            gr::internal::Severity::ERROR,
+            gr::internal::Module::RENDERER,
+            "Mesh not found in RenderObject"
+        );
+
+        return;
+    };
+
+    if (!material.shader) {
+        gr::internal::log(
+            gr::internal::Severity::ERROR,
+            gr::internal::Module::RENDERER,
+            "Material.shader not found in RenderObject"
+        );
+
+        return;
+    }
+
     material.bind();
 
     // calculates transform
