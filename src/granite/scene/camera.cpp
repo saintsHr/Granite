@@ -97,7 +97,10 @@ gr::Vec3 Camera::getDirection(gr::Direction direction) {
         case gr::Direction::LEFT:  return {-right.x,   -right.y,   -right.z  };
         case gr::Direction::UP:    return { up.x,       up.y,       up.z     };
         case gr::Direction::DOWN:  return {-up.x,      -up.y,      -up.z     };
+        default: break;
     }
+
+    return {0.0f, 0.0f, 0.0f};
 }
 
 }
