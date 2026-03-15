@@ -65,6 +65,26 @@ static void computeNormal(const float v0[3], const float v1[3], const float v2[3
     }
 }
 
+struct VertexKey {
+    int v;
+    int vt;
+    int vn;
+
+    bool operator==(const VertexKey& other) const {
+        return v == other.v &&
+               vt == other.vt &&
+               vn == other.vn;
+    }
+};
+
+struct VertexKeyHash {
+    size_t operator()(const VertexKey& k) const {
+        return ((size_t)k.v * 73856093) ^
+               ((size_t)k.vt * 19349663) ^
+               ((size_t)k.vn * 83492791);
+    }
+};
+
 void Model::load(const std::string& filename) {
     gr::Assets::Model* model = this;
 
@@ -124,14 +144,15 @@ void Model::load(const std::string& filename) {
             std::vector<float> uvs;
             std::vector<unsigned int> indices;
 
+            std::unordered_map<VertexKey, unsigned int, VertexKeyHash> vertexCache;
+
             size_t vertexCount = indicesList.size();
 
             vertices.reserve(vertexCount * 3);
             normals.reserve(vertexCount * 3);
             uvs.reserve(vertexCount * 2);
             indices.reserve(vertexCount);
-
-            unsigned int currentIndex = 0;
+            vertexCache.reserve(vertexCount);
 
             for (size_t i = 0; i < indicesList.size(); i += 3) {
                 float faceNormal[3] = {0,0,0};
@@ -149,36 +170,51 @@ void Model::load(const std::string& filename) {
                 }
 
                 for (int k = 0; k < 3; k++) {
-                    auto& idx = indicesList[static_cast<size_t>(i) + static_cast<size_t>(k)];
+                    auto& idx = indicesList[i + k];
 
-                    const float* v = &attrib.vertices[3 * static_cast<size_t>(idx.vertex_index)];
-                    vertices.push_back(v[0]);
-                    vertices.push_back(v[1]);
-                    vertices.push_back(v[2]);
+                    VertexKey key{
+                        idx.vertex_index,
+                        idx.texcoord_index,
+                        idx.normal_index
+                    };
 
-                    // normal
-                    if (hasNormals && idx.normal_index >= 0) {
-                        const float* n = &attrib.normals[3 * static_cast<size_t>(idx.normal_index)];
-                        normals.push_back(n[0]);
-                        normals.push_back(n[1]);
-                        normals.push_back(n[2]);
+                    auto it = vertexCache.find(key);
+
+                    if (it != vertexCache.end()) {
+                        indices.push_back(it->second);
                     } else {
-                        normals.push_back(faceNormal[0]);
-                        normals.push_back(faceNormal[1]);
-                        normals.push_back(faceNormal[2]);
-                    }
+                        unsigned int newIndex = vertices.size() / 3;
+                        vertexCache[key] = newIndex;
+                        indices.push_back(newIndex);
 
-                    // uv
-                    if (hasUVs && idx.texcoord_index >= 0) {
-                        const float* t = &attrib.texcoords[2 * static_cast<size_t>(idx.texcoord_index)];
-                        uvs.push_back(t[0]);
-                        uvs.push_back(t[1]);
-                    } else {
-                        uvs.push_back(0.f);
-                        uvs.push_back(0.f);
-                    }
+                        const float* v = &attrib.vertices[3 * idx.vertex_index];
 
-                    indices.push_back(currentIndex++);
+                        vertices.push_back(v[0]);
+                        vertices.push_back(v[1]);
+                        vertices.push_back(v[2]);
+
+                        if (hasNormals && idx.normal_index >= 0) {
+                            const float* n = &attrib.normals[3 * idx.normal_index];
+
+                            normals.push_back(n[0]);
+                            normals.push_back(n[1]);
+                            normals.push_back(n[2]);
+                        } else {
+                            normals.push_back(faceNormal[0]);
+                            normals.push_back(faceNormal[1]);
+                            normals.push_back(faceNormal[2]);
+                        }
+
+                        if (hasUVs && idx.texcoord_index >= 0) {
+                            const float* t = &attrib.texcoords[2 * idx.texcoord_index];
+
+                            uvs.push_back(t[0]);
+                            uvs.push_back(t[1]);
+                        } else {
+                            uvs.push_back(0.f);
+                            uvs.push_back(0.f);
+                        }
+                    }
                 }
             }
 
