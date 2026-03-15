@@ -105,35 +105,54 @@ void Model::load(const std::string& filename) {
         size_t indexOffset = 0;
         const auto& numFaceVerts = shape.mesh.num_face_vertices;
 
-        std::unordered_map<int, std::vector<tinyobj::index_t>> facesByMaterial;
+        std::vector<std::vector<tinyobj::index_t>> facesByMaterial(objMaterials.size() + 1);
 
         for (size_t f = 0; f < numFaceVerts.size(); ++f) {
             size_t fv = numFaceVerts[f];
-            int matID = -1;
 
+            int matID = -1;
             if (f < shape.mesh.material_ids.size()) matID = shape.mesh.material_ids[f];
 
+            size_t matIndex = (matID >= 0) ? static_cast<size_t>(matID) : objMaterials.size();
+
             for (size_t v = 0; v < fv; ++v) {
-                facesByMaterial[matID].push_back(shape.mesh.indices[indexOffset + v]);
+                facesByMaterial[matIndex].push_back(shape.mesh.indices[indexOffset + v]);
             }
 
             indexOffset += fv;
         }
 
-        for (auto& [matID, indicesList] : facesByMaterial) {
+        for (size_t matIndex = 0; matIndex < facesByMaterial.size(); matIndex++) {
+            auto& indicesList = facesByMaterial[matIndex];
+            if (indicesList.empty()) continue;
+
+            int matID = (matIndex == objMaterials.size()) ? -1 : static_cast<int>(matIndex);
+            
             std::vector<float> vertices;
             std::vector<float> normals;
             std::vector<float> uvs;
             std::vector<unsigned int> indices;
+
+            size_t vertexCount = indicesList.size();
+
+            vertices.reserve(vertexCount * 3);
+            normals.reserve(vertexCount * 3);
+            uvs.reserve(vertexCount * 2);
+            indices.reserve(vertexCount);
+
             unsigned int currentIndex = 0;
 
             for (size_t i = 0; i < indicesList.size(); i += 3) {
                 float faceNormal[3] = {0,0,0};
 
+                const auto& i0 = indicesList[i+0];
+                const auto& i1 = indicesList[i+1];
+                const auto& i2 = indicesList[i+2];
+
                 if (!hasNormals) {
-                    const float* v0 = &attrib.vertices[3 * static_cast<size_t>(indicesList[i+0].vertex_index)];
-                    const float* v1 = &attrib.vertices[3 * static_cast<size_t>(indicesList[i+1].vertex_index)];
-                    const float* v2 = &attrib.vertices[3 * static_cast<size_t>(indicesList[i+2].vertex_index)];
+                    const float* v0 = &attrib.vertices[3 * static_cast<size_t>(i0.vertex_index)];
+                    const float* v1 = &attrib.vertices[3 * static_cast<size_t>(i1.vertex_index)];
+                    const float* v2 = &attrib.vertices[3 * static_cast<size_t>(i2.vertex_index)];
 
                     computeNormal(v0, v1, v2, faceNormal);
                 }
