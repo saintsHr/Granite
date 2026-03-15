@@ -42,15 +42,6 @@ namespace std {
     };
 }
 
-struct Vertex {
-    glm::vec3 pos;
-    glm::vec3 normal;
-    glm::vec2 uv;
-    bool operator==(const Vertex& other) const {
-        return pos == other.pos && normal == other.normal && uv == other.uv;
-    }
-};
-
 namespace gr::Assets {
 
 static void computeNormal(const float v0[3], const float v1[3], const float v2[3], float out[3]) {
@@ -127,7 +118,7 @@ void Model::load(const std::string& filename) {
             if (indicesList.empty()) continue;
 
             int matID = (matIndex == objMaterials.size()) ? -1 : static_cast<int>(matIndex);
-            
+
             std::vector<float> vertices;
             std::vector<float> normals;
             std::vector<float> uvs;
