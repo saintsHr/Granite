@@ -79,9 +79,9 @@ struct VertexKey {
 
 struct VertexKeyHash {
     size_t operator()(const VertexKey& k) const {
-        return ((size_t)k.v * 73856093) ^
-               ((size_t)k.vt * 19349663) ^
-               ((size_t)k.vn * 83492791);
+        return (static_cast<size_t>(k.v)  * 73856093) ^
+               (static_cast<size_t>(k.vt) * 19349663) ^
+               (static_cast<size_t>(k.vn) * 83492791);
     }
 };
 
@@ -169,13 +169,13 @@ void Model::load(const std::string& filename) {
                     computeNormal(v0, v1, v2, faceNormal);
                 }
 
-                for (int k = 0; k < 3; k++) {
+                for (size_t k = 0; k < 3; k++) {
                     auto& idx = indicesList[i + k];
 
                     VertexKey key{
                         idx.vertex_index,
-                        idx.texcoord_index,
-                        idx.normal_index
+                        hasUVs ? idx.texcoord_index : -1,
+                        hasNormals ? idx.normal_index : -1
                     };
 
                     auto it = vertexCache.find(key);
@@ -183,18 +183,18 @@ void Model::load(const std::string& filename) {
                     if (it != vertexCache.end()) {
                         indices.push_back(it->second);
                     } else {
-                        unsigned int newIndex = vertices.size() / 3;
+                        unsigned int newIndex = static_cast<unsigned int>(vertices.size() / 3);
                         vertexCache[key] = newIndex;
                         indices.push_back(newIndex);
 
-                        const float* v = &attrib.vertices[3 * idx.vertex_index];
+                        const float* v = &attrib.vertices[3 * static_cast<size_t>(idx.vertex_index)];
 
                         vertices.push_back(v[0]);
                         vertices.push_back(v[1]);
                         vertices.push_back(v[2]);
 
                         if (hasNormals && idx.normal_index >= 0) {
-                            const float* n = &attrib.normals[3 * idx.normal_index];
+                            const float* n = &attrib.normals[3 * static_cast<size_t>(idx.normal_index)];
 
                             normals.push_back(n[0]);
                             normals.push_back(n[1]);
@@ -206,7 +206,7 @@ void Model::load(const std::string& filename) {
                         }
 
                         if (hasUVs && idx.texcoord_index >= 0) {
-                            const float* t = &attrib.texcoords[2 * idx.texcoord_index];
+                            const float* t = &attrib.texcoords[2 * static_cast<size_t>(idx.texcoord_index)];
 
                             uvs.push_back(t[0]);
                             uvs.push_back(t[1]);
