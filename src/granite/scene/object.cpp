@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "granite/scene/object.hpp"
 #include "granite/renderer/renderer.hpp"
+#include <iostream>
 
 gr::Vec3 calculateDirection(gr::Vec3 rotation, gr::Direction direction) {
     float rx = gr::Math::deg2rad(rotation.x);

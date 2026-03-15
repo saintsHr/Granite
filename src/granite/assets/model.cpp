@@ -74,9 +74,8 @@ static void computeNormal(const float v0[3], const float v1[3], const float v2[3
     }
 }
 
-gr::Assets::Model Model::upload(const std::string& filename) {
-    gr::Assets::Model model;
-    gr::Assets::Model nullmodel;
+void Model::load(const std::string& filename) {
+    gr::Assets::Model* model = this;
 
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -96,7 +95,7 @@ gr::Assets::Model Model::upload(const std::string& filename) {
             "Cannot load model from file '{}'",
             filename
         );
-        return nullmodel;
+        return;
     }
 
     bool hasNormals = !attrib.normals.empty();
@@ -175,7 +174,7 @@ gr::Assets::Model Model::upload(const std::string& filename) {
 
             gr::Renderer::Mesh mesh;
             mesh.upload(vertices, indices, normals, uvs);
-            model.meshes.push_back(std::move(mesh));
+            model->meshes.push_back(std::move(mesh));
 
             gr::Renderer::Material material;
             if (matID >= 0 && static_cast<size_t>(matID) < objMaterials.size()) {
@@ -192,11 +191,9 @@ gr::Assets::Model Model::upload(const std::string& filename) {
                 }
             }
             
-            model.materials.push_back(material);
+            model->materials.push_back(material);
         }
     }
-
-    return model;
 }
 
 }

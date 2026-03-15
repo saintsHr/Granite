@@ -30,7 +30,7 @@ namespace gr::Assets {
 
 class Model {
 public:
-    static gr::Assets::Model upload(const std::string& filename);
+    void load(const std::string& filename);
 
     std::vector<gr::Renderer::Mesh>     meshes;
     std::vector<gr::Renderer::Material> materials;
