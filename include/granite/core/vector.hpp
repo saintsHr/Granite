@@ -44,64 +44,81 @@ public:
     Vec2() : x(0), y(0) {}
     Vec2(float xv, float yv) : x(xv), y(yv) {}
 
-    Vec2 Normalize(float min, float max) {
+    Vec2 normalize(float min, float max) {
         return {
             gr::Math::normalize(this->x, min, max),
             gr::Math::normalize(this->y, min, max)
         };
     }
 
-    Vec2 Clamp(float min, float max) {
+    Vec2 clamp(float min, float max) {
         return {
             gr::Math::clamp(this->x, min, max),
             gr::Math::clamp(this->y, min, max)
         };
     }
 
-    explicit operator glm::vec2() const {
-        return {x, y};
+    float length() const {
+        return std::sqrt(x*x + y*y);
     }
 
-    Vec2(const glm::vec2& v) : x(v.x), y(v.y) {}
-
-    Vec2& operator+=(const Vec2& rhs) {
-        x += rhs.x;
-        y += rhs.y;
+    Vec2& operator+=(const Vec2& other) {
+        x += other.x;
+        y += other.y;
         return *this;
     }
 
-    Vec2& operator-=(const Vec2& rhs) {
-        x -= rhs.x;
-        y -= rhs.y;
+    Vec2& operator-=(const Vec2& other) {
+        x -= other.x;
+        y -= other.y;
         return *this;
     }
 
-    Vec2& operator*=(const Vec2& rhs) {
-        x *= rhs.x;
-        y *= rhs.y;
+    Vec2& operator*=(const Vec2& other) {
+        x *= other.x;
+        y *= other.y;
         return *this;
     }
 
-    Vec2& operator/=(const Vec2& rhs) {
-        x /= rhs.x;
-        y /= rhs.y;
+    Vec2& operator/=(const Vec2& other) {
+        x /= other.x;
+        y /= other.y;
         return *this;
     }
 
     Vec2 operator*(float s) const {
-        return {x * s, y * s};
+        return {
+            x * s,
+            y * s
+        };
     }
 
     Vec2 operator/(float s) const {
-        return {x / s, y / s};
+        return {
+            x / s,
+            y / s
+        };
     }
 
     Vec2 operator+(float s) const {
-        return {x + s, y + s};
+        return {
+            x + s,
+            y + s
+        };
     }
 
     Vec2 operator-(float s) const {
-        return {x - s, y - s};
+        return {
+            x - s,
+            y - s
+        };
+    }
+
+    Vec2 operator+(const Vec2& other) const {
+        return {
+            x + other.x,
+            y + other.y
+        };
     }
 
     Vec2 operator-(const Vec2& other) const {
@@ -111,8 +128,18 @@ public:
         };
     }
 
-    float length() const {
-        return std::sqrt(x*x + y*y);
+    Vec2 operator*(const Vec2& other) const {
+        return {
+            x * other.x,
+            y * other.y
+        };
+    }
+
+    Vec2 operator/(const Vec2& other) const {
+        return {
+            x / other.x,
+            y / other.y
+        };
     }
 
     float x, y;
@@ -123,7 +150,7 @@ public:
     Vec3() : x(0), y(0), z(0) {}
     Vec3(float xv, float yv, float zv) : x(xv), y(yv), z(zv) {}
 
-    Vec3 Normalize(float min, float max) {
+    Vec3 normalize(float min, float max) {
         return {
             gr::Math::normalize(this->x, min, max),
             gr::Math::normalize(this->y, min, max),
@@ -131,7 +158,7 @@ public:
         };
     }
 
-    Vec3 Clamp(float min, float max) {
+    Vec3 clamp(float min, float max) {
         return {
             gr::Math::clamp(this->x, min, max),
             gr::Math::clamp(this->y, min, max),
@@ -139,58 +166,76 @@ public:
         };
     }
 
-    explicit operator glm::vec3() const {
-        return {x, y, z};
+    float length() const {
+        return std::sqrt(x*x + y*y + z*z);
     }
 
-    Vec3(const glm::vec3& v) : x(v.x), y(v.y), z(v.z) {}
-
-    Vec3& operator+=(const Vec3& rhs) {
-        x += rhs.x;
-        y += rhs.y;
-        z += rhs.z;
+    Vec3& operator+=(const Vec3& other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
         return *this;
     }
 
-    Vec3& operator-=(const Vec3& rhs) {
-        x -= rhs.x;
-        y -= rhs.y;
-        z -= rhs.z;
+    Vec3& operator-=(const Vec3& other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
         return *this;
     }
 
-    Vec3& operator*=(const Vec3& rhs) {
-        x *= rhs.x;
-        y *= rhs.y;
-        z *= rhs.z;
+    Vec3& operator*=(const Vec3& other) {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
         return *this;
     }
 
-    Vec3& operator/=(const Vec3& rhs) {
-        x /= rhs.x;
-        y /= rhs.y;
-        z /= rhs.z;
+    Vec3& operator/=(const Vec3& other) {
+        x /= other.x;
+        y /= other.y;
+        z /= other.z;
         return *this;
     }
 
     Vec3 operator*(float s) const {
-        return {x * s, y * s, z * s};
-    }
-
-    Vec3 operator*(Vec3 v) const {
-        return {x * v.x, y * v.y, z * v.z};
+        return {
+            x * s,
+            y * s,
+            z * s
+        };
     }
 
     Vec3 operator/(float s) const {
-        return {x / s, y / s, z / s};
+        return {
+            x / s,
+            y / s,
+            z / s
+        };
     }
 
     Vec3 operator+(float s) const {
-        return {x + s, y + s, z + s};
+        return {
+            x + s,
+            y + s,
+            z + s
+        };
     }
 
     Vec3 operator-(float s) const {
-        return {x - s, y - s, z - s};
+        return {
+            x - s,
+            y - s,
+            z - s
+        };
+    }
+
+    Vec3 operator+(const Vec3& other) const {
+        return {
+            x + other.x,
+            y + other.y,
+            z + other.z
+        };
     }
 
     Vec3 operator-(const Vec3& other) const {
@@ -201,8 +246,20 @@ public:
         };
     }
 
-    float length() const {
-        return std::sqrt(x*x + y*y + z*z);
+    Vec3 operator*(const Vec3& other) const {
+        return {
+            x * other.x,
+            y * other.y,
+            z * other.z
+        };
+    }
+
+    Vec3 operator/(const Vec3& other) const {
+        return {
+            x / other.x,
+            y / other.y,
+            z / other.z
+        };
     }
 
     float x, y, z;
