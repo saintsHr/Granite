@@ -26,6 +26,7 @@ SOFTWARE.
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/vector_relational.hpp>
+#include <glm/ext.hpp>
 
 #include "granite/renderer/renderer.hpp"
 #include "granite/scene/light.hpp"
@@ -42,6 +43,49 @@ GLuint depthMapFBO = 0;
 GLuint depthMap    = 0;
 const GLsizei SHADOW_WIDTH  = 1024;
 const GLsizei SHADOW_HEIGHT = 1024;
+
+void calcLightSpace() {
+    glm::vec3 camPos = glm::vec3(
+        gFrame.cameraPos.x,
+        gFrame.cameraPos.y,
+        gFrame.cameraPos.z
+    );
+    
+    glm::vec3 camForward = -glm::vec3(gFrame.view[2]);
+    glm::vec3 frustumCenter = camPos + camForward * 20.0f;
+
+    auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
+    if (!dirLights.empty()) {
+        gFrame.lightSpaces.resize(dirLights.size());
+
+        int i = 0;
+        for (auto& [id, light] : dirLights) {
+            glm::vec3 lightDir = glm::normalize(glm::vec3(
+                light.direction.x,
+                light.direction.y,
+                light.direction.z
+            ));
+
+            glm::vec3 lightPos = frustumCenter - lightDir * 30.0f;
+
+            glm::mat4 lightView = glm::lookAt(
+                lightPos,
+                frustumCenter,
+                glm::vec3(0,1,0)
+            );
+
+            float size = 25.0f;
+
+            glm::mat4 lightProj = glm::ortho(
+                -size, size,
+                -size, size,
+                -50.0f, 50.0f
+            );
+
+            gFrame.lightSpaces[i++] = lightProj * lightView;
+        }
+    }
+}
 
 void init() {
     bool success = true;

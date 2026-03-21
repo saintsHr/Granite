@@ -35,15 +35,15 @@ struct FrameContext {
     glm::mat4 view;
     glm::mat4 projection;
     gr::Vec3 cameraPos;
+
+    std::vector<glm::mat4> lightSpaces;
 };
 
 extern FrameContext gFrame;
-    
+
 void init();
 void beginFrame(const gr::Scene::Camera& camera);
-
 void addToQueue(const gr::Renderer::RenderObject& obj);
-
 void endFrame();
 
 }
