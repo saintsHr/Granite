@@ -38,6 +38,11 @@ FrameContext gFrame;
 
 GLuint lightUBO = 0;
 
+GLuint depthMapFBO = 0;
+GLuint depthMap    = 0;
+const GLsizei SHADOW_WIDTH  = 1024;
+const GLsizei SHADOW_HEIGHT = 1024;
+
 void init() {
     bool success = true;
 
@@ -49,14 +54,14 @@ void init() {
         if (err) success = false;
     };
 
-    // loads GLAD
+    // --- loads GLAD ---
     if (!gladLoadGLLoader(
         reinterpret_cast<GLADloadproc>(glfwGetProcAddress)
     )) {
         success = false;
     }
 
-    // configs OpenGL
+    // --- configs OpenGL ---
     while (glGetError() != GL_NO_ERROR) {}
 
     glEnable(GL_DEPTH_TEST);
@@ -79,13 +84,13 @@ void init() {
 
     checkGL();
 
-    // creates light UBO
+    // --- creates light UBO ---
     while (glGetError() != GL_NO_ERROR) {}
     glGenBuffers(1, &lightUBO);
     if (lightUBO == 0) success = false;
     checkGL();
 
-    // binds light UBO
+    // --- binds light UBO ---
     while (glGetError() != GL_NO_ERROR) {}
     glBindBuffer(GL_UNIFORM_BUFFER, lightUBO);
     glBufferData(
@@ -96,10 +101,46 @@ void init() {
     );
     checkGL();
 
-    // binds light UBO
+    // --- binds light UBO ---
     while (glGetError() != GL_NO_ERROR) {}
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, lightUBO);
     checkGL();
+
+    // --- generates depth map & depth map FBO ---
+    glGenFramebuffers(1, &depthMapFBO);
+    glGenTextures(1, &depthMap);
+
+    // --- creates depth map texture ---
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_DEPTH_COMPONENT, 
+        SHADOW_WIDTH,
+        SHADOW_HEIGHT,
+        0,
+        GL_DEPTH_COMPONENT,
+        GL_FLOAT,
+        NULL
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // --- attach depth map texture to depth map FBO ---
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_DEPTH_ATTACHMENT,
+        GL_TEXTURE_2D,
+        depthMap,
+        0
+    );
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) success = false;
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     if (!success) {
         gr::internal::log(
