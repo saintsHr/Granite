@@ -27,6 +27,7 @@ SOFTWARE.
 #include "glad/glad.h"
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace gr::Renderer {
 
@@ -36,9 +37,12 @@ const extern Shader* currentShader;
 class Shader {
 public:
     Shader();
-    Shader(const std::string& vertexFile, const std::string& fragmentFile);
+    Shader(const std::string& vertexStr, const std::string& fragmentStr);
     ~Shader();
+
     void use() const;
+
+    void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
     GLuint getProgram() const;
     GLint getPLoc() const;

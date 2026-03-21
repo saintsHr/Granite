@@ -33,6 +33,39 @@ SOFTWARE.
 #include "granite/core/log.hpp"
 #include <algorithm>
 
+namespace gr::internal {
+
+const char* defaultVertexShadowShader = R"glsl(
+
+// ------------------------------------------------------------------------------//
+
+#version 330 core
+layout(location = 0) in vec3 aPos;
+
+uniform mat4 uModel;
+uniform mat4 uLightSpace;
+
+void main() {
+    gl_Position = uLightSpace * uModel * vec4(aPos, 1.0);
+}
+
+// ------------------------------------------------------------------------------//
+
+)glsl";
+
+const char* defaultFragmentShadowShader = R"glsl(
+
+// ------------------------------------------------------------------------------//
+
+#version 330 core
+void main() {}
+
+// ------------------------------------------------------------------------------//
+
+)glsl";
+
+}
+
 namespace gr::Renderer {
 
 FrameContext gFrame;
@@ -41,8 +74,11 @@ GLuint lightUBO = 0;
 
 GLuint depthMapFBO = 0;
 GLuint depthMap    = 0;
+
 const GLsizei SHADOW_WIDTH  = 1024;
 const GLsizei SHADOW_HEIGHT = 1024;
+
+std::unique_ptr<gr::Renderer::Shader> shadowShader;
 
 void calcLightSpace() {
     glm::vec3 camPos = glm::vec3(
@@ -50,7 +86,7 @@ void calcLightSpace() {
         gFrame.cameraPos.y,
         gFrame.cameraPos.z
     );
-    
+
     glm::vec3 camForward = -glm::vec3(gFrame.view[2]);
     glm::vec3 frustumCenter = camPos + camForward * 20.0f;
 
@@ -185,6 +221,12 @@ void init() {
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // --- creates shadow shader ---
+    shadowShader = std::make_unique<gr::Renderer::Shader>(
+        gr::internal::defaultVertexShadowShader,
+        gr::internal::defaultFragmentShadowShader
+    );
 
     if (!success) {
         gr::internal::log(

@@ -29,6 +29,7 @@ SOFTWARE.
 #include <cstdio>
 #include <fstream>
 #include <sstream>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace gr::internal {
 
@@ -322,21 +323,9 @@ namespace gr::Renderer {
 
 const Shader* currentShader = nullptr;
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) {
-    std::string vertexRead, fragmentRead;
-    const char* vertexSource;
-    const char* fragmentSource;
-
-    vertexRead = load_(vertexFile);
-    fragmentRead = load_(fragmentFile);
-
-    if (vertexRead != "" && fragmentRead != "") {
-        vertexSource = vertexRead.c_str();
-        fragmentSource = fragmentRead.c_str();
-    } else {
-        vertexSource = gr::internal::defaultVertexShader;
-        fragmentSource = gr::internal::defaultFragmentShader;
-    }
+Shader::Shader() {
+    const char* vertexSource = gr::internal::defaultVertexShader;
+    const char* fragmentSource = gr::internal::defaultFragmentShader;
 
     // creates & compiles shaders
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -382,9 +371,9 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) {
     glDeleteShader(fragmentShader);
 }
 
-Shader::Shader() {
-    const char* vertexSource = gr::internal::defaultVertexShader;
-    const char* fragmentSource = gr::internal::defaultFragmentShader;
+Shader::Shader(const std::string &vertexStr, const std::string &fragmentStr) {
+    const char* vertexSource   = vertexStr.c_str();
+    const char* fragmentSource = fragmentStr.c_str();
 
     // creates & compiles shaders
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -456,6 +445,11 @@ std::string Shader::load_(const std::string& filename) const {
 void Shader::use() const {
     glUseProgram(program_);
     currentShader = this;
+}
+
+void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
+    unsigned int loc = glGetUniformLocation(program_, name.c_str());
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
 GLuint Shader::getProgram() const {
