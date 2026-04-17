@@ -62,6 +62,10 @@ public:
         return std::sqrt(x*x + y*y);
     }
 
+    Vec2 invert() {
+        return {this->y, this->x};
+    }
+
     Vec2& operator+=(const Vec2& other) {
         x += other.x;
         y += other.y;
@@ -168,6 +172,10 @@ public:
 
     float length() const {
         return std::sqrt(x*x + y*y + z*z);
+    }
+
+    Vec3 invert() {
+        return {this->z, this->y, this->x};
     }
 
     Vec3& operator+=(const Vec3& other) {

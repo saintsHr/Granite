@@ -118,7 +118,7 @@ void calcLightSpace() {
                 -50.0f, 50.0f
             );
 
-            gFrame.lightSpaces[i++] = lightProj * lightView;
+            gFrame.lightSpaces[static_cast<unsigned long>(i++)] = lightProj * lightView;
         }
     }
 }

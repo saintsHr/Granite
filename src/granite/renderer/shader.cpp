@@ -448,7 +448,7 @@ void Shader::use() const {
 }
 
 void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
-    unsigned int loc = glGetUniformLocation(program_, name.c_str());
+    GLint loc = glGetUniformLocation(program_, name.c_str());
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
