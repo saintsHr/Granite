@@ -77,8 +77,8 @@ GLuint depthMap    = 0;
 
 bool gShadowPass = false;
 
-const GLsizei SHADOW_WIDTH  = 1024;
-const GLsizei SHADOW_HEIGHT = 1024;
+const GLsizei SHADOW_WIDTH  = 2048;
+const GLsizei SHADOW_HEIGHT = 2048;
 
 std::unique_ptr<gr::Renderer::Shader> shadowShader;
 
@@ -90,7 +90,9 @@ void calcLightSpace() {
     );
 
     glm::vec3 camForward = -glm::vec3(gFrame.view[2]);
-    glm::vec3 frustumCenter = camPos + camForward * 20.0f;
+    
+    float shadowDistance = 30.0f;
+    glm::vec3 frustumCenter = camPos + camForward * shadowDistance;
 
     auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
     if (!dirLights.empty()) {
@@ -112,12 +114,12 @@ void calcLightSpace() {
                 glm::vec3(0,1,0)
             );
 
-            float size = 25.0f;
+            float size = shadowDistance;
 
             glm::mat4 lightProj = glm::ortho(
                 -size, size,
                 -size, size,
-                -50.0f, 50.0f
+                -100.0f, 100.0f
             );
 
             gFrame.lightSpaces[static_cast<unsigned long>(i++)] = lightProj * lightView;
@@ -207,8 +209,11 @@ void init() {
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    float borderColor[] = {1.0, 1.0, 1.0, 1.0};
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
     // --- attach depth map texture to depth map FBO ---
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
