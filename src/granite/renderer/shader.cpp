@@ -62,10 +62,12 @@ layout(location = 2) in vec2 aTexCoord;
 uniform mat4 uProjection;
 uniform mat4 uView;
 uniform mat4 uModel;
+uniform mat4 uLightSpace;
 
 out vec3 vNormal;
 out vec3 vFragPos;
 out vec2 vTexCoord;
+out vec4 vFragPosLightSpace;
 
 void main() {
     vec4 worldPos = uModel * vec4(aPos, 1.0);
@@ -75,6 +77,8 @@ void main() {
     vNormal = normalize(normalMatrix * aNormal);
 
     vTexCoord = aTexCoord;
+
+    vFragPosLightSpace = uLightSpace * vec4(vFragPos, 1.0);
 
     gl_Position = uProjection * uView * worldPos;
 }
@@ -94,12 +98,14 @@ uniform float uShininess;
 uniform float uOpacity;
 uniform vec3 uCameraPos;
 uniform sampler2D uTexture;
+uniform sampler2D uShadowMap;
 uniform bool uHasTexture;
 uniform vec3 uSpecularColor;
 
 in vec3 vNormal;
 in vec3 vFragPos;
 in vec2 vTexCoord;
+in vec4 vFragPosLightSpace;
 
 out vec4 vFragColor;
 
@@ -181,6 +187,22 @@ float spotFactor(vec3 L, vec3 direction, float cutoff) {
         cutoff,
         theta
     );
+}
+
+float ShadowCalculation(vec4 fragPosLightSpace) {
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    if (projCoords.z > 1.0) return 0.0;
+
+    float closestDepth = texture(uShadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+    float bias = 0.05;
+
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
 }
 
 // ------------------------------------------------------------
@@ -305,8 +327,10 @@ void main() {
         );
     }
 
+    float shadow = ShadowCalculation(vFragPosLightSpace);
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
-    vec3 finalColor = diffuseAccum * baseColor + specAccum;
+    vec3 lighting = diffuseAccum * baseColor + specAccum;
+    vec3 finalColor = lighting * (1.0 - shadow);
 
     finalColor = finalColor / (finalColor + vec3(1.0));
 

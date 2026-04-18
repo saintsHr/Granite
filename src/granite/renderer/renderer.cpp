@@ -75,6 +75,8 @@ GLuint lightUBO = 0;
 GLuint depthMapFBO = 0;
 GLuint depthMap    = 0;
 
+bool gShadowPass = false;
+
 const GLsizei SHADOW_WIDTH  = 1024;
 const GLsizei SHADOW_HEIGHT = 1024;
 
@@ -339,7 +341,54 @@ void addToQueue(const gr::Renderer::RenderObject& obj) {
     }
 }
 
-void endFrame() {
+static void shadowPass(const gr::Window* window) {
+    glDisable(GL_CULL_FACE);
+
+    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    shadowShader->use();
+
+    GLint lightSpaceLoc = glGetUniformLocation(
+        shadowShader->getProgram(),
+        "uLightSpace"
+    );
+
+    glUniformMatrix4fv(
+        lightSpaceLoc,
+        1,
+        GL_FALSE,
+        glm::value_ptr(gFrame.lightSpaces[0])
+    );
+
+    for (size_t i = 0; i < opaqueObjects.size(); i++) {
+        GLint modelLoc = glGetUniformLocation(
+            shadowShader->getProgram(),
+            "uModel"
+        );
+
+        glUniformMatrix4fv(
+            modelLoc,
+            1,
+            GL_FALSE,
+            glm::value_ptr(opaqueObjects[i].transform.getMatrix())
+        );
+
+        opaqueObjects[i].draw();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, window->getSize().x, window->getSize().y);
+}
+
+void endFrame(const gr::Window* window) {
+    calcLightSpace();
+
+    gShadowPass = true;
+    shadowPass(window);
+    gShadowPass = false;
+
     for (size_t i = 0; i < opaqueObjects.size(); i++){
         opaqueObjects[i].draw();
     }

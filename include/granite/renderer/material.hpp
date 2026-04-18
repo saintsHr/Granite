@@ -51,6 +51,8 @@ private:
     GLint tL_  = -1;
     GLint hL_  = -1;
     GLint scL_ = -1;
+    GLint lsL_ = -1;
+    GLint smL_ = -1;
 };
 
 }

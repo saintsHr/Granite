@@ -40,10 +40,13 @@ struct FrameContext {
 };
 
 extern FrameContext gFrame;
+extern GLuint depthMap;
+extern bool gShadowPass;
+extern std::unique_ptr<gr::Renderer::Shader> shadowShader;
 
 void init();
 void beginFrame(const gr::Scene::Camera& camera);
 void addToQueue(const gr::Renderer::RenderObject& obj);
-void endFrame();
+void endFrame(const gr::Window* window);
 
 }
