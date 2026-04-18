@@ -105,7 +105,7 @@ void calcLightSpace() {
 
     glm::vec3 camForward = -glm::vec3(gFrame.view[2]);
     
-    float shadowDistance = 30.0f;
+    float shadowDistance = 10.0f;
     glm::vec3 frustumCenter = camPos + camForward * shadowDistance;
 
     auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
@@ -120,7 +120,7 @@ void calcLightSpace() {
                 light.direction.z
             ));
 
-            glm::vec3 lightPos = frustumCenter - lightDir * 30.0f;
+            glm::vec3 lightPos = frustumCenter - lightDir * shadowDistance;
 
             glm::mat4 lightView = glm::lookAt(
                 lightPos,
@@ -128,12 +128,12 @@ void calcLightSpace() {
                 glm::vec3(0,1,0)
             );
 
-            float size = shadowDistance;
+            float size = shadowDistance + 10.0f;
 
             glm::mat4 lightProj = glm::ortho(
                 -size, size,
                 -size, size,
-                -100.0f, 100.0f
+                0.1f, 100.0f
             );
 
             gFrame.lightSpaces[static_cast<unsigned long>(i++)] = lightProj * lightView;
