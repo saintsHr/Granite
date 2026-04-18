@@ -347,10 +347,14 @@ void main() {
         );
     }
 
-    float shadow = ShadowCalculation(vFragPosLightSpace);
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
-    vec3 lighting = diffuseAccum * baseColor + specAccum;
-    vec3 finalColor = lighting * (1.0 - shadow);
+
+    float shadow = ShadowCalculation(vFragPosLightSpace);
+    vec3  ambient = ambientLight.color * ambientLight.intensity * baseColor;
+    vec3  directLighting = diffuseAccum * baseColor + specAccum;
+    
+    directLighting *= (1.0 - shadow);
+    vec3 finalColor = ambient + directLighting;
 
     finalColor = finalColor / (finalColor + vec3(1.0));
 
