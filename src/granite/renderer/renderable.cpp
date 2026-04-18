@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "granite/renderer/renderable.hpp"
 #include "granite/renderer/renderer.hpp"
+#include "granite/renderer/shadow.hpp"
 #include "granite/core/log.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>

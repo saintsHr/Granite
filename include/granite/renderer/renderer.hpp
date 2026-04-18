@@ -42,7 +42,8 @@ struct FrameContext {
 extern FrameContext gFrame;
 extern GLuint depthMap;
 extern bool gShadowPass;
-extern std::unique_ptr<gr::Renderer::Shader> shadowShader;
+extern std::vector<gr::Renderer::RenderObject> opaqueObjects;
+extern std::vector<gr::Renderer::RenderObject> transparentObjects;
 
 void init();
 void beginFrame(const gr::Scene::Camera& camera);
