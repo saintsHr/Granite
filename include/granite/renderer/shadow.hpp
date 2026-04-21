@@ -15,13 +15,15 @@ extern const char* defaultFragmentShadowShader;
 
 namespace gr::Renderer {
 
+extern std::unique_ptr<gr::Renderer::Shader> shadowShader;
 extern GLuint depthMap;
 extern GLuint depthMapFBO;
 
-extern const GLsizei SHADOW_WIDTH;
-extern const GLsizei SHADOW_HEIGHT;
+constexpr GLsizei SHADOW_WIDTH = 2048;
+constexpr GLsizei SHADOW_HEIGHT = 2048;
+constexpr float SHADOW_DISTANCE = 10.0;
 
-extern std::unique_ptr<gr::Renderer::Shader> shadowShader;
+constexpr float DEPTH_MAP_BORDER_COLOR[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 void initShadow();
 void shadowPass(const gr::Window* window);

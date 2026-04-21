@@ -41,13 +41,9 @@ void main() {}
 
 namespace gr::Renderer {
 
-const GLsizei SHADOW_WIDTH  = 2048;
-const GLsizei SHADOW_HEIGHT = 2048;
-
+std::unique_ptr<gr::Renderer::Shader> shadowShader;
 GLuint depthMap    = 0;
 GLuint depthMapFBO = 0;
-
-std::unique_ptr<gr::Renderer::Shader> shadowShader;
 
 void initShadow() {
     // --- generates depth map & depth map FBO ---
@@ -72,8 +68,11 @@ void initShadow() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    float borderColor[] = {1.0, 1.0, 1.0, 1.0};
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glTexParameterfv(
+        GL_TEXTURE_2D,
+        GL_TEXTURE_BORDER_COLOR,
+        DEPTH_MAP_BORDER_COLOR
+    );
 
     // --- attach depth map texture to depth map FBO ---
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
@@ -102,11 +101,8 @@ void calcLightSpace() {
         gFrame.cameraPos.y,
         gFrame.cameraPos.z
     );
-
     glm::vec3 camForward = -glm::vec3(gFrame.view[2]);
-    
-    float shadowDistance = 10.0f;
-    glm::vec3 frustumCenter = camPos + camForward * shadowDistance;
+    glm::vec3 frustumCenter = camPos + camForward * SHADOW_DISTANCE;
 
     auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
     if (!dirLights.empty()) {
@@ -120,7 +116,7 @@ void calcLightSpace() {
                 light.direction.z
             ));
 
-            glm::vec3 lightPos = frustumCenter - lightDir * shadowDistance;
+            glm::vec3 lightPos = frustumCenter - lightDir * SHADOW_DISTANCE;
 
             glm::mat4 lightView = glm::lookAt(
                 lightPos,
@@ -128,11 +124,9 @@ void calcLightSpace() {
                 glm::vec3(0,1,0)
             );
 
-            float size = shadowDistance + 10.0f;
-
             glm::mat4 lightProj = glm::ortho(
-                -size, size,
-                -size, size,
+                -SHADOW_DISTANCE, SHADOW_DISTANCE,
+                -SHADOW_DISTANCE, SHADOW_DISTANCE,
                 0.1f, 100.0f
             );
 
