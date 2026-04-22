@@ -56,8 +56,8 @@ void initShadow() {
         GL_TEXTURE_2D,
         0,
         GL_DEPTH_COMPONENT, 
-        SHADOW_WIDTH,
-        SHADOW_HEIGHT,
+        SHADOW_RESOLUTION,
+        SHADOW_RESOLUTION,
         0,
         GL_DEPTH_COMPONENT,
         GL_FLOAT,
@@ -96,54 +96,115 @@ void initShadow() {
     );
 }
 
-static void calcLightSpace() {
-    glm::vec3 camPos = glm::vec3(
-        gFrame.cameraPos.x,
-        gFrame.cameraPos.y,
-        gFrame.cameraPos.z
-    );
-    glm::vec3 camForward = -glm::vec3(gFrame.view[2]);
-    glm::vec3 frustumCenter = camPos + camForward * SHADOW_DISTANCE;
+static std::vector<glm::vec3> getFrustumCornersWorldSpace(const glm::mat4& proj, const glm::mat4& view) {
+    const auto inv = glm::inverse(proj * view);
 
-    auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
-    
-    if (!dirLights.empty()) {
-        gFrame.lightSpaces.resize(dirLights.size());
+    std::vector<glm::vec3> corners;
+    corners.reserve(8);
 
-        int i = 0;
-        for (auto& [id, light] : dirLights) {
-            glm::vec3 lightDir = glm::normalize(glm::vec3(
-                light.direction.x,
-                light.direction.y,
-                light.direction.z
-            ));
+    for (int x = 0; x < 2; ++x) {
+        for (int y = 0; y < 2; ++y) {
+            for (int z = 0; z < 2; ++z) {
+                glm::vec4 pt = inv * glm::vec4(
+                    2.0f * x - 1.0f,
+                    2.0f * y - 1.0f,
+                    2.0f * z - 1.0f,
+                    1.0f
+                );
 
-            glm::vec3 lightPos = frustumCenter - lightDir * SHADOW_DISTANCE;
-            glm::vec3 lightUp = abs(lightDir.y) > 0.9f ? glm::vec3(0,0,1) : glm::vec3(0,1,0);
-
-            glm::mat4 lightView = glm::lookAt(
-                lightPos,
-                frustumCenter,
-                lightUp
-            );
-
-            glm::mat4 lightProj = glm::ortho(
-                -SHADOW_DISTANCE, SHADOW_DISTANCE,
-                -SHADOW_DISTANCE, SHADOW_DISTANCE,
-                SHADOW_NEAR, SHADOW_FAR
-            );
-
-            gFrame.lightSpaces[static_cast<unsigned long>(i++)] = lightProj * lightView;
+                pt /= pt.w;
+                corners.push_back(glm::vec3(pt));
+            }
         }
+    }
+
+    return corners;
+}
+
+static void calcLightSpace() {
+    auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
+    if (dirLights.empty()) return;
+
+    gFrame.lightSpaces.resize(dirLights.size());
+
+    glm::mat4 proj = gFrame.projection;
+    glm::mat4 view = gFrame.view;
+
+    auto corners = getFrustumCornersWorldSpace(proj, view);
+
+    int i = 0;
+    for (auto& [id, light] : dirLights) {
+        glm::vec3 lightDir = glm::normalize(glm::vec3(
+            light.direction.x,
+            light.direction.y,
+            light.direction.z
+        ));
+
+        glm::vec3 center(0.0f);
+        for (const auto& v : corners) center += v;
+        center /= corners.size();
+
+        glm::vec3 up = abs(lightDir.y) > 0.9f
+            ? glm::vec3(0, 0, 1)
+            : glm::vec3(0, 1, 0);
+
+        float radius = 0.0f;
+        for (const auto& corner : corners) {
+            radius = std::max(radius, glm::length(corner - center));
+        }
+
+        glm::mat4 lightView = glm::lookAt(
+            center - lightDir * radius,
+            center,
+            up
+        );
+
+        float minX =  FLT_MAX;
+        float maxX = -FLT_MAX;
+        float minY =  FLT_MAX;
+        float maxY = -FLT_MAX;
+        float minZ =  FLT_MAX;
+        float maxZ = -FLT_MAX;
+
+        for (const auto& corner : corners) {
+            glm::vec4 trf = lightView * glm::vec4(corner, 1.0f);
+
+            minX = std::min(minX, trf.x);
+            maxX = std::max(maxX, trf.x);
+            minY = std::min(minY, trf.y);
+            maxY = std::max(maxY, trf.y);
+            minZ = std::min(minZ, trf.z);
+            maxZ = std::max(maxZ, trf.z);
+        }
+
+        float zExtent = maxZ - minZ;
+        float zPadding = zExtent * 0.05f;
+
+        minZ -= zPadding;
+        maxZ += zPadding;
+
+        if (minZ > maxZ) std::swap(minZ, maxZ);
+
+        float nearPlane = -maxZ;
+        float farPlane  = -minZ;
+
+        glm::mat4 lightProj = glm::ortho(
+            minX, maxX,
+            minY, maxY,
+            nearPlane,
+            farPlane
+        );
+
+        gFrame.lightSpaces[i++] = lightProj * lightView;
     }
 }
 
 void shadowPass(const gr::Window* window) {
     calcLightSpace();
 
-    glDisable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
 
-    glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+    glViewport(0, 0, SHADOW_RESOLUTION, SHADOW_RESOLUTION);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -177,7 +238,7 @@ void shadowPass(const gr::Window* window) {
         opaqueObjects[i].draw();
     }
 
-    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(
