@@ -63,6 +63,7 @@ void initShadow() {
         GL_FLOAT,
         NULL
     );
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER); 
@@ -95,7 +96,7 @@ void initShadow() {
     );
 }
 
-void calcLightSpace() {
+static void calcLightSpace() {
     glm::vec3 camPos = glm::vec3(
         gFrame.cameraPos.x,
         gFrame.cameraPos.y,
@@ -105,6 +106,7 @@ void calcLightSpace() {
     glm::vec3 frustumCenter = camPos + camForward * SHADOW_DISTANCE;
 
     auto& dirLights = gr::Scene::LightManager::getDirectionalLights();
+    
     if (!dirLights.empty()) {
         gFrame.lightSpaces.resize(dirLights.size());
 
@@ -117,17 +119,18 @@ void calcLightSpace() {
             ));
 
             glm::vec3 lightPos = frustumCenter - lightDir * SHADOW_DISTANCE;
+            glm::vec3 lightUp = abs(lightDir.y) > 0.9f ? glm::vec3(0,0,1) : glm::vec3(0,1,0);
 
             glm::mat4 lightView = glm::lookAt(
                 lightPos,
                 frustumCenter,
-                glm::vec3(0,1,0)
+                lightUp
             );
 
             glm::mat4 lightProj = glm::ortho(
                 -SHADOW_DISTANCE, SHADOW_DISTANCE,
                 -SHADOW_DISTANCE, SHADOW_DISTANCE,
-                0.1f, 100.0f
+                SHADOW_NEAR, SHADOW_FAR
             );
 
             gFrame.lightSpaces[static_cast<unsigned long>(i++)] = lightProj * lightView;
@@ -174,8 +177,15 @@ void shadowPass(const gr::Window* window) {
         opaqueObjects[i].draw();
     }
 
+    glEnable(GL_CULL_FACE);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, window->getSize().x, window->getSize().y);
+    glViewport(
+        0,
+        0,
+        static_cast<GLsizei>(window->getSize().x),
+        static_cast<GLsizei>(window->getSize().y)
+    );
 }
 
 }
