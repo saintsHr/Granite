@@ -208,6 +208,12 @@ const vec2 poissonDisk[16] = vec2[](
     vec2(0.14383161, -0.14100790)
 );
 
+mat2 rot(float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return mat2(c, -s, s, c);
+}
+
 float ShadowCalculation(vec4 fragPosLightSpace) {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
@@ -232,13 +238,36 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(uShadowMap, 0);
 
-    for(int i = 0; i < 16; ++i) {
-        vec2 offset = poissonDisk[i] * texelSize;
-        float pcfDepth = texture(uShadowMap, projCoords.xy + offset).r;
-        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+    int N = 4;
+    int samples = N * N;
+    float radius = 0.3 / currentDepth;
+
+    float noise = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
+    float angle = noise * (2 * 3.1415926535);
+
+    mat2 R = rot(angle);
+
+    for(int y = 0; y < N; ++y) {
+        for(int x = 0; x < N; ++x) {
+            vec2 cell = (vec2(x, y) + 0.5) / float(N);
+
+            vec2 jitter = vec2(
+                fract(sin(dot(vec2(x, y), vec2(127.1, 311.7))) * 43758.5453),
+                fract(sin(dot(vec2(y, x), vec2(269.5, 183.3))) * 43758.5453)
+            );
+            jitter = (jitter - 0.5) / float(N);
+
+            vec2 samplePos = (cell - 0.5) + jitter;
+            samplePos = R * samplePos;
+
+            vec2 offset = samplePos * texelSize * radius;
+            float pcfDepth = texture(uShadowMap, projCoords.xy + offset).r;
+
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
     }
 
-    shadow /= 16.0;
+    shadow /= float(samples);
 
     return shadow;
 }
