@@ -42,8 +42,8 @@ void main() {}
 namespace gr::Renderer {
 
 std::unique_ptr<gr::Renderer::Shader> shadowShader;
-GLuint depthMap    = 0;
-GLuint depthMapFBO = 0;
+GLuint depthMap          = 0;
+GLuint depthMapFBO       = 0;
 
 void initShadow() {
     // --- generates depth map & depth map FBO ---
@@ -56,8 +56,8 @@ void initShadow() {
         GL_TEXTURE_2D,
         0,
         GL_DEPTH_COMPONENT, 
-        SHADOW_RESOLUTION,
-        SHADOW_RESOLUTION,
+        8192,
+        8192,
         0,
         GL_DEPTH_COMPONENT,
         GL_FLOAT,
@@ -106,9 +106,9 @@ static std::vector<glm::vec3> getFrustumCornersWorldSpace(const glm::mat4& proj,
         for (int y = 0; y < 2; ++y) {
             for (int z = 0; z < 2; ++z) {
                 glm::vec4 pt = inv * glm::vec4(
-                    2.0f * x - 1.0f,
-                    2.0f * y - 1.0f,
-                    2.0f * z - 1.0f,
+                    2.0f * static_cast<float>(x) - 1.0f,
+                    2.0f * static_cast<float>(y) - 1.0f,
+                    2.0f * static_cast<float>(z) - 1.0f,
                     1.0f
                 );
 
@@ -195,7 +195,7 @@ static void calcLightSpace() {
             farPlane
         );
 
-        gFrame.lightSpaces[i++] = lightProj * lightView;
+        gFrame.lightSpaces[static_cast<unsigned long>(i++)] = lightProj * lightView;
     }
 }
 
@@ -204,7 +204,7 @@ void shadowPass(const gr::Window* window) {
 
     glCullFace(GL_FRONT);
 
-    glViewport(0, 0, SHADOW_RESOLUTION, SHADOW_RESOLUTION);
+    glViewport(0, 0, 8192, 8192);
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 

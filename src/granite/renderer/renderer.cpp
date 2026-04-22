@@ -82,6 +82,8 @@ void init() {
 
     checkGL();
 
+    initShadow();
+
     // --- creates light UBO ---
     while (glGetError() != GL_NO_ERROR) {}
     glGenBuffers(1, &lightUBO);
@@ -98,8 +100,6 @@ void init() {
         GL_DYNAMIC_DRAW
     );
     checkGL();
-
-    initShadow();
 
     // --- binds light UBO ---
     while (glGetError() != GL_NO_ERROR) {}
