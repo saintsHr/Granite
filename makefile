@@ -26,7 +26,9 @@
 CC      ?= gcc
 CXX     ?= g++
 AR      := ar
-RM      := rm -rf
+
+RM  := rm -rf
+CP  := cp -r
 
 COMPILER_NAME := $(notdir $(CXX))
 
@@ -50,27 +52,36 @@ INC_DIR      := include
 THIRD_PARTY  := third-party
 THIRD_SRC    := $(THIRD_PARTY)/src
 
-INCLUDE := -I$(INC_DIR) -I$(THIRD_PARTY)/include -I/usr/include/bullet
+INCLUDE := \
+	-I$(INC_DIR) \
+	-I$(THIRD_PARTY)/include \
+	$(shell pkg-config --cflags bullet)
+
 DEFS := -DGLFW_INCLUDE_NONE
 
 DEPFLAGS := -MMD -MP
 
+LINUX_INSTALL_PREFIX  := /usr/local
+LINUX_INSTALL_INCLUDE := $(LINUX_INSTALL_PREFIX)/include
+LINUX_INSTALL_LIBDIR  := $(LINUX_INSTALL_PREFIX)/lib
+LINUX_INSTALL_PKGDIR  := $(LINUX_INSTALL_LIBDIR)/pkgconfig
+
 # ====================================================
 # Sources
 # ====================================================
-CPP_ALL := $(shell find $(SRC_DIR) -type f -name '*.cpp')
-C_ALL   := $(shell find $(SRC_DIR) -type f -name '*.c')
+CPP_INTERNAL := $(shell find $(SRC_DIR) -type f -name '*.cpp')
+C_INTERNAL   := $(shell find $(SRC_DIR) -type f -name '*.c')
 
 CPP_EXTERNAL := $(shell find $(THIRD_SRC) -type f -name '*.cpp')
 C_EXTERNAL   := $(shell find $(THIRD_SRC) -type f -name '*.c')
 
-OBJ_GRANITE = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(CPP_ALL))
-OBJ_GRANITE += $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_ALL))
+OBJ_INTERNAL  = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(CPP_INTERNAL))
+OBJ_INTERNAL += $(patsubst %.c,$(BUILD_DIR)/%.o,$(C_INTERNAL))
 
-OBJ_EXTERNAL = $(patsubst $(THIRD_SRC)/%.cpp,$(BUILD_DIR)/third-party/src/%.o,$(CPP_EXTERNAL))
+OBJ_EXTERNAL  = $(patsubst $(THIRD_SRC)/%.cpp,$(BUILD_DIR)/third-party/src/%.o,$(CPP_EXTERNAL))
 OBJ_EXTERNAL += $(patsubst $(THIRD_SRC)/%.c,$(BUILD_DIR)/third-party/src/%.o,$(C_EXTERNAL))
 
-OBJ_CURRENT = $(OBJ_GRANITE) $(OBJ_EXTERNAL)
+OBJ_CURRENT = $(OBJ_INTERNAL) $(OBJ_EXTERNAL)
 
 # ====================================================
 # Base Flags
@@ -117,7 +128,7 @@ CI_BASE := \
 	-fsanitize=address,undefined \
 	-fno-omit-frame-pointer -g3
 
-# GCC-specific warnings
+# GCC-specific flags
 ifeq ($(IS_GCC),g++)
 CI_BASE += \
 	-Wduplicated-cond \
@@ -204,6 +215,38 @@ $(BUILD_DIR)/third-party/src/%.o: $(THIRD_SRC)/%.c
 $(BUILD_DIR)/third-party/src/%.o: $(THIRD_SRC)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) -std=c++20 -I$(THIRD_PARTY)/include -c $< -o $@
+
+# ====================================================
+# Install Rules
+# ====================================================
+install-linux:
+	@if [ ! -f $(LIB) ]; then \
+		echo "Build not found, run 'make release' first"; \
+		exit 1; \
+	fi
+
+	@if [ "$$(id -u)" -ne 0 ]; then \
+		echo "Use sudo mode to run 'make install-linux'"; \
+		exit 1; \
+	fi
+
+	mkdir -p $(LINUX_INSTALL_INCLUDE)
+	mkdir -p $(LINUX_INSTALL_LIBDIR)
+	mkdir -p $(LINUX_INSTALL_PKGDIR)
+
+	$(CP) include/$(TARGET)         $(LINUX_INSTALL_INCLUDE)
+	$(CP) $(LIB_DIR)/lib$(TARGET).a $(LINUX_INSTALL_LIBDIR)
+	$(CP) $(TARGET).pc              $(LINUX_INSTALL_PKGDIR)
+
+uninstall-linux:
+	@if [ "$$(id -u)" -ne 0 ]; then \
+		echo "Use sudo mode to run 'make install-linux'"; \
+		exit 1; \
+	fi
+
+	$(RM) $(LINUX_INSTALL_INCLUDE)/$(TARGET)
+	$(RM) $(LINUX_INSTALL_LIBDIR)/lib$(TARGET).a
+	$(RM) $(LINUX_INSTALL_PKGDIR)/$(TARGET).pc
 
 # ====================================================
 # cloc

@@ -24,10 +24,9 @@ SOFTWARE.
 
 #pragma once
 
-#include <string>
-
-#include "stb_image/stb_image.h"
 #include "granite/core/vector.hpp"
+
+#include <string>
 
 namespace gr::Assets {
 

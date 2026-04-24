@@ -40,7 +40,7 @@ struct FrameContext {
 };
 
 extern FrameContext gFrame;
-extern GLuint depthMap;
+extern unsigned int depthMap;
 extern bool gShadowPass;
 extern std::vector<gr::Renderer::RenderObject> opaqueObjects;
 extern std::vector<gr::Renderer::RenderObject> transparentObjects;

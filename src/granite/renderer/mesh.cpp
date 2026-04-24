@@ -26,6 +26,8 @@ SOFTWARE.
 #include "granite/core/math.hpp"
 #include "granite/core/log.hpp"
 
+#include "glad/glad.h"
+
 #include <glm/glm.hpp>
 #include <cmath>
 

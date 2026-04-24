@@ -24,8 +24,6 @@ SOFTWARE.
 
 #pragma once
 
-#include "glad/glad.h"
-
 #include <string>
 #include <glm/glm.hpp>
 
@@ -44,17 +42,17 @@ public:
 
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
-    GLuint getProgram() const;
-    GLint getPLoc() const;
-    GLint getVLoc() const;
-    void setPLoc(GLint loc);
-    void setVLoc(GLint loc);
+    unsigned int getProgram() const;
+    int getPLoc() const;
+    int getVLoc() const;
+    void setPLoc(int loc);
+    void setVLoc(int loc);
 private:
     std::string load_(const std::string& filename) const;
 
-    GLuint program_;
-    GLint pLoc_ = -1;
-    GLint vLoc_ = -1;
+    unsigned int program_;
+    int pLoc_ = -1;
+    int vLoc_ = -1;
 };
 
 }

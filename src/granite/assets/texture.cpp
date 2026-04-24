@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "glad/glad.h"
+
 #include "granite/assets/texture.hpp"
 #include "granite/core/log.hpp"
 

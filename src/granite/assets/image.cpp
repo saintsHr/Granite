@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "stb_image/stb_image.h"
+
 #include "granite/assets/image.hpp"
 #include "granite/core/log.hpp"
 

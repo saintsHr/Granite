@@ -25,6 +25,8 @@ SOFTWARE.
 #include "granite/renderer/shader.hpp"
 #include "granite/core/log.hpp"
 
+#include "glad/glad.h"
+
 #include <cstddef>
 #include <cstdio>
 #include <fstream>

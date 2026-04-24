@@ -1,0 +1,14 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: granite
+Description: Granite Engine
+Version: 0.1.0
+
+Requires: bullet glfw3 gl
+
+Libs: -L${libdir} -lgranite
+
+Cflags: -I${includedir}/granite

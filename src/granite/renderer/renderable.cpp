@@ -28,6 +28,7 @@ SOFTWARE.
 #include "granite/core/log.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include "glad/glad.h"
 
 namespace gr::Renderer{
 

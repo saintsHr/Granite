@@ -45,14 +45,14 @@ public:
 
     void bind();
 private:
-    GLint cL_  = -1;
-    GLint sL_  = -1;
-    GLint oL_  = -1;
-    GLint tL_  = -1;
-    GLint hL_  = -1;
-    GLint scL_ = -1;
-    GLint lsL_ = -1;
-    GLint smL_ = -1;
+    int cL_  = -1;
+    int sL_  = -1;
+    int oL_  = -1;
+    int tL_  = -1;
+    int hL_  = -1;
+    int scL_ = -1;
+    int lsL_ = -1;
+    int smL_ = -1;
 };
 
 }

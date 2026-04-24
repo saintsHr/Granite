@@ -24,7 +24,6 @@ SOFTWARE.
 
 #pragma once
 
-#include "glad/glad.h"
 #include <vector>
 
 #include "granite/renderer/shader.hpp"
@@ -56,7 +55,7 @@ public:
     static gr::Renderer::Mesh newPyramid();
     static gr::Renderer::Mesh newCone(int segments = 64);
 private:
-    GLuint vbo_, vao_, ebo_;
+    unsigned int vbo_, vao_, ebo_;
     uint32_t vertexCount_;
     uint32_t indexCount_;
 };

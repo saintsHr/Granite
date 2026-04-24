@@ -26,6 +26,8 @@ SOFTWARE.
 #include "granite/renderer/material.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
+#include "glad/glad.h"
+
 namespace gr::Renderer{
 
 void Material::bind(){

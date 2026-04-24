@@ -2,6 +2,8 @@
 #include "granite/renderer/renderer.hpp"
 #include "granite/scene/light.hpp"
 
+#include "glad/glad.h"
+
 #include <glm/glm.hpp>
 #include <glm/vector_relational.hpp>
 #include <glm/ext.hpp>
