@@ -48,24 +48,24 @@ constexpr float PI = 3.1415927f;
 constexpr float TwoPI = PI * 2.0f;
 constexpr float HalfPI = PI / 2.0f;
 
-static inline float clamp(float value, float min, float max) {
+static inline float Clamp(float value, float min, float max) {
     if (value <= min) return min;
     if (value >= max) return max;
     return value;
 }
 
-static inline float normalize(float value, float min, float max) {
+static inline float Normalize(float value, float min, float max) {
     if (std::abs(max - min) < static_cast<float>(1e-9)) return 0.0f;
     if (value <= min) return 0.0f;
     if (value >= max) return 1.0f;
     return (value - min) / (max - min);
 }
 
-inline float deg2rad(float deg) {
+inline float Deg2Rad(float deg) {
     return deg * gr::Math::PI / 180.0f;
 }
 
-inline float rad2deg(float rad) {
+inline float Rad2Deg(float rad) {
     return rad * 180.0f / gr::Math::PI;
 }
 

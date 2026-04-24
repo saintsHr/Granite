@@ -110,14 +110,14 @@ void init() {
         gr::internal::log(
             gr::internal::Severity::FATAL,
             gr::internal::Module::RENDERER,
-            "Cannot initialize renderer"
+            "Cannot initialize renderer."
         );
     }
 
     gr::internal::log(
         gr::internal::Severity::INFO,
         gr::internal::Module::RENDERER,
-        "Renderer Initialized (OpenGL)"
+        "Renderer Initialized (OpenGL)."
     );
 }
 

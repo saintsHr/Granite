@@ -31,28 +31,24 @@ SOFTWARE.
 namespace gr::Core{
 
 void init(const Config& cfg){
-    // converts & clamps cfg info
-    float depth, stencil, samples;
-    depth   = gr::Math::clamp(static_cast<float>(cfg.depthBits),          16.0f,    32.0f);
-    stencil = gr::Math::clamp(static_cast<float>(cfg.stencilBits),        0.0f,     8.0f);
-    samples = gr::Math::clamp(static_cast<float>(cfg.msaaSamples),        0.0f,     8.0f);
+    const int depth   = gr::Math::Clamp(cfg.depthBits,   16, 32);
+    const int stencil = gr::Math::Clamp(cfg.stencilBits, 0,  8);
+    const int samples = gr::Math::Clamp(cfg.msaaSamples, 0,  8);
 
-    // tryes to init GLFW
-    if (!glfwInit()) {
-        gr::internal::log(
-            gr::internal::Severity::FATAL,
-            gr::internal::Module::WINDOW,
-            "Cannot initialize windowing backend (GLFW)."
-        );
-    } else {
+    if (glfwInit()) {
         gr::internal::log(
             gr::internal::Severity::INFO,
             gr::internal::Module::WINDOW,
             "Windowing backend (GLFW) initialized."
         );
+    } else {
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::WINDOW,
+            "Cannot initialize windowing backend (GLFW)."
+        );
     };
 
-    // GLFW hints
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
@@ -68,37 +64,20 @@ void init(const Config& cfg){
     );
 }
 
-void init(){
-    // tryes to init GLFW
-    if (!glfwInit()) {
-        gr::internal::log(
-            gr::internal::Severity::FATAL,
-            gr::internal::Module::WINDOW,
-            "Cannot initialize windowing backend (GLFW)."
-        );
-    };
+void init() {
+    Config cfg = {0};
+    cfg.depthBits    = 24;
+    cfg.stencilBits  = 8;
+    cfg.msaaSamples  = 4;
 
-    // GLFW hints
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_DEPTH_BITS, 24);
-    glfwWindowHint(GLFW_STENCIL_BITS, 8);
-    glfwWindowHint(GLFW_SAMPLES, 4);
-
-    gr::internal::log(
-        gr::internal::Severity::INFO,
-        gr::internal::Module::CORE,
-        "Core initialized."
-    );
+    init(cfg);
 }
 
 void exit(){
     glfwTerminate();
     gr::internal::log(
         gr::internal::Severity::INFO,
-        gr::internal::Module::CORE,
+        gr::internal::Module::WINDOW,
         "Windowing backend (GLFW) shutdown."
     );
 

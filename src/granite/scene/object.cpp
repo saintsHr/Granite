@@ -27,9 +27,9 @@ SOFTWARE.
 #include <iostream>
 
 gr::Vec3 calculateDirection(gr::Vec3 rotation, gr::Direction direction) {
-    float rx = gr::Math::deg2rad(rotation.x);
-    float ry = gr::Math::deg2rad(rotation.y);
-    float rz = gr::Math::deg2rad(rotation.z);
+    float rx = gr::Math::Deg2Rad(rotation.x);
+    float ry = gr::Math::Deg2Rad(rotation.y);
+    float rz = gr::Math::Deg2Rad(rotation.z);
 
     float cx = std::cos(rx), sx = std::sin(rx);
     float cy = std::cos(ry), sy = std::sin(ry);

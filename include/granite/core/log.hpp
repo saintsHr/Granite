@@ -66,8 +66,8 @@ inline void log(
     Severity sev,
     Module mod,
     std::format_string<Args...> fmt,
-    Args&&... args)
-{
+    Args&&... args
+) {
     const float t = gr::Time::getElapsedTimeS();
 
     const int h  = static_cast<int>(t / 3600.0f);
@@ -85,10 +85,9 @@ inline void log(
         ModuleString[static_cast<int>(mod)]
     );
 
-    std::cout << header << message << '\n';
+    std::cout << header << message << std::endl;
 
-    if (sev == Severity::FATAL)
-        std::exit(EXIT_FAILURE);
+    if (sev == Severity::FATAL) std::exit(EXIT_FAILURE);
 }
 
 }
