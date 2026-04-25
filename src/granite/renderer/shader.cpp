@@ -95,6 +95,11 @@ const char* defaultFragmentShader = R"glsl(
 
 #version 330 core
 
+#define MAX_POINT_LIGHTS 32
+#define MAX_SPOT_LIGHTS  32
+#define MAX_DIRECTIONAL_LIGHTS 4
+#define PI 3.1415926535
+
 uniform vec3 uColor;
 uniform float uShininess;
 uniform float uOpacity;
@@ -110,10 +115,6 @@ in vec2 vTexCoord;
 in vec4 vFragPosLightSpace;
 
 out vec4 vFragColor;
-
-#define MAX_POINT_LIGHTS 32
-#define MAX_SPOT_LIGHTS  32
-#define MAX_DIRECTIONAL_LIGHTS 4
 
 // ------------------------------------------------------------
 // light structs
@@ -229,47 +230,38 @@ float ShadowCalculation(vec4 fragPosLightSpace) {
         return 0.0;
     }
 
+    if (projCoords.z > 1.0) return 0.0;
+
     float closestDepth = texture(uShadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
 
-    float bias = max(
-        0.05 * (1.0 - dot(normalize(vNormal), normalize(-directionalLights[0].direction))),
-        0.005
-    );
+    float biasDot = dot(normalize(vNormal), normalize(-directionalLights[0].direction));
+    float bias    = max(0.005 * (1.0 - biasDot), 0.0005);
 
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(uShadowMap, 0);
+    float shadow    = 0.0;
+    vec2  texelSize = 1.0 / textureSize(uShadowMap, 0);
 
-    int N = 4;
-    int samples = N * N;
-    float radius = 0.3 / currentDepth;
+    int   samples = 16;
+    float radius  = mix(1.5, 3.0, projCoords.z);
 
     float noise = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
-    float angle = noise * (2 * 3.1415926535);
+    float angle = noise * PI * 2;
 
     mat2 R = rot(angle);
 
-    for(int y = 0; y < N; ++y) {
-        for(int x = 0; x < N; ++x) {
-            vec2 cell = (vec2(x, y) + 0.5) / float(N);
+    for (int i = 0; i < samples; i++) {
+        vec2  offset = R * poissonDisk[i];
+        float scale  = 0.5 + 0.5 * float(i) / float(samples);
+        offset *= texelSize * radius * scale;
 
-            vec2 jitter = vec2(
-                fract(sin(dot(vec2(x, y), vec2(127.1, 311.7))) * 43758.5453),
-                fract(sin(dot(vec2(y, x), vec2(269.5, 183.3))) * 43758.5453)
-            );
-            jitter = (jitter - 0.5) / float(N);
+        float pcfDepth = texture(uShadowMap, projCoords.xy + offset).r;
 
-            vec2 samplePos = (cell - 0.5) + jitter;
-            samplePos = R * samplePos;
-
-            vec2 offset = samplePos * texelSize * radius;
-            float pcfDepth = texture(uShadowMap, projCoords.xy + offset).r;
-
-            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
-        }
+        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
     }
 
     shadow /= float(samples);
+    shadow += (noise - 0.5) * 0.02;
+    shadow = clamp(shadow, 0.0, 1.0);
 
     return shadow;
 }
