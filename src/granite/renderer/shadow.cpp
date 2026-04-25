@@ -43,9 +43,12 @@ void main() {}
 
 namespace gr::Renderer {
 
+constexpr float DEPTH_MAP_BORDER_COLOR[] = {1.0f, 1.0f, 1.0f, 1.0f};
 std::unique_ptr<gr::Renderer::Shader> shadowShader;
-GLuint depthMap          = 0;
-GLuint depthMapFBO       = 0;
+GLuint depthMap    = 0;
+GLuint depthMapFBO = 0;
+GLint  lsL_ = -1;
+GLint  mL_  = -1;
 
 void initShadow() {
     // --- generates depth map & depth map FBO ---
@@ -212,26 +215,30 @@ void shadowPass(const gr::Window* window) {
 
     shadowShader->use();
 
-    GLint lightSpaceLoc = glGetUniformLocation(
-        shadowShader->getProgram(),
-        "uLightSpace"
-    );
+    if (lsL_ == -1) {
+        lsL_ = glGetUniformLocation(
+            shadowShader->getProgram(),
+            "uLightSpace"
+        );
+    }
 
     glUniformMatrix4fv(
-        lightSpaceLoc,
+        lsL_,
         1,
         GL_FALSE,
         glm::value_ptr(gFrame.lightSpaces[0])
     );
 
     for (size_t i = 0; i < opaqueObjects.size(); i++) {
-        GLint modelLoc = glGetUniformLocation(
-            shadowShader->getProgram(),
-            "uModel"
-        );
+        if (mL_ == -1) {
+            mL_ = glGetUniformLocation(
+                shadowShader->getProgram(),
+                "uModel"
+            );
+        }
 
         glUniformMatrix4fv(
-            modelLoc,
+            mL_,
             1,
             GL_FALSE,
             glm::value_ptr(opaqueObjects[i].transform.getMatrix())
