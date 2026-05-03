@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "gcc-ci",
+      "displayName": "GCC CI",
+      "generator": "Ninja",
+      "binaryDir": "build/gcc-ci",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "CI",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "clang-ci",
+      "displayName": "Clang CI",
+      "generator": "Ninja",
+      "binaryDir": "build/clang-ci",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "CI",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    }
+  ]
+}
