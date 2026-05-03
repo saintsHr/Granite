@@ -1,5 +1,2 @@
 build
-lib
-Granite.code-workspace
-.vscode
-clocignore.txt
+.cache

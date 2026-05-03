@@ -14,14 +14,6 @@ jobs:
       matrix:
         compiler: [gcc, clang]
 
-    defaults:
-      run:
-        shell: bash -euo pipefail {0}
-
-    env:
-      CC: ${{ matrix.compiler == 'gcc' && 'gcc' || 'clang' }}
-      CXX: ${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,26 +22,34 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            cmake ninja-build \
             libgl1-mesa-dev \
             libglfw3-dev \
             libglm-dev \
-            libbullet-dev
+            libbullet-dev \
+            gcc g++ clang
 
-      - name: Compiler Version
+      - name: Configure
         run: |
-          $CC --version
-          $CXX --version
+          if [ "${{ matrix.compiler }}" = "gcc" ]; then
+            cmake --preset gcc-ci
+          else
+            cmake --preset clang-ci
+          fi
 
-      - name: Build (CI Debug)
+      - name: Build (CI)
         run: |
-          make clean
-          make ci -j$(nproc)
+          cmake --build build/${{ matrix.compiler }}-ci -j$(nproc)
 
-      - name: Build (CI Release)
+      - name: Build (Release)
         run: |
-          make clean
-          make ci-release -j$(nproc)
+          cmake -B build/release-${{ matrix.compiler }} \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=${{ matrix.compiler == 'gcc' && 'gcc' || 'clang' }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }}
+
+          cmake --build build/release-${{ matrix.compiler }} -j$(nproc)
 
       - name: Verify Engine
         run: |
-          test -s lib/libgranite.a
+          test -s build/${{ matrix.compiler }}-ci/libgranite.a
