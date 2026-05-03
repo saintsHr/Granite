@@ -3,7 +3,6 @@
 ![Static Badge](https://img.shields.io/badge/Language%20-%20C%2B%2B%20-%20rgb(60%2C%2060%2C%20255))
 ![GitHub License](https://img.shields.io/github/license/saintsHr/Granite)
 ![GitHub Downloads](https://img.shields.io/github/downloads/saintsHr/Granite/total)
-![Github CI Status](https://img.shields.io/github/actions/workflow/status/saintsHr/Granite/.github%2Fworkflows%2Fci.yml)
 ![GitHub Commits](https://img.shields.io/github/commit-activity/t/saintsHr/Granite/main)
 ![GitHub Stars](https://img.shields.io/github/stars/saintsHr/Granite?style=flat&label=%E2%AD%90%EF%B8%8F&color=%23f0c013)
 
