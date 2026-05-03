@@ -35,13 +35,9 @@ struct FrameContext {
     glm::mat4 view;
     glm::mat4 projection;
     gr::Vec3 cameraPos;
-
-    std::vector<glm::mat4> lightSpaces;
 };
 
 extern FrameContext gFrame;
-extern unsigned int depthMap;
-extern bool gShadowPass;
 extern std::vector<gr::Renderer::RenderObject> opaqueObjects;
 extern std::vector<gr::Renderer::RenderObject> transparentObjects;
 

@@ -28,7 +28,6 @@ SOFTWARE.
 #include "granite/core/math.hpp"
 #include "granite/core/vector.hpp"
 #include "granite/core/time.hpp"
-#include "granite/renderer/shadow.hpp"
 
 namespace gr::Core {
 
