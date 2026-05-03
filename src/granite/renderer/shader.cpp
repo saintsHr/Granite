@@ -64,12 +64,10 @@ layout(location = 2) in vec2 aTexCoord;
 uniform mat4 uProjection;
 uniform mat4 uView;
 uniform mat4 uModel;
-uniform mat4 uLightSpace;
 
 out vec3 vNormal;
 out vec3 vFragPos;
 out vec2 vTexCoord;
-out vec4 vFragPosLightSpace;
 
 void main() {
     vec4 worldPos = uModel * vec4(aPos, 1.0);
@@ -79,8 +77,6 @@ void main() {
     vNormal = normalize(normalMatrix * aNormal);
 
     vTexCoord = aTexCoord;
-
-    vFragPosLightSpace = uLightSpace * vec4(vFragPos, 1.0);
 
     gl_Position = uProjection * uView * worldPos;
 }
@@ -100,19 +96,17 @@ const char* defaultFragmentShader = R"glsl(
 #define MAX_DIRECTIONAL_LIGHTS 4
 #define PI 3.1415926535
 
-uniform vec3 uColor;
-uniform float uShininess;
-uniform float uOpacity;
-uniform vec3 uCameraPos;
+uniform vec3      uColor;
+uniform float     uShininess;
+uniform float     uOpacity;
+uniform vec3      uCameraPos;
 uniform sampler2D uTexture;
-uniform sampler2D uShadowMap;
-uniform bool uHasTexture;
-uniform vec3 uSpecularColor;
+uniform bool      uHasTexture;
+uniform vec3      uSpecularColor;
 
 in vec3 vNormal;
 in vec3 vFragPos;
 in vec2 vTexCoord;
-in vec4 vFragPosLightSpace;
 
 out vec4 vFragColor;
 
@@ -190,80 +184,6 @@ float spotFactor(vec3 L, vec3 direction, float cutoff) {
         cutoff,
         theta
     );
-}
-
-const vec2 poissonDisk[16] = vec2[](
-    vec2(-0.94201624, -0.39906216),
-    vec2(0.94558609, -0.76890725),
-    vec2(-0.094184101, -0.92938870),
-    vec2(0.34495938, 0.29387760),
-    vec2(-0.91588581, 0.45771432),
-    vec2(-0.81544232, -0.87912464),
-    vec2(-0.38277543, 0.27676845),
-    vec2(0.97484398, 0.75648379),
-    vec2(0.44323325, -0.97511554),
-    vec2(0.53742981, -0.47373420),
-    vec2(-0.26496911, -0.41893023),
-    vec2(0.79197514, 0.19090188),
-    vec2(-0.24188840, 0.99706507),
-    vec2(-0.81409955, 0.91437590),
-    vec2(0.19984126, 0.78641367),
-    vec2(0.14383161, -0.14100790)
-);
-
-mat2 rot(float a) {
-    float s = sin(a);
-    float c = cos(a);
-    return mat2(c, -s, s, c);
-}
-
-float ShadowCalculation(vec4 fragPosLightSpace) {
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    projCoords = projCoords * 0.5 + 0.5;
-
-    if (
-        projCoords.x < 0.0 ||
-        projCoords.x > 1.0 ||
-        projCoords.y < 0.0 ||
-        projCoords.y > 1.0
-    ) {
-        return 0.0;
-    }
-
-    if (projCoords.z > 1.0) return 0.0;
-
-    float closestDepth = texture(uShadowMap, projCoords.xy).r;
-    float currentDepth = projCoords.z;
-
-    float biasDot = dot(normalize(vNormal), normalize(-directionalLights[0].direction));
-    float bias    = max(0.005 * (1.0 - biasDot), 0.0005);
-
-    float shadow    = 0.0;
-    vec2  texelSize = 1.0 / textureSize(uShadowMap, 0);
-
-    int   samples = 16;
-    float radius  = mix(1.5, 3.0, projCoords.z);
-
-    float noise = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
-    float angle = noise * PI * 2;
-
-    mat2 R = rot(angle);
-
-    for (int i = 0; i < samples; i++) {
-        vec2  offset = R * poissonDisk[i];
-        float scale  = 0.5 + 0.5 * float(i) / float(samples);
-        offset *= texelSize * radius * scale;
-
-        float pcfDepth = texture(uShadowMap, projCoords.xy + offset).r;
-
-        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
-    }
-
-    shadow /= float(samples);
-    shadow += (noise - 0.5) * 0.02;
-    shadow = clamp(shadow, 0.0, 1.0);
-
-    return shadow;
 }
 
 // ------------------------------------------------------------
@@ -390,16 +310,13 @@ void main() {
 
     vec3 baseColor = uHasTexture ? texture(uTexture, vTexCoord).rgb : uColor;
 
-    float shadow = ShadowCalculation(vFragPosLightSpace);
-    vec3  ambient = ambientLight.color * ambientLight.intensity * baseColor;
-    vec3  directLighting = diffuseAccum * baseColor + specAccum;
-    
-    directLighting *= (1.0 - shadow);
-    vec3 finalColor = ambient + directLighting;
+    vec3 ambient = ambientLight.color * ambientLight.intensity * baseColor;
+    vec3 direct  = diffuseAccum * baseColor + specAccum;
+    vec3 final = ambient + direct;
 
-    finalColor = finalColor / (finalColor + vec3(1.0));
+    final = final / (final + vec3(1.0));
 
-    vFragColor = vec4(finalColor, uOpacity);
+    vFragColor = vec4(final, uOpacity);
 }
 
 // ------------------------------------------------------------------------------//

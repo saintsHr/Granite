@@ -31,8 +31,6 @@ SOFTWARE.
 namespace gr::Renderer{
 
 void Material::bind(){
-    if (gr::Renderer::gShadowPass) return;
-
     shader->use();
 
     if (cL_  == -1) cL_  = glGetUniformLocation(shader->getProgram(), "uColor");
@@ -41,8 +39,6 @@ void Material::bind(){
     if (oL_  == -1) oL_  = glGetUniformLocation(shader->getProgram(), "uOpacity");
     if (hL_  == -1) hL_  = glGetUniformLocation(shader->getProgram(), "uHasTexture");
     if (scL_ == -1) scL_ = glGetUniformLocation(shader->getProgram(), "uSpecularColor");
-    if (lsL_ == -1) lsL_ = glGetUniformLocation(shader->getProgram(), "uLightSpace");
-    if (smL_ == -1) smL_ = glGetUniformLocation(shader->getProgram(), "uShadowMap");
 
     if (cL_ != -1){
         glUniform3f(
@@ -96,21 +92,6 @@ void Material::bind(){
     } else {
         glDisable(GL_BLEND);
         glDepthMask(GL_TRUE);
-    }
-
-    if (lsL_ != -1) {
-        glUniformMatrix4fv(
-            lsL_,
-            1,
-            GL_FALSE,
-            glm::value_ptr(gr::Renderer::gFrame.lightSpaces[0])
-        );
-    }
-
-    if (smL_ != -1) {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, gr::Renderer::depthMap);
-        glUniform1i(smL_, 1);
     }
 }
 

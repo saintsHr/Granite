@@ -32,14 +32,12 @@ SOFTWARE.
 #include "granite/renderer/renderer.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/core/log.hpp"
-#include "granite/renderer/shadow.hpp"
 
 namespace gr::Renderer {
 
 GLuint lightUBO = 0;
 
 FrameContext gFrame;
-bool gShadowPass = false;
 
 void init() {
     bool success = true;
@@ -81,8 +79,6 @@ void init() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     checkGL();
-
-    initShadow();
 
     // --- creates light UBO ---
     while (glGetError() != GL_NO_ERROR) {}
@@ -218,10 +214,6 @@ void addToQueue(const gr::Renderer::RenderObject& obj) {
 }
 
 void endFrame(const gr::Window* window) {
-    gShadowPass = true;
-    shadowPass(window);
-    gShadowPass = false;
-
     for (size_t i = 0; i < opaqueObjects.size(); i++){
         opaqueObjects[i].draw();
     }

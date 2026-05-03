@@ -51,8 +51,6 @@ private:
     int tL_  = -1;
     int hL_  = -1;
     int scL_ = -1;
-    int lsL_ = -1;
-    int smL_ = -1;
 };
 
 }
