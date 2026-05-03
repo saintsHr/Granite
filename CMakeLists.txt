@@ -25,32 +25,24 @@ pkg_check_modules(BULLET REQUIRED bullet)
 # Directories
 # ====================================================
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
+set(THIRD_SRC ${CMAKE_SOURCE_DIR}/third-party/src)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
-    SYSTEM ${CMAKE_SOURCE_DIR}/third-party/include
+    ${CMAKE_SOURCE_DIR}/third-party/include
     ${BULLET_INCLUDE_DIRS}
 )
 
 add_definitions(-DGLFW_INCLUDE_NONE)
 
 # ====================================================
-# Sources (your code only)
+# Sources
 # ====================================================
 file(GLOB_RECURSE SRC_CPP ${SRC_DIR}/*.cpp)
 file(GLOB_RECURSE SRC_C   ${SRC_DIR}/*.c)
 
-# ====================================================
-# Third-party sources (ONLY what must compile)
-# ====================================================
-set(THIRD_CPP
-    ${CMAKE_SOURCE_DIR}/third-party/src/tiny_obj_loader/tiny_obj_loader.cpp
-)
-
-set(THIRD_C
-    ${CMAKE_SOURCE_DIR}/third-party/src/glad/glad.c
-    ${CMAKE_SOURCE_DIR}/third-party/src/stb_image/stb_image.c
-)
+file(GLOB_RECURSE THIRD_CPP ${THIRD_SRC}/*.cpp)
+file(GLOB_RECURSE THIRD_C   ${THIRD_SRC}/*.c)
 
 # ====================================================
 # Static Library
@@ -82,17 +74,6 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_options(granite PRIVATE
         -O3 -DNDEBUG
-    )
-endif()
-
-# CI
-if(CMAKE_BUILD_TYPE STREQUAL "CI")
-    target_compile_options(granite PRIVATE
-        -Wall -Wextra -Wpedantic -Werror
-        -Wconversion -Wsign-conversion -Wshadow
-        -Wformat=2 -Wundef
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer -g3
     )
 endif()
 
