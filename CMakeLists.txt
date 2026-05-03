@@ -25,24 +25,32 @@ pkg_check_modules(BULLET REQUIRED bullet)
 # Directories
 # ====================================================
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
-set(THIRD_SRC ${CMAKE_SOURCE_DIR}/third-party/src)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/third-party/include
+    SYSTEM ${CMAKE_SOURCE_DIR}/third-party/include
     ${BULLET_INCLUDE_DIRS}
 )
 
 add_definitions(-DGLFW_INCLUDE_NONE)
 
 # ====================================================
-# Sources
+# Sources (your code only)
 # ====================================================
 file(GLOB_RECURSE SRC_CPP ${SRC_DIR}/*.cpp)
 file(GLOB_RECURSE SRC_C   ${SRC_DIR}/*.c)
 
-file(GLOB_RECURSE THIRD_CPP ${THIRD_SRC}/*.cpp)
-file(GLOB_RECURSE THIRD_C   ${THIRD_SRC}/*.c)
+# ====================================================
+# Third-party sources (ONLY what must compile)
+# ====================================================
+set(THIRD_CPP
+    ${CMAKE_SOURCE_DIR}/third-party/src/tiny_obj_loader/tiny_obj_loader.cpp
+)
+
+set(THIRD_C
+    ${CMAKE_SOURCE_DIR}/third-party/src/glad/glad.c
+    ${CMAKE_SOURCE_DIR}/third-party/src/stb_image/stb_image.c
+)
 
 # ====================================================
 # Static Library
