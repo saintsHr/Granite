@@ -213,7 +213,7 @@ void addToQueue(const gr::Renderer::RenderObject& obj) {
     }
 }
 
-void endFrame(const gr::Window* window) {
+void endFrame() {
     for (size_t i = 0; i < opaqueObjects.size(); i++){
         opaqueObjects[i].draw();
     }

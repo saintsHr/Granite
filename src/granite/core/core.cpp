@@ -31,9 +31,9 @@ SOFTWARE.
 namespace gr::Core{
 
 void init(const Config& cfg){
-    const int depth   = gr::Math::Clamp(cfg.depthBits,   16, 32);
-    const int stencil = gr::Math::Clamp(cfg.stencilBits, 0,  8);
-    const int samples = gr::Math::Clamp(cfg.msaaSamples, 0,  8);
+    const int depth   = static_cast<int>(gr::Math::Clamp(static_cast<float>(cfg.depthBits),   16, 32));
+    const int stencil = static_cast<int>(gr::Math::Clamp(static_cast<float>(cfg.stencilBits), 0,  8));
+    const int samples = static_cast<int>(gr::Math::Clamp(static_cast<float>(cfg.msaaSamples), 0,  8));
 
     if (glfwInit()) {
         gr::internal::log(

@@ -48,6 +48,6 @@ extern std::vector<gr::Renderer::RenderObject> transparentObjects;
 void init();
 void beginFrame(const gr::Scene::Camera& camera);
 void addToQueue(const gr::Renderer::RenderObject& obj);
-void endFrame(const gr::Window* window);
+void endFrame();
 
 }
