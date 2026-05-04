@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include "granite/physics/body.hpp"
 
+#include <bullet/btBulletDynamicsCommon.h>
+
 namespace gr::Physics {
 
 void Body::build() {

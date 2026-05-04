@@ -26,7 +26,9 @@ SOFTWARE.
 
 #include "granite/core/vector.hpp"
 
-#include <bullet/btBulletDynamicsCommon.h>
+class btRigidBody;
+class btCollisionShape;
+class btMotionState;
 
 namespace gr::Physics {
 
