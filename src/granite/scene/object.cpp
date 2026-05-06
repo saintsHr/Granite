@@ -42,8 +42,8 @@ void Object::draw() {
                 parts_.emplace_back();
                 auto& obj = parts_.back();
 
-                obj.mesh = &model->meshes[i];
-                obj.material = model->materials[i];
+                obj.mesh      = &model->meshes[i];
+                obj.material  = model->materials[i];
                 obj.transform = transform;
             }
 
@@ -59,6 +59,24 @@ void Object::draw() {
 
 void Object::update(void) {
     return;
+}
+
+void Object::reloadModel(void) {
+    if (model) {
+        parts_.clear();
+        parts_.reserve(model->meshes.size());
+
+        for (size_t i = 0; i < model->meshes.size(); i++) {
+            parts_.emplace_back();
+            auto& obj = parts_.back();
+
+            obj.mesh      = &model->meshes[i];
+            obj.material  = model->materials[i];
+            obj.transform = transform;
+        }
+
+        modelLoaded_ = true;
+    }
 }
 
 gr::Vec3 Object::getDirection(gr::Direction direction) {

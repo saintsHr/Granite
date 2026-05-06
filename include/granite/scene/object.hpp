@@ -38,6 +38,8 @@ public:
     void update(void);
     void draw(void);
 
+    void reloadModel(void);
+
     gr::Vec3 getDirection(gr::Direction direction);
 private:
     gr::Renderer::RenderObject part_;
