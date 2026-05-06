@@ -34,8 +34,8 @@ namespace gr::Physics {
 
 class World {
 public:
-    World(gr::Vec3 gravity);
-    ~World();
+    World(gr::Vec3 gravity = {0.0f, -0.1f, 0.0f});
+    ~World(void);
 
     void step(float dt);
     void removeBody(gr::Physics::Body* body);

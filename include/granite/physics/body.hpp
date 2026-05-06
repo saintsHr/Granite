@@ -89,10 +89,13 @@ public:
     void clearForces();
 
     btRigidBody* getRaw_();
+    bool isBuilt_();
 private:
     btRigidBody*      body_   = nullptr;
     btCollisionShape* shape_  = nullptr;
     btMotionState*    motion_ = nullptr;
+
+    bool built_ = false;
 };
 
 }

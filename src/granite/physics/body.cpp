@@ -136,6 +136,8 @@ void Body::build() {
     body_->setRollingFriction(material.rollingFriction);
     body_->setSpinningFriction(material.spinningFriction);
     body_->setRestitution(material.bounciness);
+
+    built_ = true;
 }
 
 void Body::sync() {
@@ -284,6 +286,10 @@ Body::~Body() {
 
 btRigidBody* Body::getRaw_() {
     return body_;
+}
+
+bool Body::isBuilt_() {
+    return built_;
 }
 
 }

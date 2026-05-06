@@ -58,7 +58,10 @@ void Object::draw() {
 }
 
 void Object::update(void) {
-    return;
+    if (body) {
+        if (!body->isBuilt_()) body->build();
+        transform = body->transform;
+    }
 }
 
 void Object::reloadModel(void) {

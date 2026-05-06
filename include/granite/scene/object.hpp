@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include "granite/physics/body.hpp"
 #include "granite/renderer/renderable.hpp"
 
 namespace gr::Scene {
@@ -34,6 +35,7 @@ public:
     gr::Renderer::Material material;
     gr::Renderer::Mesh mesh;
     gr::Assets::Model* model = nullptr;
+    gr::Physics::Body* body  = nullptr;
 
     void update(void);
     void draw(void);
@@ -44,6 +46,7 @@ public:
 private:
     gr::Renderer::RenderObject part_;
     std::vector<gr::Renderer::RenderObject> parts_;
+    
     bool modelLoaded_ = false;
 };
 
