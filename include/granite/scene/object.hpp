@@ -33,22 +33,16 @@ public:
     gr::Transform transform;
     gr::Renderer::Material material;
     gr::Renderer::Mesh mesh;
+    gr::Assets::Model* model = nullptr;
 
-    void draw();
+    void update(void);
+    void draw(void);
+
     gr::Vec3 getDirection(gr::Direction direction);
 private:
     gr::Renderer::RenderObject part_;
-};
-
-class ModelObject {
-public:
-    gr::Transform transform;
-    
-    void load(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader = nullptr);
-    void draw();
-    gr::Vec3 getDirection(gr::Direction direction);
-private:
     std::vector<gr::Renderer::RenderObject> parts_;
+    bool modelLoaded_ = false;
 };
 
 }

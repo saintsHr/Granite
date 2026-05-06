@@ -24,12 +24,47 @@ SOFTWARE.
 
 #include "granite/scene/object.hpp"
 #include "granite/renderer/renderer.hpp"
-#include <iostream>
 
-gr::Vec3 calculateDirection(gr::Vec3 rotation, gr::Direction direction) {
-    float rx = gr::Math::Deg2Rad(rotation.x);
-    float ry = gr::Math::Deg2Rad(rotation.y);
-    float rz = gr::Math::Deg2Rad(rotation.z);
+namespace gr::Scene {
+
+void Object::draw() {
+    if (model) {
+        if (modelLoaded_) {
+            for (auto& p : parts_) {
+                p.transform = transform;
+                gr::Renderer::addToQueue(p);
+            }
+        } else {
+            parts_.clear();
+            parts_.reserve(model->meshes.size());
+
+            for (size_t i = 0; i < model->meshes.size(); i++) {
+                parts_.emplace_back();
+                auto& obj = parts_.back();
+
+                obj.mesh = &model->meshes[i];
+                obj.material = model->materials[i];
+                obj.transform = transform;
+            }
+
+            modelLoaded_ = true;
+        }
+    } else {
+        part_.material  = material;
+        part_.transform = transform;
+        part_.mesh      = &mesh;
+        gr::Renderer::addToQueue(part_);
+    }
+}
+
+void Object::update(void) {
+    return;
+}
+
+gr::Vec3 Object::getDirection(gr::Direction direction) {
+    float rx = gr::Math::Deg2Rad(transform.rotation.x);
+    float ry = gr::Math::Deg2Rad(transform.rotation.y);
+    float rz = gr::Math::Deg2Rad(transform.rotation.z);
 
     float cx = std::cos(rx), sx = std::sin(rx);
     float cy = std::cos(ry), sy = std::sin(ry);
@@ -51,45 +86,6 @@ gr::Vec3 calculateDirection(gr::Vec3 rotation, gr::Direction direction) {
     float z = v.x*(-sy)   + v.y*(sx*cy)            + v.z*(cx*cy);
 
     return {x, y, z};
-}
-
-namespace gr::Scene {
-
-void Object::draw() {
-    part_.material  = material;
-    part_.transform = transform;
-    part_.mesh      = &mesh;
-    gr::Renderer::addToQueue(part_);
-}
-
-gr::Vec3 Object::getDirection(gr::Direction direction) {
-    return calculateDirection(transform.rotation, direction);
-}
-
-void ModelObject::load(gr::Assets::Model& model, std::shared_ptr<gr::Renderer::Shader> shader) {
-    parts_.clear();
-    parts_.reserve(model.meshes.size());
-
-    for (size_t i = 0; i < model.meshes.size(); i++) {
-        parts_.emplace_back();
-        auto& obj = parts_.back();
-
-        obj.mesh = &model.meshes[i];
-        obj.material = model.materials[i];
-        if (shader) obj.material.shader = shader;
-        obj.transform = transform;
-    }
-}
-
-void ModelObject::draw() {
-    for (auto& p : parts_) {
-        p.transform = transform;
-        gr::Renderer::addToQueue(p);
-    }
-}
-
-gr::Vec3 ModelObject::getDirection(gr::Direction direction) {
-    return calculateDirection(transform.rotation, direction);
 }
 
 }
