@@ -5,10 +5,9 @@ includedir=${prefix}/include
 
 Name: granite
 Description: Granite Engine
-Version: 0.1.0
-
-Requires: bullet glfw3 gl
+Version: 1.0.0
 
 Libs: -L${libdir} -lgranite
+Libs.private: -lGL -lBulletDynamics -lBulletCollision -lLinearMath -lsndfile -lglfw
 
 Cflags: -I${includedir}/granite

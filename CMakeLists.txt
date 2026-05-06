@@ -12,6 +12,9 @@ find_package(glm REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Bullet REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(SNDFILE REQUIRED sndfile)
 
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(THIRD_SRC ${CMAKE_SOURCE_DIR}/third-party/src)
@@ -35,10 +38,13 @@ target_compile_options(granite PRIVATE
     $<$<CONFIG:Release>:-O3 -DNDEBUG>
 )
 
-target_include_directories(granite PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/third-party/include
-    /usr/include/bullet
+target_include_directories(granite
+    PUBLIC
+        ${CMAKE_SOURCE_DIR}/include
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/third-party/include
+        /usr/include/bullet
+        ${SNDFILE_INCLUDE_DIRS}
 )
 
 target_compile_definitions(granite PUBLIC GLFW_INCLUDE_NONE)
@@ -48,6 +54,7 @@ target_link_libraries(granite
     glfw
     OpenGL::GL
     glm::glm
+    ${SNDFILE_LIBRARIES}
 )
 
 install(TARGETS granite

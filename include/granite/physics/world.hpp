@@ -25,10 +25,15 @@ SOFTWARE.
 #pragma once
 
 #include <vector>
-#include <bullet/btBulletDynamicsCommon.h>
 
 #include "granite/physics/body.hpp"
 #include "granite/core/vector.hpp"
+
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btBroadphaseInterface;
+class btSequentialImpulseConstraintSolver;
+class btDiscreteDynamicsWorld;
 
 namespace gr::Physics {
 

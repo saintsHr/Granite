@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include <algorithm>
+#include <btBulletDynamicsCommon.h>
 
 #include "granite/physics/world.hpp"
 
