@@ -32,7 +32,9 @@ jobs:
             libxrandr-dev \
             libxi-dev \
             libxcursor-dev \
-            libxinerama-dev
+            libxinerama-dev \
+            libsndfile1 \
+            libsndfile1-dev \
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
