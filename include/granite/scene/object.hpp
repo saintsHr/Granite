@@ -33,7 +33,7 @@ class Object {
 public:
     gr::Transform transform;
     gr::Renderer::Material material;
-    gr::Renderer::Mesh mesh;
+    std::shared_ptr<gr::Renderer::Mesh> mesh;
     gr::Assets::Model* model = nullptr;
     gr::Physics::Body* body  = nullptr;
 

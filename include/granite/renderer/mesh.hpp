@@ -27,7 +27,7 @@ SOFTWARE.
 #include <vector>
 
 #include "granite/renderer/shader.hpp"
-#include "granite/core/color.hpp"
+#include <memory>
 
 namespace gr::Renderer {
 
@@ -45,15 +45,15 @@ public:
     void upload(const std::vector<float>& vertices, const std::vector<unsigned int>& index, const std::vector<float>& normals, const std::vector<float>& uvs);
     void draw(const Shader& shader) const;
 
-    static gr::Renderer::Mesh newTriangle();
-    static gr::Renderer::Mesh newQuad();
-    static gr::Renderer::Mesh newCircle(int segments = 64);
+    static std::shared_ptr<gr::Renderer::Mesh> newTriangle();
+    static std::shared_ptr<gr::Renderer::Mesh> newQuad();
+    static std::shared_ptr<gr::Renderer::Mesh> newCircle(int segments = 64);
 
-    static gr::Renderer::Mesh newCube();
-    static gr::Renderer::Mesh newSphere(int latSegments = 32, int longSegments = 64);
-    static gr::Renderer::Mesh newCylinder(int segments = 64);
-    static gr::Renderer::Mesh newPyramid();
-    static gr::Renderer::Mesh newCone(int segments = 64);
+    static std::shared_ptr<gr::Renderer::Mesh> newCube();
+    static std::shared_ptr<gr::Renderer::Mesh> newSphere(int latSegments = 32, int longSegments = 64);
+    static std::shared_ptr<gr::Renderer::Mesh> newCylinder(int segments = 64);
+    static std::shared_ptr<gr::Renderer::Mesh> newPyramid();
+    static std::shared_ptr<gr::Renderer::Mesh> newCone(int segments = 64);
 private:
     unsigned int vbo_, vao_, ebo_;
     uint32_t vertexCount_;

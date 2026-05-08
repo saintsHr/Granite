@@ -1,4 +1,5 @@
 #include "granite/assets/map.hpp"
+#include "granite/core/log.hpp"
 #include "granite/renderer/mesh.hpp"
 #include "granite/scene/object.hpp"
 
@@ -6,14 +7,14 @@
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
 
-static gr::Renderer::Mesh* cubeMesh     = nullptr;
-static gr::Renderer::Mesh* sphereMesh   = nullptr;
-static gr::Renderer::Mesh* circleMesh   = nullptr;
-static gr::Renderer::Mesh* coneMesh     = nullptr;
-static gr::Renderer::Mesh* cylinderMesh = nullptr;
-static gr::Renderer::Mesh* pyramidMesh  = nullptr;
-static gr::Renderer::Mesh* quadMesh     = nullptr;
-static gr::Renderer::Mesh* triangleMesh = nullptr;
+static std::shared_ptr<gr::Renderer::Mesh> cubeMesh;
+static std::shared_ptr<gr::Renderer::Mesh> sphereMesh;
+static std::shared_ptr<gr::Renderer::Mesh> circleMesh;
+static std::shared_ptr<gr::Renderer::Mesh> coneMesh;
+static std::shared_ptr<gr::Renderer::Mesh> cylinderMesh;
+static std::shared_ptr<gr::Renderer::Mesh> pyramidMesh;
+static std::shared_ptr<gr::Renderer::Mesh> quadMesh;
+static std::shared_ptr<gr::Renderer::Mesh> triangleMesh;
 
 namespace gr::Assets {
 
@@ -23,15 +24,18 @@ void Map::load(const std::string& filename) {
 
 	file >> json;
 
+	if (!cubeMesh)     cubeMesh     = gr::Renderer::Mesh::newCube();
+	if (!sphereMesh)   sphereMesh   = gr::Renderer::Mesh::newSphere();
+	if (!circleMesh)   circleMesh   = gr::Renderer::Mesh::newCircle();
+	if (!coneMesh)     coneMesh     = gr::Renderer::Mesh::newCone();
+	if (!cylinderMesh) cylinderMesh = gr::Renderer::Mesh::newCylinder();
+	if (!pyramidMesh)  pyramidMesh  = gr::Renderer::Mesh::newPyramid();
+	if (!quadMesh)     quadMesh     = gr::Renderer::Mesh::newQuad();
+	if (!triangleMesh) triangleMesh = gr::Renderer::Mesh::newTriangle();
+
+	int i = 0;
 	for (auto& obj : json["objects"]) {
-		if (!cubeMesh)     cubeMesh     = new gr::Renderer::Mesh(gr::Renderer::Mesh::newCube());
-		if (!sphereMesh)   sphereMesh   = new gr::Renderer::Mesh(gr::Renderer::Mesh::newSphere());
-		if (!circleMesh)   circleMesh   = new gr::Renderer::Mesh(gr::Renderer::Mesh::newCircle());
-		if (!coneMesh)     coneMesh     = new gr::Renderer::Mesh(gr::Renderer::Mesh::newCone());
-		if (!cylinderMesh) cylinderMesh = new gr::Renderer::Mesh(gr::Renderer::Mesh::newCylinder());
-		if (!pyramidMesh)  pyramidMesh  = new gr::Renderer::Mesh(gr::Renderer::Mesh::newPyramid());
-		if (!quadMesh)     quadMesh     = new gr::Renderer::Mesh(gr::Renderer::Mesh::newQuad());
-		if (!triangleMesh) triangleMesh = new gr::Renderer::Mesh(gr::Renderer::Mesh::newTriangle());
+		i++;
 
 		auto o = std::make_unique<gr::Scene::Object>();
 
@@ -51,24 +55,33 @@ void Map::load(const std::string& filename) {
 		o->material.color.g = obj["color"]["g"];
 		o->material.color.b = obj["color"]["b"];
 
-		std::string meshName = obj.value("mesh", "cube");
+		std::string meshName = obj.value("mesh","");
 
 		if (meshName == "cube") {
-		    o->mesh = std::move(*cubeMesh);
+		    o->mesh = cubeMesh;
 		} else if (meshName == "sphere"){
-		    o->mesh = std::move(*sphereMesh);
+		    o->mesh = sphereMesh;
 		} else if (meshName == "circle"){
-		    o->mesh = std::move(*circleMesh);
+		    o->mesh = circleMesh;
 		} else if (meshName == "cone"){
-		    o->mesh = std::move(*coneMesh);
+		    o->mesh = coneMesh;
 		} else if (meshName == "cylinder"){
-		    o->mesh = std::move(*cylinderMesh);
+		    o->mesh = cylinderMesh;
 		} else if (meshName == "pyramid"){
-		    o->mesh = std::move(*pyramidMesh);
+		    o->mesh = pyramidMesh;
 		} else if (meshName == "quad"){
-		    o->mesh = std::move(*quadMesh);
+		    o->mesh = quadMesh;
 		} else if (meshName == "triangle"){
-		    o->mesh = std::move(*triangleMesh);
+		    o->mesh = triangleMesh;
+		} else {
+			gr::internal::log(
+				gr::internal::Severity::WARNING,
+				gr::internal::Module::ASSETS,
+				"Object {} loaded from map {} has no valid mesh (defaulting to cube).",
+				i, filename
+			);
+
+			o->mesh = cubeMesh;
 		}
 
 		objects_.push_back(std::move(o));

@@ -128,7 +128,6 @@ void Mesh::draw(const Shader& shader) const {
 
     glBindVertexArray(vao_);
 
-    // draws the mesh
     if(indexCount_ > 0){
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indexCount_), GL_UNSIGNED_INT, nullptr);
     }else{
@@ -138,8 +137,8 @@ void Mesh::draw(const Shader& shader) const {
     glBindVertexArray(0);
 }
 
-gr::Renderer::Mesh Mesh::newTriangle() {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newTriangle() {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
     std::vector<float> vertices = {
        -0.5f, -0.433f, 0.0f,
@@ -176,12 +175,12 @@ gr::Renderer::Mesh Mesh::newTriangle() {
         3, 4, 5
     };
 
-    mesh.upload(vertices, index, normals, uvs);
+    mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newQuad() {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newQuad() {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
     std::vector<float> vertices = {
         -0.5f, -0.5f, 0.0f,
@@ -227,12 +226,12 @@ gr::Renderer::Mesh Mesh::newQuad() {
         1.0f, 0.0f
     };
 
-    mesh.upload(vertices, index, normals, uvs);
+    mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newCube() {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newCube() {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
     std::vector<float> vertices = {
        -0.5f,-0.5f, 0.5f,
@@ -335,12 +334,12 @@ gr::Renderer::Mesh Mesh::newCube() {
         0.0f, 0.0f
     };
 
-    mesh.upload(vertices, index, normals, uvs);
+    mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newCircle(int segments) {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newCircle(int segments) {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
@@ -410,12 +409,12 @@ gr::Renderer::Mesh Mesh::newCircle(int segments) {
 		});
 	}
 
-	mesh.upload(vertices, index, normals, uvs);
+	mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newSphere(int latSeg, int lonSeg) {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newSphere(int latSeg, int lonSeg) {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
 	std::vector<float> vertices;
 	std::vector<unsigned int> index;
@@ -454,12 +453,12 @@ gr::Renderer::Mesh Mesh::newSphere(int latSeg, int lonSeg) {
 		}
 	}
 
-	mesh.upload(vertices, index, normals, uvs);
+	mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newCylinder(int segments) {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newCylinder(int segments) {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
 	std::vector<float> vertices;
 	std::vector<float> normals;
@@ -556,12 +555,12 @@ gr::Renderer::Mesh Mesh::newCylinder(int segments) {
 		});
 	}
 
-	mesh.upload(vertices, index, normals, uvs);
+	mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newPyramid() {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newPyramid() {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
     std::vector<float> vertices;
     std::vector<float> normals;
@@ -684,12 +683,12 @@ gr::Renderer::Mesh Mesh::newPyramid() {
         0.5f, 0.0f
     };
 
-    mesh.upload(vertices, index, normals, uvs);
+    mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 
-gr::Renderer::Mesh Mesh::newCone(int segments) {
-    gr::Renderer::Mesh mesh;
+std::shared_ptr<gr::Renderer::Mesh> Mesh::newCone(int segments) {
+    auto mesh = std::make_shared<gr::Renderer::Mesh>();
 
 	std::vector<float> vertices;
 	std::vector<float> normals;
@@ -764,7 +763,7 @@ gr::Renderer::Mesh Mesh::newCone(int segments) {
 		});
 	}
 
-	mesh.upload(vertices, index, normals, uvs);
+	mesh->upload(vertices, index, normals, uvs);
     return mesh;
 }
 

@@ -52,7 +52,7 @@ void Object::draw() {
     } else {
         part_.material  = material;
         part_.transform = transform;
-        part_.mesh      = &mesh;
+        part_.mesh      = mesh.get();
         gr::Renderer::addToQueue(part_);
     }
 }
