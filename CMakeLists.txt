@@ -51,11 +51,13 @@ target_include_directories(granite
 target_compile_definitions(granite PUBLIC GLFW_INCLUDE_NONE)
 
 target_link_libraries(granite
+PRIVATE:
     ${BULLET_LIBRARIES}
     glfw
     OpenGL::GL
     glm::glm
     ${SNDFILE_LIBRARIES}
+    nlohmann_json::nlohmann_json
 )
 
 install(TARGETS granite
