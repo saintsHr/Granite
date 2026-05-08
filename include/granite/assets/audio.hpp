@@ -8,7 +8,7 @@ namespace gr::Assets {
 class Audio {
 public:
 	bool load(const std::string& filename);
-	std::vector<float> read(void) const;
+	const std::vector<float>& read(void) const;
 
 	long frameCount(void) const;
 	int sampleRate(void) const;

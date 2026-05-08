@@ -13,6 +13,7 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Bullet REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 pkg_check_modules(SNDFILE REQUIRED sndfile)
 

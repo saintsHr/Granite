@@ -44,7 +44,7 @@ bool Audio::load(const std::string& filename) {
 	return true;
 }
 
-std::vector<float> Audio::read(void) const {
+const std::vector<float>& Audio::read(void) const {
 	return buffer_;
 }
 
