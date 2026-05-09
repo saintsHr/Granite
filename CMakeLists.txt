@@ -33,10 +33,17 @@ add_library(granite STATIC
     ${THIRD_C}
 )
 
-target_compile_options(granite PRIVATE
-    -Wall -Wextra
-    $<$<CONFIG:Debug>:-O0 -g3 -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS>
-    $<$<CONFIG:Release>:-O3 -DNDEBUG>
+target_compile_options(granite
+    PRIVATE
+        -Wall
+        -Wextra
+        -Werror
+
+        $<$<CONFIG:Debug>:-O0 -g3 -fno-omit-frame-pointer>
+        $<$<CONFIG:Debug>:-D_GLIBCXX_ASSERTIONS>
+
+        $<$<CONFIG:Release>:-O3>
+        $<$<CONFIG:Release>:-DNDEBUG>
 )
 
 target_include_directories(granite
@@ -44,14 +51,17 @@ target_include_directories(granite
         ${CMAKE_SOURCE_DIR}/include
     PRIVATE
         ${CMAKE_SOURCE_DIR}/third-party/include
-        /usr/include/bullet
+        ${BULLET_INCLUDE_DIRS}
         ${SNDFILE_INCLUDE_DIRS}
 )
 
-target_compile_definitions(granite PUBLIC GLFW_INCLUDE_NONE)
+target_compile_definitions(granite
+    PUBLIC
+        GLFW_INCLUDE_NONE
+)
 
 target_link_libraries(granite
-PRIVATE:
+PRIVATE
     ${BULLET_LIBRARIES}
     glfw
     OpenGL::GL

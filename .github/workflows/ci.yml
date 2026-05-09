@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         build_type: [Debug, Release]
+        compiler: [gcc, clang]
 
     steps:
       - name: Checkout
@@ -36,9 +37,23 @@ jobs:
             libsndfile1 \
             libsndfile1-dev \
             nlohmann-json3-dev \
+            clang \
+
+      - name: Setup compiler
+        run: |
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            echo "CC=clang"    >> $GITHUB_ENV
+            echo "CXX=clang++" >> $GITHUB_ENV
+          else
+            echo "CC=gcc"  >> $GITHUB_ENV
+            echo "CXX=g++" >> $GITHUB_ENV
+          fi
 
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        run: cmake -S . -B build \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DCMAKE_C_COMPILER=${CC} \
+          -DCMAKE_CXX_COMPILER=${CXX}
 
       - name: Build
         run: cmake --build build -j
