@@ -278,6 +278,34 @@ gr::Vec3 Body::getAngularVelocity(){
     return v;
 }
 
+std::vector<btRigidBody*> Body::getCollisions(btDynamicsWorld* world) {
+    std::vector<btRigidBody*> result;
+
+    int numManifolds = world->getDispatcher()->getNumManifolds();
+
+    for (int i = 0; i < numManifolds; i++) {
+        btPersistentManifold* manifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+
+        if (manifold->getNumContacts() == 0) continue;
+
+        btCollisionObject* A = (btCollisionObject*)manifold->getBody0();
+        btCollisionObject* B = (btCollisionObject*)manifold->getBody1();
+
+        btCollisionObject* other = nullptr;
+
+        if (A == this->body_) other = B;
+        if (B == this->body_) other = A;
+
+        if (!other) continue;
+
+        btRigidBody* rb = btRigidBody::upcast(other);
+
+        if (rb) result.push_back(rb);
+    }
+
+    return result;
+}
+
 Body::~Body() {
     delete body_;
     delete shape_;

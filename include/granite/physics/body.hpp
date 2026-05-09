@@ -26,9 +26,12 @@ SOFTWARE.
 
 #include "granite/core/vector.hpp"
 
+#include <vector>
+
 class btRigidBody;
 class btCollisionShape;
 class btMotionState;
+class btDynamicsWorld;
 
 namespace gr::Physics {
 
@@ -86,7 +89,7 @@ public:
     gr::Vec3 getLinearVelocity();
     gr::Vec3 getAngularVelocity();
 
-    void clearForces();
+    std::vector<btRigidBody*> getCollisions(btDynamicsWorld* world);
 
     btRigidBody* getRaw_();
     bool isBuilt_();
