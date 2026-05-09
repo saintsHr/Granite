@@ -27,6 +27,9 @@ if you find any issue or have a cool idea/suggestion, share it on github issues 
 - Window Management
 - Keyboard & Mouse Input
 - 3D Physics
+- Models
+- Map Loading
+- Math & Vector Modules
 
 ---
 
