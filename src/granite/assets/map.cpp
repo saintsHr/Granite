@@ -25,6 +25,7 @@ SOFTWARE.
 #include "granite/assets/map.hpp"
 #include "granite/core/color.hpp"
 #include "granite/core/log.hpp"
+#include "granite/core/vector.hpp"
 #include "granite/renderer/mesh.hpp"
 #include "granite/scene/object.hpp"
 
@@ -109,9 +110,9 @@ static nlohmann::json openJson(const std::string& filename) {
 	return json;
 }
 
-static gr::Vec3 readVec3(const nlohmann::json& j, const char* key) {
+static gr::Vec3 readVec3(const nlohmann::json& j, const char* key, gr::Vec3 defaultValue) {
     auto it = j.find(key);
-	if (it == j.end()) return {0,0,0};
+	if (it == j.end()) return defaultValue;
 
 	const auto& v = *it;
 
@@ -122,9 +123,9 @@ static gr::Vec3 readVec3(const nlohmann::json& j, const char* key) {
     );
 }
 
-static gr::Color3 readColor3(const nlohmann::json& j, const char* key) {
+static gr::Color3 readColor3(const nlohmann::json& j, const char* key, gr::Color3 defaultValue) {
     auto it = j.find(key);
-	if (it == j.end()) return {0,0,0};
+	if (it == j.end()) return defaultValue;
 
 	const auto& v = *it;
     
@@ -138,10 +139,11 @@ static gr::Color3 readColor3(const nlohmann::json& j, const char* key) {
 static std::unique_ptr<gr::Scene::Object> parseObject(const nlohmann::json& obj, size_t objIndex, const std::string& filename) {
 	auto o = std::make_unique<gr::Scene::Object>();
 
-	o->transform.position = readVec3(obj, "position");
-	o->transform.rotation = readVec3(obj, "rotation");
-	o->transform.scale    = readVec3(obj, "scale");
-	o->material.color     = readColor3(obj, "color");
+	o->transform.position     = readVec3(obj, "position", {0.0f, 0.0f, 0.0f});
+	o->transform.rotation     = readVec3(obj, "rotation", {0.0f, 0.0f, 0.0f});
+	o->transform.scale        = readVec3(obj, "scale", {1.0f, 1.0f, 1.0f});
+	o->material.color         = readColor3(obj, "color", {255.0f, 255.0f, 255.0f});
+	o->material.specularColor = readColor3(obj, "specularColor", {255.0f, 255.0f, 255.0f});
 
 	std::string meshName = obj.value("mesh","");
 	std::shared_ptr<gr::Renderer::Mesh> mesh = getMesh(meshName, objIndex, filename);
@@ -185,6 +187,18 @@ void Map::load(const std::string& filename) {
 	for (auto& obj : json["objects"]) {
 		auto o = parseObject(obj, i++, filename);
 		objects_.push_back(std::move(o));
+	}
+}
+
+void Map::update(void) {
+	for (auto& obj : objects_) {
+		obj->update();
+	}
+}
+
+void Map::draw(void) {
+	for (auto& obj : objects_) {
+		obj->draw();
 	}
 }
 

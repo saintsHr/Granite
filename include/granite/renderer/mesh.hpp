@@ -53,7 +53,7 @@ public:
     static std::shared_ptr<gr::Renderer::Mesh> newSphere(int latSegments = 32, int longSegments = 64);
     static std::shared_ptr<gr::Renderer::Mesh> newCylinder(int segments = 64);
     static std::shared_ptr<gr::Renderer::Mesh> newPyramid();
-    static std::shared_ptr<gr::Renderer::Mesh> newCone(int segments = 64);
+    static std::shared_ptr<gr::Renderer::Mesh> newCone(int segments = 128);
 private:
     unsigned int vbo_, vao_, ebo_;
     uint32_t vertexCount_;

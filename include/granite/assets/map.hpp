@@ -35,6 +35,8 @@ class Map {
 public:
 	void load(const std::string& filename);
 	const std::vector<std::unique_ptr<gr::Scene::Object>>& read() const;
+	void update(void);
+	void draw(void);
 private:
 	std::vector<std::unique_ptr<gr::Scene::Object>> objects_;
 };
