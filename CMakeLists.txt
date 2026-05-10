@@ -22,6 +22,7 @@ find_package(nlohmann_json REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SNDFILE REQUIRED sndfile)
+pkg_check_modules(OPENAL REQUIRED openal)
 
 # -----------------------------
 # Sources
@@ -89,6 +90,7 @@ target_link_libraries(granite
         glfw
         ${BULLET_LIBRARIES}
         ${SNDFILE_LIBRARIES}
+        ${OPENAL_LIBRARY}
 )
 
 # -----------------------------
