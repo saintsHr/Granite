@@ -33,7 +33,6 @@ namespace gr::Core{
 void init(const Config& cfg){
     const int depth   = static_cast<int>(gr::Math::Clamp(static_cast<float>(cfg.depthBits),   16, 32));
     const int stencil = static_cast<int>(gr::Math::Clamp(static_cast<float>(cfg.stencilBits), 0,  8));
-    const int samples = static_cast<int>(gr::Math::Clamp(static_cast<float>(cfg.msaaSamples), 0,  8));
 
     if (glfwInit()) {
         gr::internal::log(
@@ -55,7 +54,6 @@ void init(const Config& cfg){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, static_cast<int>(depth));
     glfwWindowHint(GLFW_STENCIL_BITS, static_cast<int>(stencil));
-    glfwWindowHint(GLFW_SAMPLES, static_cast<int>(samples));
 
     gr::internal::log(
         gr::internal::Severity::INFO,
@@ -68,7 +66,6 @@ void init() {
     Config cfg = {0};
     cfg.depthBits    = 24;
     cfg.stencilBits  = 8;
-    cfg.msaaSamples  = 4;
 
     init(cfg);
 }

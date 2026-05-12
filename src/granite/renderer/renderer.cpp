@@ -53,14 +53,14 @@ const char* postVertexShader = R"glsl(
 
 #version 330 core
 
-layout(location = 0) in vec2 aPos;
-layout(location = 1) in vec2 aUV;
+layout(location = 0) in vec2 lPosition;
+layout(location = 1) in vec2 lUV;
 
-out vec2 vUV;
+out vec2 UV;
 
 void main() {
-    vUV = aUV;
-    gl_Position = vec4(aPos, 0.0, 1.0);
+    UV = lUV;
+    gl_Position = vec4(lPosition, 0.0, 1.0);
 }
 
 // ------------------------------------------------------------------------------//
@@ -73,13 +73,13 @@ const char* postFragmentShader = R"glsl(
 
 #version 330 core
 
-in vec2 vUV;
-out vec4 FragColor;
+uniform sampler2D uTexture;
 
-uniform sampler2D uTex;
+in vec2 UV;
+out vec4 fragColor;
 
 void main() {
-    FragColor = texture(uTex, vUV);
+    fragColor = texture(uTexture, UV);
 }
 
 // ------------------------------------------------------------------------------//
@@ -174,8 +174,6 @@ void init(const gr::Renderer::RendererConfig& cfg) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-
-    glEnable(GL_MULTISAMPLE);
 
     glEnable(GL_FRAMEBUFFER_SRGB);
 
