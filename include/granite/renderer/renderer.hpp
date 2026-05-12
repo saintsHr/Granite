@@ -24,8 +24,8 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/renderer/mesh.hpp"
-#include "granite/renderer/shader.hpp"
+#include "granite/core/vector.hpp"
+#include "granite/renderer/material.hpp"
 #include "granite/scene/camera.hpp"
 #include "granite/renderer/renderable.hpp"
 
@@ -37,13 +37,20 @@ struct FrameContext {
     gr::Vec3 cameraPos;
 };
 
+struct RendererConfig {
+    gr::Vec2 resolution;
+    gr::Assets::TextureFilter filter;
+};
+
 extern FrameContext gFrame;
 extern std::vector<gr::Renderer::RenderObject> opaqueObjects;
 extern std::vector<gr::Renderer::RenderObject> transparentObjects;
 
+void init(const gr::Renderer::RendererConfig& cfg);
 void init();
+
 void beginFrame(const gr::Scene::Camera& camera);
 void addToQueue(const gr::Renderer::RenderObject& obj);
-void endFrame();
+void endFrame(const gr::Scene::Camera& camera);
 
 }

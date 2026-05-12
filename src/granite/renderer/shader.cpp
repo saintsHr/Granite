@@ -458,6 +458,11 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
+void Shader::setInt1(const std::string &name, int n) const {
+    GLint loc = glGetUniformLocation(program_, name.c_str());
+    glUniform1i(loc, n);
+}
+
 GLuint Shader::getProgram() const {
     return program_;
 }

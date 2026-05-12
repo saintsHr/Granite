@@ -22,13 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#pragma once
+
 #include "granite/assets/image.hpp"
 
 namespace gr::Assets {
 
 enum class TextureFilter {
-    NEAREST,
-    LINEAR
+    NEAREST = 0x2600,
+    LINEAR  = 0x2601 
 };
 
 class Texture {

@@ -30,16 +30,120 @@ SOFTWARE.
 #include <algorithm>
 
 #include "granite/renderer/renderer.hpp"
+#include "granite/renderer/shader.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/core/log.hpp"
+#include "granite/assets/texture.hpp"
 
 namespace gr::Renderer {
 
 GLuint lightUBO = 0;
 
-FrameContext gFrame;
+FrameContext   gFrame;
+RendererConfig gConfig;
+
+std::shared_ptr<Shader> postShader = nullptr;
+GLuint gPostFBO = 0;
+GLuint gPostRBO = 0;
+GLuint gPostTex = 0;
+
+const char* postVertexShader = R"glsl(
+
+// ------------------------------------------------------------------------------//
+
+#version 330 core
+
+layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec2 aUV;
+
+out vec2 vUV;
+
+void main() {
+    vUV = aUV;
+    gl_Position = vec4(aPos, 0.0, 1.0);
+}
+
+// ------------------------------------------------------------------------------//
+
+)glsl";
+
+const char* postFragmentShader = R"glsl(
+
+// ------------------------------------------------------------------------------//
+
+#version 330 core
+
+in vec2 vUV;
+out vec4 FragColor;
+
+uniform sampler2D uTex;
+
+void main() {
+    FragColor = texture(uTex, vUV);
+}
+
+// ------------------------------------------------------------------------------//
+
+)glsl";
+
+static void drawPostQuad(GLuint tex) {
+    static GLuint vao = 0;
+    static GLuint vbo = 0;
+
+    if (vao == 0) {
+        float vertices[] = {
+            -1, -1,    0, 0,
+             1, -1,    1, 0,
+             1,  1,    1, 1,
+            -1,  1,    0, 1
+        };
+
+        GLuint indices[] = {0,1,2, 2,3,0};
+
+        GLuint ebo;
+
+        glGenVertexArrays(1, &vao);
+        glGenBuffers(1, &vbo);
+        glGenBuffers(1, &ebo);
+
+        glBindVertexArray(vao);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+    }
+
+    postShader->use();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    postShader->setInt1("uTex", 0);
+
+    glBindVertexArray(vao);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
 
 void init() {
+    init({
+        {1280, 768},
+        gr::Assets::TextureFilter::LINEAR
+    });
+}
+
+void init(const gr::Renderer::RendererConfig& cfg) {
+    gConfig = cfg;
+
     bool success = true;
 
     auto checkGL = [&success]() {
@@ -115,9 +219,65 @@ void init() {
         gr::internal::Module::RENDERER,
         "Renderer Initialized (OpenGL)."
     );
+
+    // --- Post-Process Setup ---
+    postShader = std::make_shared<gr::Renderer::Shader>(
+        postVertexShader,
+        postFragmentShader
+    );
+
+    glGenFramebuffers(1, &gPostFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, gPostFBO);
+
+    glGenTextures(1, &gPostTex);
+    glBindTexture(GL_TEXTURE_2D, gPostTex);
+
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA8,
+        gConfig.resolution.x,
+        gConfig.resolution.y,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        nullptr
+    );
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(gConfig.filter));
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(gConfig.filter));
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        gPostTex,
+        0
+    );
+
+    glGenRenderbuffers(1, &gPostRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, gPostRBO);
+    glRenderbufferStorage(
+        GL_RENDERBUFFER,
+        GL_DEPTH24_STENCIL8,
+        gConfig.resolution.x,
+        gConfig.resolution.y
+    );
+
+    glFramebufferRenderbuffer(
+        GL_FRAMEBUFFER,
+        GL_DEPTH_STENCIL_ATTACHMENT,
+        GL_RENDERBUFFER,
+        gPostRBO
+    );
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void beginFrame(const gr::Scene::Camera& camera){
+    glBindFramebuffer(GL_FRAMEBUFFER, gPostFBO);
+    glViewport(0, 0, gConfig.resolution.x, gConfig.resolution.y);
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -213,7 +373,7 @@ void addToQueue(const gr::Renderer::RenderObject& obj) {
     }
 }
 
-void endFrame() {
+void endFrame(const gr::Scene::Camera& camera) {
     for (size_t i = 0; i < opaqueObjects.size(); i++){
         opaqueObjects[i].draw();
     }
@@ -234,6 +394,13 @@ void endFrame() {
 
     opaqueObjects.clear();
     transparentObjects.clear();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, camera.aspect.x, camera.aspect.y);
+
+    glDisable(GL_DEPTH_TEST);
+    drawPostQuad(gPostTex);
+    glEnable(GL_DEPTH_TEST);
 }
 
 }
