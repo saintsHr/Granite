@@ -24,8 +24,8 @@ SOFTWARE.
 
 #pragma once
 
+#include "granite/assets/texture.hpp"
 #include "granite/core/vector.hpp"
-#include "granite/renderer/material.hpp"
 #include "granite/scene/camera.hpp"
 #include "granite/renderer/renderable.hpp"
 
@@ -38,8 +38,11 @@ struct FrameContext {
 };
 
 struct RendererConfig {
-    gr::Vec2 resolution;
-    gr::Assets::TextureFilter filter;
+    gr::Vec2 resolution = {1280, 768};
+    gr::Assets::TextureFilter filter = gr::Assets::TextureFilter::LINEAR;
+    float dirtyNoiseStrenght = 0.0f;
+    float ditherLevels = 0.0f;
+    float quantizationLevels = 0.0f;
 };
 
 extern FrameContext gFrame;

@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include "granite/assets/model.hpp"
 #include "granite/physics/body.hpp"
 #include "granite/renderer/renderable.hpp"
 

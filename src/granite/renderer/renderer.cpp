@@ -33,7 +33,6 @@ SOFTWARE.
 #include "granite/renderer/shader.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/core/log.hpp"
-#include "granite/assets/texture.hpp"
 
 namespace gr::Renderer {
 
@@ -75,12 +74,59 @@ const char* postFragmentShader = R"glsl(
 
 uniform sampler2D uTexture;
 
+uniform float uDitherLevels;
+uniform float uQuantizationLevels;
+uniform float uDirtyNoiseStrenght;
+
 in vec2 UV;
 out vec4 fragColor;
 
+float bayer4x4(vec2 p) {
+    int x = int(mod(p.x, 4.0));
+    int y = int(mod(p.y, 4.0));
+
+    int index = x + y * 4;
+
+    const float m[16] = float[](
+         0.0,  8.0,  2.0, 10.0,
+        12.0,  4.0, 14.0,  6.0,
+         3.0, 11.0,  1.0,  9.0,
+        15.0,  7.0, 13.0,  5.0
+    );
+
+    return m[index] / 16.0;
+}
+
+float random(vec2 co) {
+    return fract(
+        sin(dot(co, vec2(12.9898,78.233))) * 43758.5453
+    );
+}
+
 void main() {
     vec3 finalColor = texture(uTexture, UV).rgb;
-    fragColor = vec4(finalColor, 1.0);
+
+    // --- Dither --- //
+    if (uDitherLevels > 0.0f) {
+        float dither = bayer4x4(gl_FragCoord.xy);
+        finalColor += (dither - 0.5) / uDitherLevels;
+    }
+
+    // --- Quantization --- //
+    if (uQuantizationLevels > 0.0f) {
+        finalColor = floor(
+            finalColor * uQuantizationLevels
+        ) / uQuantizationLevels;
+    }
+
+    // --- Dirty Noise --- //
+    if (uDirtyNoiseStrenght > 0.0f) {
+        float noise = random(floor(gl_FragCoord.xy));
+        finalColor += (noise - 0.5) * uDirtyNoiseStrenght;
+    }
+
+    finalColor = clamp(finalColor, 0.0, 1.0);
+    fragColor  = vec4(finalColor, 1.0);
 }
 
 // ------------------------------------------------------------------------------//
@@ -127,6 +173,9 @@ static void drawPostQuad(GLuint tex) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
 
+    postShader->setFloat1("uQuantizationLevels", gConfig.quantizationLevels);
+    postShader->setFloat1("uDitherLevels", gConfig.ditherLevels);
+    postShader->setFloat1("uDirtyNoiseStrenght", gConfig.dirtyNoiseStrenght);
     postShader->setInt1("uTexture", 0);
 
     glBindVertexArray(vao);
@@ -136,10 +185,8 @@ static void drawPostQuad(GLuint tex) {
 }
 
 void init() {
-    init({
-        {1280, 768},
-        gr::Assets::TextureFilter::LINEAR
-    });
+    gr::Renderer::RendererConfig rcfg;
+    init(rcfg);
 }
 
 void init(const gr::Renderer::RendererConfig& cfg) {

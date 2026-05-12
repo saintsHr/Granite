@@ -27,7 +27,6 @@ SOFTWARE.
 #include "granite/core/vector.hpp"
 #include "granite/renderer/mesh.hpp"
 #include "granite/renderer/material.hpp"
-#include "granite/assets/model.hpp"
 
 namespace gr::Renderer {
 

@@ -463,6 +463,11 @@ void Shader::setInt1(const std::string &name, int n) const {
     glUniform1i(loc, n);
 }
 
+void Shader::setFloat1(const std::string &name, float n) const {
+    GLint loc = glGetUniformLocation(program_, name.c_str());
+    glUniform1f(loc, n);
+}
+
 GLuint Shader::getProgram() const {
     return program_;
 }
