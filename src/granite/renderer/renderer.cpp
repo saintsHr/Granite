@@ -79,7 +79,8 @@ in vec2 UV;
 out vec4 fragColor;
 
 void main() {
-    fragColor = texture(uTexture, UV);
+    vec3 finalColor = texture(uTexture, UV).rgb;
+    fragColor = vec4(finalColor, 1.0);
 }
 
 // ------------------------------------------------------------------------------//
@@ -126,7 +127,7 @@ static void drawPostQuad(GLuint tex) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
 
-    postShader->setInt1("uTex", 0);
+    postShader->setInt1("uTexture", 0);
 
     glBindVertexArray(vao);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -233,7 +234,7 @@ void init(const gr::Renderer::RendererConfig& cfg) {
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGBA8,
+        GL_SRGB8_ALPHA8,
         gConfig.resolution.x,
         gConfig.resolution.y,
         0,
