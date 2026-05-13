@@ -24,13 +24,14 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/renderer/renderable.hpp"
+#include "granite/renderer/material.hpp"
+#include "granite/renderer/mesh.hpp"
 
 namespace gr::Assets {
 
 class Model {
 public:
-    void load(const std::string& filename);
+    void load(const std::string& filename, bool invertU = false, bool invertV = false);
 
     std::vector<gr::Renderer::Mesh>     meshes;
     std::vector<gr::Renderer::Material> materials;

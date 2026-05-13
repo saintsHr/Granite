@@ -26,7 +26,6 @@ SOFTWARE.
 #include "granite/core/log.hpp"
 
 #include "tiny_obj_loader/tiny_obj_loader.hpp"
-#include <filesystem>
 #include <unordered_map>
 
 namespace std {
@@ -85,7 +84,7 @@ struct VertexKeyHash {
     }
 };
 
-void Model::load(const std::string& filename) {
+void Model::load(const std::string& filename, bool invertU, bool invertV) {
     gr::Assets::Model* model = this;
 
     tinyobj::attrib_t attrib;
@@ -208,11 +207,17 @@ void Model::load(const std::string& filename) {
                         if (hasUVs && idx.texcoord_index >= 0) {
                             const float* t = &attrib.texcoords[2 * static_cast<size_t>(idx.texcoord_index)];
 
-                            uvs.push_back(t[0]);
-                            uvs.push_back(t[1]);
+                            float u = t[0];
+                            float v = t[1];
+
+                            if (invertU) u = 1.0f - u;
+                            if (invertV) v = 1.0f - v;
+
+                            uvs.push_back(u);
+                            uvs.push_back(v);
                         } else {
-                            uvs.push_back(0.f);
-                            uvs.push_back(0.f);
+                            uvs.push_back(0.0f);
+                            uvs.push_back(0.0f);
                         }
                     }
                 }
