@@ -168,15 +168,8 @@ static void drawPostQuad(GLuint tex) {
         glEnableVertexAttribArray(1);
     }
 
-    postShader->use();
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
-
-    postShader->setFloat1("uQuantizationLevels", gConfig.quantizationLevels);
-    postShader->setFloat1("uDitherLevels", gConfig.ditherLevels);
-    postShader->setFloat1("uDirtyNoiseStrenght", gConfig.dirtyNoiseStrenght);
-    postShader->setInt1("uTexture", 0);
 
     glBindVertexArray(vao);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -443,6 +436,13 @@ void endFrame(const gr::Scene::Camera& camera) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, camera.aspect.x, camera.aspect.y);
+
+    postShader->use();
+
+    postShader->setFloat1("uQuantizationLevels", gConfig.quantizationLevels);
+    postShader->setFloat1("uDitherLevels", gConfig.ditherLevels);
+    postShader->setFloat1("uDirtyNoiseStrenght", gConfig.dirtyNoiseStrenght);
+    postShader->setInt1("uTexture", 0);
 
     glDisable(GL_DEPTH_TEST);
     drawPostQuad(gPostTex);
