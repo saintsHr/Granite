@@ -24,33 +24,36 @@ SOFTWARE.
 
 #pragma once
 
+#include "granite/assets/audio.hpp"
 #include "granite/core/vector.hpp"
 
-#include <string>
+namespace gr::Scene {
 
-namespace gr::Assets {
+enum class AudioState {
+	PLAYING,
+	PAUSED,
+	STOPPED
+};
 
-class Image {
+class AudioSource {
 public:
-    Image() = default;
-    ~Image();
+	AudioSource();
+	~AudioSource();
 
-    Image(const Image&) = delete;
-    Image& operator=(const Image&) = delete;
+	gr::Vec3 position;
 
-    Image(Image&& other) noexcept;
-    Image& operator=(Image&& other) noexcept;
+	void load(const gr::Assets::Audio& audio);
+	void unload(void);
 
-    void load(const std::string& filename);
+	void play(void);
+	void pause(void);
+	void stop(void);
 
-    int width() const { return static_cast<int>(size_.x); }
-    int height() const { return static_cast<int>(size_.y); }
-    bool isValid() const { return data_ != nullptr; }
-    unsigned char* getData_() { return data_; }
-    const unsigned char* getData_() const { return data_; }
+	AudioState getState(void) const;
+	bool isLoaded(void) const;
 private:
-    unsigned char* data_ = nullptr;
-    gr::Vec2 size_ = {0.0f, 0.0f};
+	AudioState state_ = AudioState::STOPPED;
+	bool loaded_ = false;
 };
 
 }

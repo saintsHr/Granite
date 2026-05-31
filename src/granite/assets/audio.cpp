@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace gr::Assets {
 
-bool Audio::load(const std::string& filename) {
+void Audio::load(const std::string& filename) {
 	SF_INFO info = {};
 	SNDFILE* file = sf_open(filename.c_str(), SFM_READ, &info);
 
@@ -40,7 +40,8 @@ bool Audio::load(const std::string& filename) {
 			"Cannot open sound file: %s",
 			filename.c_str()
 		);
-		return false;
+		loaded_ = false;
+		return;
 	}
 
 	buffer_.resize(info.frames * info.channels);
@@ -58,29 +59,37 @@ bool Audio::load(const std::string& filename) {
 			filename.c_str()
 		);
 		sf_close(file);
-		return false;
+		
+		loaded_ = false;
+		return;
 	}
 
 	buffer_.resize(read * info.channels);
 	framesCount_   = read;
 
 	sf_close(file);
-	return true;
+
+	loaded_ = true;
+	return;
+}
+
+bool Audio::isLoaded(void) const {
+	return loaded_;
 }
 
 const std::vector<float>& Audio::read(void) const {
 	return buffer_;
 }
 
-long Audio::frameCount(void) const {
+uint64_t Audio::frameCount(void) const {
 	return framesCount_;
 }
 
-int Audio::sampleRate(void) const {
+uint32_t Audio::sampleRate(void) const {
 	return sampleRate_;
 }
 
-int Audio::channelsCount(void) const {
+uint8_t Audio::channelsCount(void) const {
 	return channelsCount_;
 }
 

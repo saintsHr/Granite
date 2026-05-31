@@ -33,7 +33,7 @@ void Texture::load(const gr::Assets::Image& image) {
     glGenTextures(1, &id_);
     glBindTexture(GL_TEXTURE_2D, id_);
 
-    if (image.data() == nullptr || image.width() == 0 || image.height() == 0) {
+    if (image.getData_() == nullptr || image.width() == 0 || image.height() == 0) {
         gr::internal::log(
             gr::internal::Severity::ERROR,
             gr::internal::Module::ASSETS,
@@ -51,7 +51,7 @@ void Texture::load(const gr::Assets::Image& image) {
             0,
             GL_RGBA,
             GL_UNSIGNED_BYTE,
-            image.data()
+            image.getData_()
         );
     }
 

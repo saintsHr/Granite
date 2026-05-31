@@ -24,6 +24,7 @@ SOFTWARE.
 
 #pragma once
 
+#include <glm/fwd.hpp>
 #include <string>
 #include <vector>
 
@@ -31,17 +32,22 @@ namespace gr::Assets {
 
 class Audio {
 public:
-	bool load(const std::string& filename);
+	void load(const std::string& filename);
+	bool isLoaded(void) const;
+
 	const std::vector<float>& read(void) const;
 
-	long frameCount(void) const;
-	int sampleRate(void) const;
-	int channelsCount(void) const;
+	uint64_t frameCount(void) const;
+	uint32_t sampleRate(void) const;
+	uint8_t  channelsCount(void) const;
 private:
-	std::vector<float> buffer_;
-	long framesCount_;
-	int  sampleRate_;
-	int  channelsCount_;
+	std::vector<float> buffer_ = {0};
+
+	uint64_t framesCount_   = 0;
+	uint32_t sampleRate_    = 0;
+	uint8_t  channelsCount_ = 0;
+
+	bool loaded_ = false;
 };
 
 };

@@ -41,8 +41,8 @@ public:
     void load(const gr::Assets::Image& image);
     void setFilter(TextureFilter filter, bool useMipmaps);
 
-    unsigned int id() {return id_;}
-    unsigned char* data() {return data_;}
+    unsigned int getID_() {return id_;}
+    unsigned char* getData_() {return data_;}
 private:
     unsigned char* data_ = nullptr;
     unsigned int id_ = 0;

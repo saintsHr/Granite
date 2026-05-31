@@ -72,16 +72,16 @@ void Material::bind(){
         );
     }
 
-    if (tL_ != -1 && texture.id() != 0) {
+    if (tL_ != -1 && texture.getID_() != 0) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture.id());
+        glBindTexture(GL_TEXTURE_2D, texture.getID_());
         glUniform1i(tL_, 0);
     }
 
     if (hL_ != -1) {
         glUniform1i(
             hL_,
-            texture.id() != 0 ? true : false
+            texture.getID_() != 0 ? true : false
         );
     }
 

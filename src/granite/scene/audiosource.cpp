@@ -22,35 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
+#include "granite/scene/audiosource.hpp"
 
-#include "granite/core/vector.hpp"
+namespace gr::Scene {
 
-#include <string>
+void AudioSource::load(const gr::Assets::Audio& audio) {
+	if (audio.isLoaded()) {
 
-namespace gr::Assets {
+	} else {
+		loaded_ = false;
+	}
 
-class Image {
-public:
-    Image() = default;
-    ~Image();
+	loaded_ = true;
+}
 
-    Image(const Image&) = delete;
-    Image& operator=(const Image&) = delete;
+void AudioSource::unload(void) {
+	loaded_ = false;
+}
 
-    Image(Image&& other) noexcept;
-    Image& operator=(Image&& other) noexcept;
+bool AudioSource::isLoaded(void) const {
+	return loaded_;
+}
 
-    void load(const std::string& filename);
+void AudioSource::play(void) {
+	state_ = AudioState::PLAYING;
+}
 
-    int width() const { return static_cast<int>(size_.x); }
-    int height() const { return static_cast<int>(size_.y); }
-    bool isValid() const { return data_ != nullptr; }
-    unsigned char* getData_() { return data_; }
-    const unsigned char* getData_() const { return data_; }
-private:
-    unsigned char* data_ = nullptr;
-    gr::Vec2 size_ = {0.0f, 0.0f};
-};
+void AudioSource::pause(void) {
+	state_ = AudioState::PAUSED;
+}
+
+void AudioSource::stop(void) {
+	state_ = AudioState::STOPPED;
+}
+
+AudioState AudioSource::getState(void) const {
+	return state_;
+}
 
 }
