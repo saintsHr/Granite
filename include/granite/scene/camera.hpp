@@ -24,7 +24,6 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/renderer/shader.hpp"
 #include "granite/window/window.hpp"
 
 namespace gr::Scene {
@@ -38,14 +37,8 @@ public:
     float near = 0.01f;
     float far = 100.0f;
 
-    glm::mat4 getProjection() const;
-    glm::mat4 getView() const;
-
     void update(const gr::Window& window);
     gr::Vec3 getDirection(gr::Direction direction);
-private:
-    glm::mat4 projection_;
-    glm::mat4 view_;
 };
 
 }

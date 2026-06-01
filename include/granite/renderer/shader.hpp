@@ -25,12 +25,11 @@ SOFTWARE.
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
 
 namespace gr::Renderer {
 
 class Shader;
-const extern Shader* currentShader;
+extern const Shader* currentShader;
 
 class Shader {
 public:
@@ -40,7 +39,7 @@ public:
 
     void use() const;
 
-    void setMat4(const std::string &name, const glm::mat4 &mat) const;
+    void setMat4(const std::string &name, const float* mat) const;
     void setInt1(const std::string &name, int n) const;
     void setFloat1(const std::string &name, float n) const;
 

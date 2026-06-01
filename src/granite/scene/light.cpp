@@ -25,17 +25,20 @@ SOFTWARE.
 #include "granite/scene/light.hpp"
 
 #include <cmath>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/trigonometric.hpp>
 
 namespace gr::Scene {
 
-LightID LightManager::nextID_ = 1;
+uint64_t LightManager::nextID_ = 1;
 
-std::unordered_map<LightID, PointLight> LightManager::pointLights_;
-std::unordered_map<LightID, SpotLight> LightManager::spotLights_;
-std::unordered_map<LightID, DirectionalLight> LightManager::directionalLights_;
+std::unordered_map<uint64_t, PointLight> LightManager::pointLights_;
+std::unordered_map<uint64_t, SpotLight> LightManager::spotLights_;
+std::unordered_map<uint64_t, DirectionalLight> LightManager::directionalLights_;
 AmbientLight LightManager::ambientLight_;
 
-LightID LightManager::create(const PointLight& light) {
+uint64_t LightManager::create(const PointLight& light) {
     PointLight light_ = light;
     light_.color = {
         light_.color.r / 255.0f,
@@ -43,12 +46,12 @@ LightID LightManager::create(const PointLight& light) {
         light_.color.b / 255.0f
     };
 
-    LightID id = nextID_++;
+    uint64_t id = nextID_++;
     pointLights_.emplace(id, light_);
     return id;
 }
 
-LightID LightManager::create(const DirectionalLight& light) {
+uint64_t LightManager::create(const DirectionalLight& light) {
     DirectionalLight light_ = light;
     light_.color = {
         light_.color.r / 255.0f,
@@ -56,12 +59,12 @@ LightID LightManager::create(const DirectionalLight& light) {
         light_.color.b / 255.0f
     };
 
-    LightID id = nextID_++;
+    uint64_t id = nextID_++;
     directionalLights_.emplace(id, light_);
     return id;
 }
 
-LightID LightManager::create(const SpotLight& light) {
+uint64_t LightManager::create(const SpotLight& light) {
     SpotLight light_ = light;
     light_.color = {
         light_.color.r / 255.0f,
@@ -70,36 +73,36 @@ LightID LightManager::create(const SpotLight& light) {
     };
     light_.cutoff = std::cos(glm::radians(light.cutoff));
 
-    LightID id = nextID_++;
+    uint64_t id = nextID_++;
     spotLights_.emplace(id, light_);
     return id;
 }
 
-void LightManager::destroyPointLight(LightID id) {
+void LightManager::destroyPointLight(uint64_t id) {
     pointLights_.erase(id);
 }
 
-void LightManager::destroySpotLight(LightID id) {
+void LightManager::destroySpotLight(uint64_t id) {
     spotLights_.erase(id);
 }
 
-void LightManager::destroyDirectionalLight(LightID id) {
+void LightManager::destroyDirectionalLight(uint64_t id) {
     directionalLights_.erase(id);
 }
 
-PointLight* LightManager::getPointLight(LightID id) {
+PointLight* LightManager::getPointLight(uint64_t id) {
     auto it = pointLights_.find(id);
     if (it == pointLights_.end()) return nullptr;
     return &it->second;
 }
 
-SpotLight* LightManager::getSpotLight(LightID id) {
+SpotLight* LightManager::getSpotLight(uint64_t id) {
     auto it = spotLights_.find(id);
     if (it == spotLights_.end()) return nullptr;
     return &it->second;
 }
 
-DirectionalLight* LightManager::getDirectionalLight(LightID id) {
+DirectionalLight* LightManager::getDirectionalLight(uint64_t id) {
     auto it = directionalLights_.find(id);
     if (it == directionalLights_.end()) return nullptr;
     return &it->second;
@@ -109,15 +112,15 @@ AmbientLight* LightManager::getAmbientLight(){
     return &ambientLight_;
 }
 
-const std::unordered_map<LightID, PointLight>& LightManager::getPointLights() {
+const std::unordered_map<uint64_t, PointLight>& LightManager::getPointLights() {
     return pointLights_;
 }
 
-const std::unordered_map<LightID, SpotLight>& LightManager::getSpotLights() {
+const std::unordered_map<uint64_t, SpotLight>& LightManager::getSpotLights() {
     return spotLights_;
 }
 
-const std::unordered_map<LightID, DirectionalLight>& LightManager::getDirectionalLights() {
+const std::unordered_map<uint64_t, DirectionalLight>& LightManager::getDirectionalLights() {
     return directionalLights_;
 }
 

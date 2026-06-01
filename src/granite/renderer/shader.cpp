@@ -453,9 +453,9 @@ void Shader::use() const {
     currentShader = this;
 }
 
-void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
+void Shader::setMat4(const std::string &name, const float* mat) const {
     GLint loc = glGetUniformLocation(program_, name.c_str());
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
+    glUniformMatrix4fv(loc, 1, GL_FALSE, mat);
 }
 
 void Shader::setInt1(const std::string &name, int n) const {

@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "granite/input/mouse.hpp"
+#include <GLFW/glfw3.h>
 
 namespace gr::Input{
 

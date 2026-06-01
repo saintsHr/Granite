@@ -22,41 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+// ATENTION!
+/*
+	This header (internal.hpp), as the name suggests,
+	its an internal header used only by the engine itself,
+	so you shouldnt include it in any case, doing so may
+	cause dependency leaks, compile errors, and more.
+*/
+
 #pragma once
 
 #include "granite/core/vector.hpp"
+#include <glm/mat4x4.hpp>
 
-#include <string>
+// ---- Renderer --------------------
 
-struct GLFWwindow;
+namespace gr::Renderer {
 
-namespace gr {
-
-class Window {
-public:
-    Window(const std::string& title, gr::Vec2 size);
-    ~Window();
-    
-    void setSize(int width, int height);
-    void setTitle(const std::string& title);
-
-    gr::Vec2 getSize() const;
-    std::string getTitle() const;
-
-    void setVSync(bool state);
-    void setMouseLock(bool state);
-
-    void close();
-
-    bool shouldClose() const;
-    void endFrame();
-
-    GLFWwindow* getRaw();
-private:
-    gr::Vec2 size_;
-    std::string title_;
-    GLFWwindow* raw_;
-    static void framebuffer_size_callback_(GLFWwindow* window, int width, int height);
+struct FrameContext {
+    glm::mat4 view;
+    glm::mat4 projection;
+    gr::Vec3 cameraPos;
 };
 
+extern FrameContext gFrame;
+
 }
+
+// ----------------------------------

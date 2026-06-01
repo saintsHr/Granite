@@ -24,9 +24,12 @@ SOFTWARE.
 
 #include "granite/assets/model.hpp"
 #include "granite/core/log.hpp"
-
 #include "tiny_obj_loader/tiny_obj_loader.hpp"
+
 #include <unordered_map>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <cmath>
 
 namespace std {
     template<> struct hash<glm::vec3> {
@@ -57,6 +60,7 @@ static void computeNormal(const float v0[3], const float v1[3], const float v2[3
     out[2] = e1x * e2y - e1y * e2x;
 
     float len = std::sqrt(out[0]*out[0] + out[1]*out[1] + out[2]*out[2]);
+
     if (len > 0.0f) {
         out[0] /= len;
         out[1] /= len;

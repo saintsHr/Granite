@@ -30,16 +30,63 @@ SOFTWARE.
 #include <algorithm>
 
 #include "granite/renderer/renderer.hpp"
+#include "granite/core/vector.hpp"
 #include "granite/renderer/shader.hpp"
 #include "granite/scene/light.hpp"
 #include "granite/core/log.hpp"
+#include "granite/internal.hpp"
 
 namespace gr::Renderer {
 
+    struct alignas(16) GPUPointLight {
+    glm::vec3 position;
+    float radius;
+
+    glm::vec3 color;
+    float intensity;
+};
+
+struct alignas(16) GPUSpotLight {
+    glm::vec3 position;
+    float radius;
+
+    glm::vec3 direction;
+    float cutoff;
+
+    glm::vec3 color;
+    float intensity;
+};
+
+struct alignas(16) GPUDirectionalLight {
+    glm::vec3 direction;
+    float intensity;
+
+    glm::vec3 color;
+    float padding;
+};
+
+struct alignas(16) GPUAmbientLight {
+    glm::vec3 color;
+    float intensity;
+};
+
+struct alignas(16) GPULightBlock {
+    GPUPointLight pointLights[gr::Scene::MAX_POINT_LIGHTS];
+    GPUSpotLight spotLights[gr::Scene::MAX_SPOT_LIGHTS];
+    GPUDirectionalLight directionalLights[gr::Scene::MAX_DIRECTIONAL_LIGHTS];
+    GPUAmbientLight ambientLight;
+
+    glm::ivec4 counts;
+};
+
+static_assert(sizeof(GPUPointLight) == 32, "GPUPointLight layout mismatch");
+static_assert(sizeof(GPUDirectionalLight) == 32, "GPUDirectionalLight layout mismatch");
+static_assert(sizeof(GPUAmbientLight) == 16, "GPUAmbientLight layout mismatch");
+
 GLuint lightUBO = 0;
 
-FrameContext   gFrame;
 RendererConfig gConfig;
+FrameContext   gFrame;
 
 std::shared_ptr<Shader> postShader = nullptr;
 GLuint gPostFBO = 0;
@@ -132,6 +179,54 @@ void main() {
 // ------------------------------------------------------------------------------//
 
 )glsl";
+
+static glm::mat4 calculateProjection(
+    float fov,
+    float near,
+    float far,
+    gr::Vec2 aspect
+) {
+    return glm::perspective(
+        glm::radians(fov),
+        aspect.x / aspect.y,
+        near,
+        far
+    );
+}
+
+static glm::mat4 calculateView(gr::Vec3 position, gr::Vec3 rotation) {
+    glm::vec3 front;
+
+    float yawAdjusted = rotation.y - 90.0f;
+
+    front.x =
+        glm::cos(glm::radians(yawAdjusted)) *
+        glm::cos(glm::radians(rotation.x));
+
+    front.y =
+        glm::sin(glm::radians(rotation.x));
+
+    front.z =
+        glm::sin(glm::radians(yawAdjusted)) *
+        glm::cos(glm::radians(rotation.x));
+
+    front =
+        glm::normalize(front);
+
+    glm::vec3 posGLM = {
+        position.x,
+        position.y,
+        position.z
+    };
+
+    glm::vec3 cameraTarget = posGLM + front;
+
+    return glm::lookAt(
+        posGLM,
+        cameraTarget,
+        glm::vec3(0.0f, 1.0f, 0.0f)
+    );
+}
 
 static void drawPostQuad(GLuint tex) {
     static GLuint vao = 0;
@@ -234,7 +329,7 @@ void init(const gr::Renderer::RendererConfig& cfg) {
     glBindBuffer(GL_UNIFORM_BUFFER, lightUBO);
     glBufferData(
         GL_UNIFORM_BUFFER,
-        sizeof(gr::Scene::GPULightBlock),
+        sizeof(GPULightBlock),
         nullptr,
         GL_DYNAMIC_DRAW
     );
@@ -320,8 +415,24 @@ void beginFrame(const gr::Scene::Camera& camera){
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    gFrame.view = camera.getView();
-    gFrame.projection = camera.getProjection();
+    // updates view on frame info
+    gFrame.view = calculateView(
+        camera.position,
+        {
+            camera.rotation.x,
+            camera.rotation.y,
+            0.0f
+        }
+    );
+
+    // updates projection on frame info
+    gFrame.projection = calculateProjection(
+        camera.fov,
+        camera.near,
+        camera.far,
+        camera.aspect
+    );
+
     gFrame.cameraPos = camera.position;
 
     // sends camera position to shader
@@ -331,7 +442,7 @@ void beginFrame(const gr::Scene::Camera& camera){
     }
 
     // creates empty light block
-    gr::Scene::GPULightBlock block{};
+    GPULightBlock block{};
     block.counts = glm::ivec4(0);
 
     // copy point lights to block

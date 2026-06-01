@@ -48,33 +48,6 @@ void Camera::update(const gr::Window& window) {
     };
 
     aspect = window.getSize();
-
-    glm::mat4 projection = glm::perspective(glm::radians(fov), aspect.x / aspect.y, near, far);
-
-    glm::vec3 front;
-    float yawAdjusted = rotation.y - 90.0f;
-    front.x = glm::cos(glm::radians(yawAdjusted)) * glm::cos(glm::radians(rotation.x));
-    front.y = glm::sin(glm::radians(rotation.x));
-    front.z = glm::sin(glm::radians(yawAdjusted)) * glm::cos(glm::radians(rotation.x));
-
-    front = glm::normalize(front);
-
-    glm::vec3 posGLM = {position.x, position.y, position.z};
-    glm::vec3 cameraTarget = posGLM + front;
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    glm::mat4 view = glm::lookAt(posGLM, cameraTarget, up);
-
-    projection_ = projection;
-    view_ = view;
-}
-
-glm::mat4 Camera::getProjection() const {
-    return projection_;
-}
-
-glm::mat4 Camera::getView() const {
-    return view_;
 }
 
 gr::Vec3 Camera::getDirection(gr::Direction direction) {

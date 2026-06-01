@@ -31,12 +31,6 @@ SOFTWARE.
 
 namespace gr::Renderer {
 
-struct FrameContext {
-    glm::mat4 view;
-    glm::mat4 projection;
-    gr::Vec3 cameraPos;
-};
-
 struct RendererConfig {
     gr::Vec2 resolution = {1280, 768};
     gr::Assets::TextureFilter filter = gr::Assets::TextureFilter::LINEAR;
@@ -45,7 +39,6 @@ struct RendererConfig {
     float quantizationLevels = 0.0f;
 };
 
-extern FrameContext gFrame;
 extern std::vector<gr::Renderer::RenderObject> opaqueObjects;
 extern std::vector<gr::Renderer::RenderObject> transparentObjects;
 

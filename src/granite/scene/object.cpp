@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "granite/scene/object.hpp"
+#include "granite/core/math.hpp"
 #include "granite/renderer/renderer.hpp"
 
 namespace gr::Scene {

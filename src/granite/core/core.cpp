@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "granite/core/core.hpp"
 #include "granite/core/log.hpp"
+#include "granite/core/math.hpp"
 
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>

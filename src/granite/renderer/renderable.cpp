@@ -23,8 +23,8 @@ SOFTWARE.
 */
 
 #include "granite/renderer/renderable.hpp"
-#include "granite/renderer/renderer.hpp"
 #include "granite/core/log.hpp"
+#include "granite/internal.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "glad/glad.h"

@@ -24,10 +24,9 @@ SOFTWARE.
 
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-
 #include "granite/core/core.hpp"
 #include "granite/core/event.hpp"
+#include "granite/core/math.hpp"
 #include "granite/window/window.hpp"
 #include "granite/renderer/renderer.hpp"
 #include "granite/scene/scene.hpp"

@@ -82,12 +82,11 @@ target_compile_definitions(granite PUBLIC GLFW_INCLUDE_NONE)
 # Link Libraries
 # -----------------------------
 target_link_libraries(granite
-    PUBLIC
+    PRIVATE
+        glfw
         OpenGL::GL
         glm::glm
         nlohmann_json::nlohmann_json
-    PRIVATE
-        glfw
         ${BULLET_LIBRARIES}
         ${SNDFILE_LIBRARIES}
         ${OPENAL_LIBRARY}

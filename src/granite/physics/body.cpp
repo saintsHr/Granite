@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "granite/physics/body.hpp"
+#include "granite/core/math.hpp"
 
 #include <bullet/btBulletDynamicsCommon.h>
 

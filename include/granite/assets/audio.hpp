@@ -24,7 +24,7 @@ SOFTWARE.
 
 #pragma once
 
-#include <glm/fwd.hpp>
+#include <cstdint>
 #include <string>
 #include <vector>
 
