@@ -73,6 +73,7 @@ void init() {
 
 void exit(){
     glfwTerminate();
+    
     gr::internal::log(
         gr::internal::Severity::INFO,
         gr::internal::Module::WINDOW,

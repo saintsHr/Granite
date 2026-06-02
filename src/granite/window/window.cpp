@@ -24,9 +24,9 @@ SOFTWARE.
 
 #include "granite/window/window.hpp"
 #include "granite/core/log.hpp"
+#include "glad/glad.h"
 
 #include <GLFW/glfw3.h>
-#include <GL/gl.h>
 
 namespace gr{
 
@@ -54,6 +54,15 @@ Window::Window(const std::string& title, gr::Vec2 size) {
     glfwMakeContextCurrent(raw_);
 
     glfwSetWindowUserPointer(raw_, this);
+    
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::WINDOW,
+            "Failed to initialize GLAD"
+        );
+        return;
+    }
     
     int fbW, fbH;
     glfwGetFramebufferSize(raw_, &fbW, &fbH);

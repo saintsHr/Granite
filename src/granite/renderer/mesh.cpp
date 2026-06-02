@@ -28,6 +28,7 @@ SOFTWARE.
 
 #include "glad/glad.h"
 
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <cmath>
 
@@ -799,6 +800,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
 }
 
 Mesh::~Mesh() {
+    if (!glfwGetCurrentContext()) return;
     glBindVertexArray(0);
     if (vao_) glDeleteVertexArrays(1, &vao_);
     if (vbo_) glDeleteBuffers(1, &vbo_);

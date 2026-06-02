@@ -24,24 +24,26 @@ SOFTWARE.
 
 #pragma once
 
+#include <climits>
+#include <cfloat>
 #include <cmath>
 
 namespace gr::Math{
 
 namespace Huge {
-    constexpr int                Int     = 2147483647;
-    constexpr unsigned int       UInt    = 4294967295U;
-    constexpr long               Long    = 9223372036854775807L;
-    constexpr unsigned long      ULong   = 18446744073709551615UL;
-    constexpr long long          LLong   = 9223372036854775807LL;
-    constexpr unsigned long long ULLong  = 18446744073709551615ULL;
-    constexpr short              Short   = 32767;
-    constexpr unsigned short     UShort  = 65535;
-    constexpr char               Char    = 127;
-    constexpr unsigned char      UChar   = 255;
-    constexpr float              Float   = 3.4028235e38f;
-    constexpr double             Double  = 1.7976931348623157e308;
-    constexpr long double        LDouble = 1.189731495357231765e4932L;
+    constexpr int                Int     = INT_MAX;
+    constexpr unsigned int       UInt    = UINT_MAX;
+    constexpr long               Long    = LONG_MAX;
+    constexpr unsigned long      ULong   = ULONG_MAX;
+    constexpr long long          LLong   = LLONG_MAX;
+    constexpr unsigned long long ULLong  = ULLONG_MAX;
+    constexpr short              Short   = SHRT_MAX;
+    constexpr unsigned short     UShort  = USHRT_MAX;
+    constexpr char               Char    = CHAR_MAX;
+    constexpr unsigned char      UChar   = UCHAR_MAX;
+    constexpr float              Float   = FLT_MAX;
+    constexpr double             Double  = DBL_MAX;
+    constexpr long double        LDouble = LDBL_MAX;
 }
 
 constexpr float PI = 3.1415927f;

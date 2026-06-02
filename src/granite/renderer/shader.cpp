@@ -27,6 +27,7 @@ SOFTWARE.
 
 #include "glad/glad.h"
 
+#include <GLFW/glfw3.h>
 #include <cstddef>
 #include <cstdio>
 #include <fstream>
@@ -426,6 +427,7 @@ Shader::Shader(const std::string &vertexStr, const std::string &fragmentStr) {
 }
 
 Shader::~Shader() {
+    if (!glfwGetCurrentContext()) return;
     glDeleteProgram(program_);
 }
 

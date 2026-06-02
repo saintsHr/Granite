@@ -12,7 +12,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_DEBUG_POSTFIX "d")
 
 # -----------------------------
 # Dependencies
@@ -99,10 +98,13 @@ target_link_libraries(granite
         OpenGL::GL
         OpenAL::OpenAL
         nlohmann_json::nlohmann_json
-        ${BULLET_LIBRARIES}
         SndFile::sndfile
+        ${BULLET_LIBRARIES}
         $<$<PLATFORM_ID:Linux>:${CMAKE_DL_LIBS}>
         $<$<PLATFORM_ID:Linux>:${CMAKE_THREAD_LIBS_INIT}>
+        $<$<PLATFORM_ID:Windows>:winmm>
+        $<$<PLATFORM_ID:Windows>:ole32>
+        $<$<PLATFORM_ID:Windows>:uuid>
 )
 
 # -----------------------------
