@@ -10,6 +10,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_DEBUG_POSTFIX "d")
 
 # -----------------------------
 # Dependencies
@@ -21,6 +22,8 @@ find_package(Bullet REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
 find_package(PkgConfig REQUIRED)
+find_package(Threads REQUIRED)
+
 pkg_check_modules(SNDFILE REQUIRED sndfile)
 pkg_check_modules(OPENAL REQUIRED openal)
 
@@ -56,8 +59,17 @@ target_compile_options(granite PRIVATE
     -Wextra
     -Werror
 
-    $<$<CONFIG:Debug>:-O0 -g3 -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS>
-    $<$<CONFIG:Release>:-O3 -DNDEBUG>
+    $<$<CONFIG:Debug>:
+        -O0
+        -g3
+        -fno-omit-frame-pointer
+        -D_GLIBCXX_ASSERTIONS
+    >
+
+    $<$<CONFIG:Release>:
+        -O3
+        -DNDEBUG
+    >
 )
 
 # -----------------------------
@@ -76,7 +88,7 @@ target_include_directories(granite
 # -----------------------------
 # Defines
 # -----------------------------
-target_compile_definitions(granite PUBLIC GLFW_INCLUDE_NONE)
+target_compile_definitions(granite PRIVATE GLFW_INCLUDE_NONE)
 
 # -----------------------------
 # Link Libraries
@@ -89,7 +101,9 @@ target_link_libraries(granite
         nlohmann_json::nlohmann_json
         ${BULLET_LIBRARIES}
         ${SNDFILE_LIBRARIES}
-        ${OPENAL_LIBRARY}
+        ${OPENAL_LIBRARIES}
+        $<$<PLATFORM_ID:Linux>:${CMAKE_DL_LIBS}>
+        $<$<PLATFORM_ID:Linux>:${CMAKE_THREAD_LIBS_INIT}>
 )
 
 # -----------------------------
