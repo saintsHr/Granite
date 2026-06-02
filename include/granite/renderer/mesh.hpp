@@ -24,10 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include <vector>
-
 #include "granite/renderer/shader.hpp"
+
 #include <memory>
+#include <cstdint>
+#include <vector>
 
 namespace gr::Renderer {
 
