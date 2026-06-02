@@ -4,6 +4,8 @@ project(granite VERSION 1.0.0 LANGUAGES C CXX)
 
 include(GNUInstallDirs)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -18,14 +20,12 @@ set(CMAKE_DEBUG_POSTFIX "d")
 find_package(glm REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(OpenAL REQUIRED)
 find_package(Bullet REQUIRED)
 find_package(nlohmann_json REQUIRED)
-
 find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
-
-pkg_check_modules(SNDFILE REQUIRED sndfile)
-pkg_check_modules(OPENAL REQUIRED openal)
+find_package(SndFile REQUIRED)
 
 # -----------------------------
 # Sources
@@ -82,7 +82,6 @@ target_include_directories(granite
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/third-party/include
         ${BULLET_INCLUDE_DIRS}
-        ${SNDFILE_INCLUDE_DIRS}
 )
 
 # -----------------------------
@@ -96,12 +95,12 @@ target_compile_definitions(granite PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(granite
     PRIVATE
         glfw
-        OpenGL::GL
         glm::glm
+        OpenGL::GL
+        OpenAL::OpenAL
         nlohmann_json::nlohmann_json
         ${BULLET_LIBRARIES}
-        ${SNDFILE_LIBRARIES}
-        ${OPENAL_LIBRARIES}
+        SndFile::sndfile
         $<$<PLATFORM_ID:Linux>:${CMAKE_DL_LIBS}>
         $<$<PLATFORM_ID:Linux>:${CMAKE_THREAD_LIBS_INIT}>
 )
@@ -149,5 +148,6 @@ write_basic_package_version_file(
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/graniteConfig.cmake
     ${CMAKE_CURRENT_BINARY_DIR}/graniteConfigVersion.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSndFile.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/granite
 )

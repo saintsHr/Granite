@@ -1,8 +1,18 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-include("${CMAKE_CURRENT_LIST_DIR}/graniteTargets.cmake")
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
 find_dependency(OpenGL REQUIRED)
+find_dependency(OpenAL REQUIRED)
+find_dependency(glfw3 REQUIRED)
 find_dependency(glm REQUIRED)
+find_dependency(Bullet REQUIRED)
 find_dependency(nlohmann_json REQUIRED)
+find_dependency(Threads REQUIRED)
+find_dependency(SndFile REQUIRED)
+
+include("${CMAKE_CURRENT_LIST_DIR}/graniteTargets.cmake")
+
+check_required_components(granite)
