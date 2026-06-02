@@ -1,0 +1,53 @@
+name: ci-windows
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+
+    env:
+      BUILD_DIR: build
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MinGW
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-clang
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-bullet
+            mingw-w64-x86_64-glfw
+            mingw-w64-x86_64-glm
+            mingw-w64-x86_64-libsndfile
+            mingw-w64-x86_64-nlohmann-json
+            mingw-w64-x86_64-openal
+
+      - name: Configure
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B $BUILD_DIR \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          cmake --build $BUILD_DIR --parallel $(nproc)

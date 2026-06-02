@@ -5,7 +5,7 @@ on:
   pull_request:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-linux-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
