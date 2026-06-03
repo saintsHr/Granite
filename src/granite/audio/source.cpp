@@ -57,7 +57,7 @@ void Source::load(const gr::Assets::Sound& audio, bool forceMono) {
             rawSamples = audio.read();
         }
 
-        int format;
+        int format = 0;
         uint8_t channels = forceMono ? 1 : audio.channelsCount();
 
         switch (channels) {
