@@ -37,6 +37,7 @@ struct RendererConfig {
     float dirtyNoiseStrenght = 0.0f;
     float ditherLevels = 0.0f;
     float quantizationLevels = 0.0f;
+    bool gammaCorrection = true;
 };
 
 extern std::vector<gr::Renderer::RenderObject> opaqueObjects;

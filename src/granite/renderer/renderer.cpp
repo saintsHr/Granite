@@ -119,11 +119,15 @@ const char* postFragmentShader = R"glsl(
 
 #version 330 core
 
+#define false 0
+#define true  1
+
 uniform sampler2D uTexture;
 
 uniform float uDitherLevels;
 uniform float uQuantizationLevels;
 uniform float uDirtyNoiseStrenght;
+uniform int   uGammaCorrection;
 
 in vec2 UV;
 out vec4 fragColor;
@@ -150,8 +154,21 @@ float random(vec2 co) {
     );
 }
 
+vec3 linearToSRGB(vec3 c) {
+    return mix(
+        c * 12.92,
+        1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055,
+        step(vec3(0.0031308), c)
+    );
+}
+
 void main() {
     vec3 finalColor = texture(uTexture, UV).rgb;
+
+    // --- Gamma Correction --- //
+    if (uGammaCorrection == true) {
+        finalColor = linearToSRGB(finalColor);
+    }
 
     // --- Dither --- //
     if (uDitherLevels > 0.0f) {
@@ -311,8 +328,6 @@ void init(const gr::Renderer::RendererConfig& cfg) {
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
-    glEnable(GL_FRAMEBUFFER_SRGB);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -369,7 +384,7 @@ void init(const gr::Renderer::RendererConfig& cfg) {
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_SRGB8_ALPHA8,
+        GL_RGBA8,
         gConfig.resolution.x,
         gConfig.resolution.y,
         0,
@@ -553,6 +568,7 @@ void endFrame(const gr::Scene::Camera& camera) {
     postShader->setFloat1("uQuantizationLevels", gConfig.quantizationLevels);
     postShader->setFloat1("uDitherLevels", gConfig.ditherLevels);
     postShader->setFloat1("uDirtyNoiseStrenght", gConfig.dirtyNoiseStrenght);
+    postShader->setInt1("uGammaCorrection", gConfig.gammaCorrection);
     postShader->setInt1("uTexture", 0);
 
     glDisable(GL_DEPTH_TEST);
