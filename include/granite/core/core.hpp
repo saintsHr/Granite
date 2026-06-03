@@ -24,6 +24,13 @@ SOFTWARE.
 
 #pragma once
 
+#include "granite/core/color.hpp"
+#include "granite/core/event.hpp"
+#include "granite/core/log.hpp"
+#include "granite/core/math.hpp"
+#include "granite/core/time.hpp"
+#include "granite/core/vector.hpp"
+
 namespace gr::Core {
 
 struct Config {

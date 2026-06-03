@@ -24,16 +24,51 @@ SOFTWARE.
 
 #include "granite/scene/audiosource.hpp"
 
+#include <AL/al.h>
+#include <cstdint>
+#include <vector>
+
 namespace gr::Scene {
+
+AudioSource::AudioSource() {
+	alGenBuffers(1, &buffer_);
+	alGenSources(1, &source_);
+}
+
+AudioSource::~AudioSource() {
+	alDeleteBuffers(1, &buffer_);
+	alDeleteSources(1, &source_);
+}
 
 void AudioSource::load(const gr::Assets::Audio& audio) {
 	if (audio.isLoaded()) {
+		std::vector<int16_t> samples;
+		int format;
 
-	} else {
-		loaded_ = false;
+		samples.reserve(audio.frameCount() * audio.channelsCount());
+
+		switch (audio.channelsCount()) {
+			case 1: format = AL_FORMAT_MONO16;   break;
+			case 2: format = AL_FORMAT_STEREO16; break;
+			default: break;
+		}
+
+		for (uint64_t i = 0; i < audio.frameCount() * audio.channelsCount(); i++) {
+			samples.push_back(audio.read().at(i) * 32767);
+		}
+
+		alBufferData(
+			buffer_,
+			format,
+			samples.data(),
+			samples.size() * sizeof(int16_t),
+			audio.sampleRate()
+		);
+
+		alSourcei(source_, AL_BUFFER, buffer_);
+
+		loaded_ = true;
 	}
-
-	loaded_ = true;
 }
 
 void AudioSource::unload(void) {

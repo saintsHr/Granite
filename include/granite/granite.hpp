@@ -25,14 +25,9 @@ SOFTWARE.
 #pragma once
 
 #include "granite/core/core.hpp"
-#include "granite/core/event.hpp"
-#include "granite/core/math.hpp"
 #include "granite/window/window.hpp"
 #include "granite/renderer/renderer.hpp"
 #include "granite/scene/scene.hpp"
 #include "granite/input/input.hpp"
-#include "granite/scene/light.hpp"
-#include "granite/assets/model.hpp"
-#include "granite/assets/map.hpp"
-#include "granite/assets/audio.hpp"
 #include "granite/physics/physics.hpp"
+#include "granite/assets/assets.hpp"

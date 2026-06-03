@@ -54,6 +54,9 @@ public:
 private:
 	AudioState state_ = AudioState::STOPPED;
 	bool loaded_ = false;
+
+	unsigned int buffer_ = 0;
+	unsigned int source_ = 0;
 };
 
 }
