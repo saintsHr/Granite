@@ -22,25 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "granite/scene/audiosource.hpp"
+#include "granite/audio/source.hpp"
+#include "granite/core/math.hpp"
 
 #include <AL/al.h>
 #include <cstdint>
 #include <vector>
 
-namespace gr::Scene {
+namespace gr::Audio {
 
-AudioSource::AudioSource() {
+Source::Source() {
 	alGenBuffers(1, &buffer_);
 	alGenSources(1, &source_);
 }
 
-AudioSource::~AudioSource() {
-	alDeleteBuffers(1, &buffer_);
+Source::~Source() {
+	unload();
 	alDeleteSources(1, &source_);
+	alDeleteBuffers(1, &buffer_);
 }
 
-void AudioSource::load(const gr::Assets::Audio& audio) {
+void Source::load(const gr::Assets::Sound& audio) {
 	if (audio.isLoaded()) {
 		std::vector<int16_t> samples;
 		int format;
@@ -71,27 +73,69 @@ void AudioSource::load(const gr::Assets::Audio& audio) {
 	}
 }
 
-void AudioSource::unload(void) {
+void Source::unload(void) {
+	if (state_ != State::STOPPED) stop();
+	alSourcei(source_, AL_BUFFER, 0);
 	loaded_ = false;
 }
 
-bool AudioSource::isLoaded(void) const {
+void Source::update(void) {
+	alSource3f(
+		source_,
+		AL_POSITION,
+		position.x,
+		position.y,
+		position.z
+	);
+}
+
+void Source::setVolume(float volume) {
+	volume = gr::Math::Clamp(volume, 0.0f, 1.0f);
+
+	alSourcef(source_, AL_GAIN, volume);
+
+	volume_ = volume;
+}
+
+void Source::setLooping(bool state) {
+	alSourcei(source_, AL_LOOPING, state ? AL_TRUE : AL_FALSE);
+	looping_ = state;
+}
+
+float Source::getVolume(void) const {
+	return volume_;
+}
+
+bool Source::isLoaded(void) const {
 	return loaded_;
 }
 
-void AudioSource::play(void) {
-	state_ = AudioState::PLAYING;
+bool Source::isLooping(void) const {
+	return looping_;
 }
 
-void AudioSource::pause(void) {
-	state_ = AudioState::PAUSED;
+void Source::play(void) {
+	if (loaded_ && state_ != State::PLAYING) {
+		alSourcePlay(source_);
+		state_ = State::PLAYING;
+	}
 }
 
-void AudioSource::stop(void) {
-	state_ = AudioState::STOPPED;
+void Source::pause(void) {
+	if (loaded_ && state_ != State::PAUSED) {
+		alSourcePause(source_);
+		state_ = State::PAUSED;
+	}
 }
 
-AudioState AudioSource::getState(void) const {
+void Source::stop(void) {
+	if (loaded_ && state_ != State::STOPPED) {
+		alSourceStop(source_);
+		state_ = State::STOPPED;
+	}
+}
+
+State Source::getState(void) const {
 	return state_;
 }
 

@@ -24,39 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/assets/audio.hpp"
-#include "granite/core/vector.hpp"
+#include "granite/audio/source.hpp"
 
-namespace gr::Scene {
+namespace gr::Audio {
 
-enum class AudioState {
-	PLAYING,
-	PAUSED,
-	STOPPED
-};
-
-class AudioSource {
-public:
-	AudioSource();
-	~AudioSource();
-
-	gr::Vec3 position;
-
-	void load(const gr::Assets::Audio& audio);
-	void unload(void);
-
-	void play(void);
-	void pause(void);
-	void stop(void);
-
-	AudioState getState(void) const;
-	bool isLoaded(void) const;
-private:
-	AudioState state_ = AudioState::STOPPED;
-	bool loaded_ = false;
-
-	unsigned int buffer_ = 0;
-	unsigned int source_ = 0;
-};
+bool init(void);
+void shutdown(void);
 
 }

@@ -24,30 +24,50 @@ SOFTWARE.
 
 #pragma once
 
-#include <cstdint>
-#include <string>
-#include <vector>
+#include "granite/assets/sound.hpp"
+#include "granite/core/vector.hpp"
 
-namespace gr::Assets {
+namespace gr::Audio {
 
-class Audio {
+enum class State {
+	PLAYING,
+	PAUSED,
+	STOPPED
+};
+
+class Source {
 public:
-	void load(const std::string& filename);
+	Source();
+	~Source();
+
+	gr::Vec3 position = {0.0f, 0.0f, 0.0f};
+
+	void load(const gr::Assets::Sound& sound);
+	void unload(void);
+
+	void update(void);
+
+	void play(void);
+	void pause(void);
+	void stop(void);
+
+	void setVolume(float volume);
+	void setLooping(bool state);
+
+	float getVolume(void) const;
+	State getState(void) const;
+
 	bool isLoaded(void) const;
-
-	const std::vector<float>& read(void) const;
-
-	uint64_t frameCount(void) const;
-	uint32_t sampleRate(void) const;
-	uint8_t  channelsCount(void) const;
+	bool isLooping(void) const;
 private:
-	std::vector<float> buffer_ = {0};
-
-	uint64_t framesCount_   = 0;
-	uint32_t sampleRate_    = 0;
-	uint8_t  channelsCount_ = 0;
-
+	State state_ = State::STOPPED;
 	bool loaded_ = false;
+
+	unsigned int buffer_ = 0;
+	unsigned int source_ = 0;
+
+	float volume_ = 1.0f;
+	bool looping_ = false;
 };
 
-};
+}

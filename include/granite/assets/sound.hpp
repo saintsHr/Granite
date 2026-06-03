@@ -24,11 +24,30 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/core/core.hpp"
-#include "granite/window/window.hpp"
-#include "granite/renderer/renderer.hpp"
-#include "granite/scene/scene.hpp"
-#include "granite/input/input.hpp"
-#include "granite/physics/physics.hpp"
-#include "granite/assets/assets.hpp"
-#include "granite/audio/audio.hpp"
+#include <cstdint>
+#include <string>
+#include <vector>
+
+namespace gr::Assets {
+
+class Sound {
+public:
+	void load(const std::string& filename);
+	bool isLoaded(void) const;
+
+	const std::vector<float>& read(void) const;
+
+	uint64_t frameCount(void) const;
+	uint32_t sampleRate(void) const;
+	uint8_t  channelsCount(void) const;
+private:
+	std::vector<float> buffer_ = {0};
+
+	uint64_t framesCount_   = 0;
+	uint32_t sampleRate_    = 0;
+	uint8_t  channelsCount_ = 0;
+
+	bool loaded_ = false;
+};
+
+};

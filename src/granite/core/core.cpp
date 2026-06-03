@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "granite/core/core.hpp"
+#include "granite/audio/audio.hpp"
 #include "granite/core/log.hpp"
 #include "granite/core/math.hpp"
 
@@ -55,6 +56,20 @@ void init(const Config& cfg){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_DEPTH_BITS, static_cast<int>(depth));
     glfwWindowHint(GLFW_STENCIL_BITS, static_cast<int>(stencil));
+
+    if (gr::Audio::init()) {
+        gr::internal::log(
+            gr::internal::Severity::INFO,
+            gr::internal::Module::WINDOW,
+            "Audio backend (OpenAL) initialized."
+        );
+    } else {
+        gr::internal::log(
+            gr::internal::Severity::FATAL,
+            gr::internal::Module::WINDOW,
+            "Cannot initialize audio backend (OpenAL)."
+        );
+    };
 
     gr::internal::log(
         gr::internal::Severity::INFO,

@@ -24,12 +24,12 @@ SOFTWARE.
 
 #include <sndfile.h>
 
-#include "granite/assets/audio.hpp"
+#include "granite/assets/sound.hpp"
 #include "granite/core/log.hpp"
 
 namespace gr::Assets {
 
-void Audio::load(const std::string& filename) {
+void Sound::load(const std::string& filename) {
 	SF_INFO info = {};
 	SNDFILE* file = sf_open(filename.c_str(), SFM_READ, &info);
 
@@ -73,23 +73,23 @@ void Audio::load(const std::string& filename) {
 	return;
 }
 
-bool Audio::isLoaded(void) const {
+bool Sound::isLoaded(void) const {
 	return loaded_;
 }
 
-const std::vector<float>& Audio::read(void) const {
+const std::vector<float>& Sound::read(void) const {
 	return buffer_;
 }
 
-uint64_t Audio::frameCount(void) const {
+uint64_t Sound::frameCount(void) const {
 	return framesCount_;
 }
 
-uint32_t Audio::sampleRate(void) const {
+uint32_t Sound::sampleRate(void) const {
 	return sampleRate_;
 }
 
-uint8_t Audio::channelsCount(void) const {
+uint8_t Sound::channelsCount(void) const {
 	return channelsCount_;
 }
 

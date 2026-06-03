@@ -22,13 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma once
-
-#include "granite/core/core.hpp"
-#include "granite/window/window.hpp"
-#include "granite/renderer/renderer.hpp"
-#include "granite/scene/scene.hpp"
-#include "granite/input/input.hpp"
-#include "granite/physics/physics.hpp"
-#include "granite/assets/assets.hpp"
 #include "granite/audio/audio.hpp"
+
+#include <AL/alc.h>
+
+ALCdevice*  device  = nullptr;
+ALCcontext* context = nullptr;
+
+namespace gr::Audio {
+
+bool init(void) {
+	device  = alcOpenDevice(nullptr);
+	if (!device) return false;
+
+	context = alcCreateContext(device, nullptr);
+	if (!context) return false;
+
+	if (!alcMakeContextCurrent(context)) return false;
+
+	return true;
+}
+
+void shutdown(void) {
+	alcMakeContextCurrent(nullptr);
+	alcDestroyContext(context);
+	alcCloseDevice(device);
+
+	context = nullptr;
+	device  = nullptr;
+}
+
+}

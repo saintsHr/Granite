@@ -1,6 +1,6 @@
 #pragma once
 
-#include "granite/assets/audio.hpp"
+#include "granite/assets/sound.hpp"
 #include "granite/assets/image.hpp"
 #include "granite/assets/map.hpp"
 #include "granite/assets/model.hpp"

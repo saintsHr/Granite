@@ -27,4 +27,3 @@ SOFTWARE.
 #include "granite/scene/camera.hpp"
 #include "granite/scene/object.hpp"
 #include "granite/scene/light.hpp"
-#include "granite/scene/audiosource.hpp"
