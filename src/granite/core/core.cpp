@@ -60,13 +60,13 @@ void init(const Config& cfg){
     if (gr::Audio::init()) {
         gr::internal::log(
             gr::internal::Severity::INFO,
-            gr::internal::Module::WINDOW,
+            gr::internal::Module::AUDIO,
             "Audio backend (OpenAL) initialized."
         );
     } else {
         gr::internal::log(
             gr::internal::Severity::FATAL,
-            gr::internal::Module::WINDOW,
+            gr::internal::Module::AUDIO,
             "Cannot initialize audio backend (OpenAL)."
         );
     };

@@ -42,35 +42,49 @@ Source::~Source() {
 	alDeleteBuffers(1, &buffer_);
 }
 
-void Source::load(const gr::Assets::Sound& audio) {
-	if (audio.isLoaded()) {
-		std::vector<int16_t> samples;
-		int format;
+void Source::load(const gr::Assets::Sound& audio, bool forceMono) {
+    if (audio.isLoaded()) {
+        std::vector<float> rawSamples;
 
-		samples.reserve(audio.frameCount() * audio.channelsCount());
+        if (forceMono && audio.channelsCount() == 2) {
+            rawSamples.reserve(audio.frameCount());
+            for (uint64_t i = 0; i < audio.frameCount(); i++) {
+                float L = audio.read().at(i * 2);
+                float R = audio.read().at(i * 2 + 1);
+                rawSamples.push_back((L + R) / 2.0f);
+            }
+        } else {
+            rawSamples = audio.read();
+        }
 
-		switch (audio.channelsCount()) {
-			case 1: format = AL_FORMAT_MONO16;   break;
-			case 2: format = AL_FORMAT_STEREO16; break;
-			default: break;
-		}
+        int format;
+        uint8_t channels = forceMono ? 1 : audio.channelsCount();
 
-		for (uint64_t i = 0; i < audio.frameCount() * audio.channelsCount(); i++) {
-			samples.push_back(audio.read().at(i) * 32767);
-		}
+        switch (channels) {
+            case 1: format = AL_FORMAT_MONO16;   break;
+            case 2: format = AL_FORMAT_STEREO16; break;
+            default: break;
+        }
 
-		alBufferData(
-			buffer_,
-			format,
-			samples.data(),
-			samples.size() * sizeof(int16_t),
-			audio.sampleRate()
-		);
+        std::vector<int16_t> samples;
+        samples.reserve(rawSamples.size());
 
-		alSourcei(source_, AL_BUFFER, buffer_);
+        for (float s : rawSamples) {
+            samples.push_back(s * 32767);
+        }
 
-		loaded_ = true;
-	}
+        alBufferData(
+        	buffer_,
+        	format,
+        	samples.data(),
+            samples.size() * sizeof(int16_t),
+            audio.sampleRate()
+        );
+
+        alSourcei(source_, AL_BUFFER, buffer_);
+
+        loaded_ = true;
+    }
 }
 
 void Source::unload(void) {

@@ -42,7 +42,7 @@ public:
 
 	gr::Vec3 position = {0.0f, 0.0f, 0.0f};
 
-	void load(const gr::Assets::Sound& sound);
+	void load(const gr::Assets::Sound& audio, bool forceMono = true);
 	void unload(void);
 
 	void update(void);

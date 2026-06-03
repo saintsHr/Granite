@@ -24,12 +24,11 @@ SOFTWARE.
 
 #pragma once
 
-#include "granite/audio/source.hpp"
-#include "granite/audio/listener.hpp"
+#include "granite/core/vector.hpp"
 
-namespace gr::Audio {
+namespace gr::Audio::Listener {
 
-bool init(void);
-void shutdown(void);
+void setPosition(const gr::Vec3& position);
+void setRotation(const gr::Vec2& rotation);
 
 }
