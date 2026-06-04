@@ -12,7 +12,7 @@
 
 ---
 
-**Granite** is a 3d game engine written in C++, its main goal is to make gamedev easy and enjoyable for everyone while keeping things simple.
+**Granite** is a 3d game engine written in C++, its main goal is to make gamedev easy and enjoyable for everyone while keeping things simple and powerful.
 feel free to use it to develop your game or to modify it, also, if you want to contribute, just fork it and create a pull request!
 if you find any issue or have a cool idea/suggestion, share it on github issues or send me an e-mail!
 
@@ -42,8 +42,13 @@ if you find any issue or have a cool idea/suggestion, share it on github issues 
 
 ---
 
-Copyright (c) 2026 Henrique Rodrigues Santos  
-Licensed under the MIT License  
-Github: https://github.com/saintsHr/Granite  
+### 📜 Documentation:
+[Site](https://saintshr.github.io/Granite/)
+
+---
+
+Copyright (c) 2026 saintsHr
+Licensed under the MIT License
+Github: https://github.com/saintsHr/Granite
 
 ---
