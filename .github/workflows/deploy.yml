@@ -17,7 +17,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Dependencyes
-        run: sudo apt-get install -y doxygen graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            doxygen \
+            graphviz
 
       - name: Generate Docs
         run: doxygen Doxyfile
