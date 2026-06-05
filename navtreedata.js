@@ -24,12 +24,14 @@
 */
 var NAVTREE =
 [
-  [ "Granite", "index.html", ]
+  [ "Granite", "index.html", [
+    [ "Topics", "topics.html", "topics" ]
+  ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"index.html"
+"group__Core.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
