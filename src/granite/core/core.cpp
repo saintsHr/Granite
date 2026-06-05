@@ -78,7 +78,7 @@ void init(const Config& cfg){
     );
 }
 
-void init() {
+void init(void) {
     Config cfg = {0};
     cfg.depthBits    = 24;
     cfg.stencilBits  = 8;
@@ -86,13 +86,21 @@ void init() {
     init(cfg);
 }
 
-void exit(){
+void exit(void){
     glfwTerminate();
     
     gr::internal::log(
         gr::internal::Severity::INFO,
         gr::internal::Module::WINDOW,
         "Windowing backend (GLFW) shutdown."
+    );
+
+    gr::Audio::shutdown();
+
+    gr::internal::log(
+        gr::internal::Severity::INFO,
+        gr::internal::Module::AUDIO,
+        "Audio backend (OpenAL) shutdown."
     );
 
     gr::internal::log(

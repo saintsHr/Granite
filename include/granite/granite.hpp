@@ -22,6 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/**
+ * @defgroup Core Core Module
+ * 
+ * @brief Initialization, configuration, and lifecycle of the engine.
+ */
+
 #pragma once
 
 #include "granite/core/core.hpp"

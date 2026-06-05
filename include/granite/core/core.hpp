@@ -33,14 +33,53 @@ SOFTWARE.
 
 namespace gr::Core {
 
+/**
+ * @ingroup Core
+ * @brief Initialization Configurations.
+ * 
+ * Configurations used on initialization of the core module.
+ */
 struct Config {
-    unsigned int depthBits        = 24;
-    unsigned int stencilBits      = 8;
-    unsigned int msaaSamples      = 4;
+    unsigned int depthBits        = 24; ///< Depth buffer bits (Default: 24)
+    unsigned int stencilBits      = 8;  ///< Stencil buffer bits (Default: 8)
 };
-    
+
+/**
+ * @ingroup Core
+ * @brief Initializes the engine core.
+ *
+ * Initializes the engine core and all needed modules with provided configurations.
+ *
+ * @param cfg Initialization configurations.
+ *
+ * @warning Should be called before any engine call.
+ * @warning After this call, correct function of the engine is not guaranteed if initialization fails.
+ *
+ * @see init(void)
+ */
 void init(const Config& cfg);
-void init();
-void exit();
+
+/**
+ * @ingroup Core
+ * @brief Initializes the engine core.
+ *
+ * Initializes the engine core and all needed modules with default configurations.
+ *
+ * @warning Should be called before any engine call.
+ * @warning After this call, correct function of the engine is not guaranteed if initialization fails.
+ *
+ * @see init(const Config&)
+ */
+void init(void);
+
+/**
+ * @ingroup Core
+ * @brief Shuts down the engine core.
+ *
+ * Shuts down the core and all needed modules.
+ *
+ * @warning After this call, correct function of the engine is not guaranteed.
+ */
+void exit(void);
 
 }
