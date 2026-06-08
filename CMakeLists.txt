@@ -27,6 +27,16 @@ find_package(Threads REQUIRED)
 find_package(SndFile REQUIRED)
 
 # -----------------------------
+# CCache
+# -----------------------------
+find_program(CCACHE_PROGRAM ccache)
+
+if(CCACHE_PROGRAM)
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+endif()
+
+# -----------------------------
 # Sources
 # -----------------------------
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
