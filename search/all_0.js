@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['config_0',['Config',['../structgr_1_1Core_1_1Config.html',1,'gr::Core']]],
-  ['core_20module_1',['Core Module',['../group__Core.html',1,'']]]
+  ['b_0',['b',['../classgr_1_1Color3.html#a9045cbc6dc6710cf8b7a2c40be661803',1,'gr::Color3']]]
 ];

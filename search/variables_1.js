@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['stencilbits_0',['stencilBits',['../structgr_1_1Core_1_1Config.html#ac8d31f3cf3b8426d782cf30019b9b29f',1,'gr::Core::Config']]]
+  ['depthbits_0',['depthBits',['../structgr_1_1Core_1_1Config.html#ad7c08ee7c2539d36f850163e860e9a95',1,'gr::Core::Config']]]
 ];
