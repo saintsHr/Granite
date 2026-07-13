@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['init_0',['init',['../group__Core.html#gaed72f733136f21d6fdd89d924cfb256d',1,'gr::Core::init(const Config &amp;cfg)'],['../group__Core.html#gad69fdff3d01fb47e2a77736ae2ec6c91',1,'gr::Core::init(void)']]]
+  ['stencilbits_0',['stencilBits',['../structgr_1_1Core_1_1Config.html#ac8d31f3cf3b8426d782cf30019b9b29f',1,'gr::Core::Config']]]
 ];

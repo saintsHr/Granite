@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['b_0',['b',['../classgr_1_1Color3.html#a9045cbc6dc6710cf8b7a2c40be661803',1,'gr::Color3']]]
+  ['depthbits_0',['depthBits',['../structgr_1_1Core_1_1Config.html#ad7c08ee7c2539d36f850163e860e9a95',1,'gr::Core::Config']]]
 ];
